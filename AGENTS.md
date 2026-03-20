@@ -148,56 +148,6 @@ zanat search [query]          # Search available skills
 
 ## Development Guidelines
 
-### Git Operations - IMPORTANT
-
-**NEVER commit or push code without explicit user permission.**
-
-Always ask the user before:
-
-- Running `git commit`
-- Running `git push`
-- Running `git push --force` or any force operations
-- Any destructive git operations
-
-The user may want to review changes, write their own commit messages, or handle git operations themselves.
-
-### Git Commits
-
-Follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
-
-**Format:** `<type>[scope]: <description>`
-
-**Types:**
-
-- `feat` - New feature
-- `fix` - Bug fix
-- `docs` - Documentation
-- `style` - Formatting (no logic change)
-- `refactor` - Code refactoring
-- `perf` - Performance
-- `test` - Tests
-- `build` - Build/dependencies
-- `ci` - CI changes
-- `chore` - Maintenance
-
-**Examples:**
-
-```
-feat(cli): add search command
-fix(install): handle missing skill directory
-docs: update README with examples
-refactor: extract path utilities
-```
-
-**Breaking changes:** Use `!` after type: `feat!: change config format`
-
-**Rules:**
-
-- Present tense, imperative mood: "add" not "added"
-- Keep description under 72 characters
-- One logical change per commit
-- Keep messages short and to the point
-
 ## License
 
 MIT
