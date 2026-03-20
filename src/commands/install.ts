@@ -1,5 +1,6 @@
 import { installSkill } from '../lib/skills.js';
 import { isHubCloned } from '../lib/git.js';
+import { SkillArgSchema } from '../schemas/skill-arg.js';
 import chalk from 'chalk';
 
 export async function installCommand(skillArg: string): Promise<void> {
@@ -12,16 +13,17 @@ export async function installCommand(skillArg: string): Promise<void> {
       process.exit(1);
     }
 
-    // Parse skill argument (format: source/skill-name)
-    const parts = skillArg.split('/');
-    if (parts.length !== 2) {
-      console.error(chalk.red('Invalid skill format. Use: source/skill-name'));
-      console.error(chalk.gray('Example: yurchi/code-review'));
+    // Validate skill argument using Zod schema
+    const result = SkillArgSchema.safeParse(skillArg);
+    if (!result.success) {
+      const errorMessage = result.error.issues[0]?.message ?? 'Invalid skill format';
+      console.error(chalk.red(errorMessage));
+      console.error(chalk.gray('Example: mycompany/hello-world'));
       process.exit(1);
     }
 
-    const source = parts[0]!;
-    const skillName = parts[1]!;
+    // Parse validated skill argument
+    const [source, skillName] = skillArg.split('/') as [string, string];
     await installSkill(source, skillName);
 
     console.log(chalk.green(`✓ Installed zanat.${source}.${skillName}`));

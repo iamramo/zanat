@@ -29,7 +29,8 @@
     "dotenv": "^17.3.1",
     "fs-extra": "^11.2.0",
     "gray-matter": "^4.0.3",
-    "simple-git": "^3.22.0"
+    "simple-git": "^3.22.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
