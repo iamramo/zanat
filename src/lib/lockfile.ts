@@ -1,5 +1,5 @@
-import { SkillLock, LockedSkill } from '../types';
-import { SKILL_LOCK_FILE } from '../utils/paths';
+import type { SkillLock, LockedSkill } from '../types/index.js';
+import { SKILL_LOCK_FILE } from '../utils/paths.js';
 import fs from 'fs-extra';
 
 const LOCK_VERSION = 1;

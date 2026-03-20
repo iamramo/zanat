@@ -1,5 +1,5 @@
-import { searchSkills } from '../lib/search';
-import { isHubCloned } from '../lib/git';
+import { searchSkills } from '../lib/search.js';
+import { isHubCloned } from '../lib/git.js';
 import chalk from 'chalk';
 
 export async function searchCommand(query?: string): Promise<void> {
@@ -24,7 +24,7 @@ export async function searchCommand(query?: string): Promise<void> {
       return;
     }
 
-    results.forEach(skill => {
+    results.forEach((skill) => {
       console.log(chalk.green('•'), `${skill.source}/${skill.name}`);
       console.log(chalk.gray(`  ${skill.description}`));
       console.log();

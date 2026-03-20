@@ -1,9 +1,9 @@
-import { Skill, SkillFrontmatter, LockedSkill } from '../types';
-import { HUB_DIR, AGENTS_SKILLS_DIR } from '../utils/paths';
-import { loadSkillLock, saveSkillLock, addSkillToLock } from './lockfile';
+import type { Skill, SkillFrontmatter, LockedSkill } from '../types/index.js';
+import { HUB_DIR, AGENTS_SKILLS_DIR } from '../utils/paths.js';
+import { loadSkillLock, saveSkillLock, addSkillToLock } from './lockfile.js';
 import fs from 'fs-extra';
 import matter from 'gray-matter';
-import path from 'path';
+import path from 'node:path';
 
 export async function installSkill(source: string, skillName: string): Promise<void> {
   const fullSkillName = `zanat.${source}.${skillName}`;
@@ -13,7 +13,7 @@ export async function installSkill(source: string, skillName: string): Promise<v
   // Check if skill exists in hub
   const skillFile = path.join(sourcePath, 'SKILL.md');
   const exists = await fs.pathExists(skillFile);
-  
+
   if (!exists) {
     throw new Error(`Skill not found: ${source}/${skillName}`);
   }
@@ -31,14 +31,14 @@ export async function installSkill(source: string, skillName: string): Promise<v
     updatedAt: new Date().toISOString(),
     version: 'latest', // MVP: only support latest
   };
-  
+
   const updatedLock = addSkillToLock(lock, fullSkillName, lockedSkill);
   await saveSkillLock(updatedLock);
 }
 
 export async function listInstalledSkills(): Promise<string[]> {
   const lock = await loadSkillLock();
-  return Object.keys(lock.skills).filter(name => name.startsWith('zanat.'));
+  return Object.keys(lock.skills).filter((name) => name.startsWith('zanat.'));
 }
 
 export async function parseSkill(filePath: string): Promise<Skill | null> {
@@ -46,12 +46,12 @@ export async function parseSkill(filePath: string): Promise<Skill | null> {
     const content = await fs.readFile(filePath, 'utf-8');
     const parsed = matter(content);
     const frontmatter = parsed.data as SkillFrontmatter;
-    
+
     // Extract source from path (sources/{source}/{skill}/SKILL.md)
     const parts = filePath.split('/');
     const sourceIndex = parts.indexOf('sources');
-    const source = sourceIndex >= 0 ? parts[sourceIndex + 1] : 'unknown';
-    
+    const source = sourceIndex >= 0 ? (parts[sourceIndex + 1] ?? 'unknown') : 'unknown';
+
     return {
       ...frontmatter,
       content: parsed.content,

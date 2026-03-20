@@ -1,5 +1,5 @@
-import { installSkill } from '../lib/skills';
-import { isHubCloned } from '../lib/git';
+import { installSkill } from '../lib/skills.js';
+import { isHubCloned } from '../lib/git.js';
 import chalk from 'chalk';
 
 export async function installCommand(skillArg: string): Promise<void> {
@@ -20,7 +20,8 @@ export async function installCommand(skillArg: string): Promise<void> {
       process.exit(1);
     }
 
-    const [source, skillName] = parts;
+    const source = parts[0]!;
+    const skillName = parts[1]!;
     await installSkill(source, skillName);
 
     console.log(chalk.green(`✓ Installed zanat.${source}.${skillName}`));

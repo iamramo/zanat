@@ -1,5 +1,5 @@
-import simpleGit from 'simple-git';
-import { HUB_DIR } from '../utils/paths';
+import { simpleGit } from 'simple-git';
+import { HUB_DIR } from '../utils/paths.js';
 import fs from 'fs-extra';
 
 export async function cloneHub(hubUrl: string, branch: string): Promise<void> {

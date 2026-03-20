@@ -1,5 +1,5 @@
-import { pullHub, isHubCloned } from '../lib/git';
-import { saveConfig, loadConfig } from '../lib/config';
+import { pullHub, isHubCloned } from '../lib/git.js';
+import { saveConfig, loadConfig } from '../lib/config.js';
 import chalk from 'chalk';
 
 export async function syncCommand(): Promise<void> {

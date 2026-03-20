@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 // Load environment variables first
-import './config/env';
+import './config/env.js';
 
 import { program } from 'commander';
-import { initCommand } from './commands/init';
-import { syncCommand } from './commands/sync';
-import { installCommand } from './commands/install';
-import { listCommand } from './commands/list';
-import { searchCommand } from './commands/search';
+import { initCommand } from './commands/init.js';
+import { syncCommand } from './commands/sync.js';
+import { installCommand } from './commands/install.js';
+import { listCommand } from './commands/list.js';
+import { searchCommand } from './commands/search.js';
 
 program.name('zanat').description('A skill hub for AI agents').version('0.1.0');
 

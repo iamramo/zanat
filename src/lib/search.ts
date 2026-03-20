@@ -1,9 +1,11 @@
-import { HUB_DIR } from '../utils/paths';
-import { parseSkill } from './skills';
+import { HUB_DIR } from '../utils/paths.js';
+import { parseSkill } from './skills.js';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
-export async function searchSkills(query?: string): Promise<Array<{ source: string; name: string; description: string }>> {
+export async function searchSkills(
+  query?: string
+): Promise<Array<{ source: string; name: string; description: string }>> {
   const sourcesDir = path.join(HUB_DIR, 'sources');
   const results: Array<{ source: string; name: string; description: string }> = [];
 
@@ -42,11 +44,14 @@ export async function searchSkills(query?: string): Promise<Array<{ source: stri
   return results;
 }
 
-function matchesQuery(skill: { name: string; description: string; tags?: string[] }, query: string): boolean {
+function matchesQuery(
+  skill: { name: string; description: string; tags?: string[] },
+  query: string
+): boolean {
   const searchableText = [
     skill.name.toLowerCase(),
     skill.description.toLowerCase(),
-    ...(skill.tags || []).map(t => t.toLowerCase()),
+    ...(skill.tags || []).map((t) => t.toLowerCase()),
   ].join(' ');
 
   return searchableText.includes(query);

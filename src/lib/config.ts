@@ -1,6 +1,6 @@
-import { ZanatConfig } from '../types';
-import { CONFIG_FILE } from '../utils/paths';
-import { ENV } from '../config/env';
+import type { ZanatConfig } from '../types/index.js';
+import { CONFIG_FILE } from '../utils/paths.js';
+import { ENV } from '../config/env.js';
 import fs from 'fs-extra';
 
 export async function loadConfig(): Promise<ZanatConfig | null> {

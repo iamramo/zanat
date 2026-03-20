@@ -1,6 +1,6 @@
-import { ZANAT_DIR, HUB_DIR, AGENTS_DIR } from '../utils/paths';
-import { saveConfig, getDefaultConfig } from '../lib/config';
-import { cloneHub, isHubCloned } from '../lib/git';
+import { ZANAT_DIR, HUB_DIR, AGENTS_DIR } from '../utils/paths.js';
+import { saveConfig, getDefaultConfig } from '../lib/config.js';
+import { cloneHub, isHubCloned } from '../lib/git.js';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 

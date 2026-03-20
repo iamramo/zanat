@@ -1,4 +1,4 @@
-import { listInstalledSkills } from '../lib/skills';
+import { listInstalledSkills } from '../lib/skills.js';
 import chalk from 'chalk';
 
 export async function listCommand(): Promise<void> {
@@ -10,11 +10,13 @@ export async function listCommand(): Promise<void> {
 
     if (skills.length === 0) {
       console.log(chalk.gray('No skills installed.'));
-      console.log(chalk.gray('Run `zanat search` to find skills or `zanat install <skill>` to install one.'));
+      console.log(
+        chalk.gray('Run `zanat search` to find skills or `zanat install <skill>` to install one.')
+      );
       return;
     }
 
-    skills.forEach(skill => {
+    skills.forEach((skill) => {
       console.log(chalk.green('•'), skill);
     });
 
