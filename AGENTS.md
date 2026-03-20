@@ -5,6 +5,7 @@ This file provides context about the Zanat project for future AI agents.
 ## Project Overview
 
 **Zanat** is a skill hub for AI agents. It allows users to:
+
 - Store skills as markdown files with YAML frontmatter
 - Version skills using Git
 - Install skills locally to `~/.agents/skills/`
@@ -13,9 +14,11 @@ This file provides context about the Zanat project for future AI agents.
 ## Key Decisions
 
 ### Naming Convention
+
 Skills are installed with the format: `zanat.<source>.<skill-name>`
 
 Examples:
+
 - `zanat.yurchi.code-review` - Skills authored by Yurchi
 - `zanat.vercel.pr-review` - Vercel skills installed via Zanat
 - `zanat.anthropic.web-accessibility` - Anthropic skills via Zanat
@@ -25,6 +28,7 @@ This prevents conflicts with other skill managers (like npx skills).
 ### Directory Structure
 
 **Hub (Git Repository):**
+
 ```
 ~/.zanat/hub/
 └── sources/
@@ -40,6 +44,7 @@ This prevents conflicts with other skill managers (like npx skills).
 ```
 
 **Installed Skills:**
+
 ```
 ~/.agents/
 ├── .skill-lock.json
@@ -70,12 +75,14 @@ Instructions for the agent go here...
 ### Storage Approach
 
 **Git as Source of Truth:**
+
 - Skills stored in a Git repository
 - Versions tracked via Git commits
 - Users can specify exact versions by commit SHA or use `latest`
 - Incremental indexing (only changed files on sync)
 
 **SQLite Cache (Future):**
+
 - For fast search and indexing
 - Rebuilt on sync
 - Content remains in Git
@@ -83,6 +90,7 @@ Instructions for the agent go here...
 ### MCP Server (Future)
 
 Planned but not part of MVP:
+
 - MCP (Model Context Protocol) interface
 - Agents can query skills on-demand
 - HTTP API for web UI
@@ -91,7 +99,7 @@ Planned but not part of MVP:
 
 ```bash
 zanat init                    # Create ~/.zanat/, clone hub repo
-zanat sync                    # Pull latest hub changes  
+zanat sync                    # Pull latest hub changes
 zanat install <source>/<skill> # Install skill
 zanat list                    # List installed skills
 zanat search [query]          # Search available skills
@@ -110,12 +118,14 @@ zanat search [query]          # Search available skills
 ### MVP Scope
 
 **Included:**
+
 - Git-based skill storage
 - CLI for init, sync, install, list, search
 - Local skill installation to `~/.agents/skills/`
 - Basic full-text search (grep-based)
 
 **Not Included (Future):**
+
 - MCP server
 - HTTP API
 - Web UI
@@ -138,6 +148,19 @@ zanat search [query]          # Search available skills
 
 ## Development Guidelines
 
+### Git Operations - IMPORTANT
+
+**NEVER commit or push code without explicit user permission.**
+
+Always ask the user before:
+
+- Running `git commit`
+- Running `git push`
+- Running `git push --force` or any force operations
+- Any destructive git operations
+
+The user may want to review changes, write their own commit messages, or handle git operations themselves.
+
 ### Git Commits
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
@@ -145,6 +168,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 **Format:** `<type>[scope]: <description>`
 
 **Types:**
+
 - `feat` - New feature
 - `fix` - Bug fix
 - `docs` - Documentation
@@ -157,6 +181,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 - `chore` - Maintenance
 
 **Examples:**
+
 ```
 feat(cli): add search command
 fix(install): handle missing skill directory
@@ -167,6 +192,7 @@ refactor: extract path utilities
 **Breaking changes:** Use `!` after type: `feat!: change config format`
 
 **Rules:**
+
 - Present tense, imperative mood: "add" not "added"
 - Keep description under 72 characters
 - One logical change per commit
