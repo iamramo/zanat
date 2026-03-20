@@ -196,6 +196,7 @@ refactor: extract path utilities
 - Present tense, imperative mood: "add" not "added"
 - Keep description under 72 characters
 - One logical change per commit
+- Keep messages short and to the point
 
 ## License
 
