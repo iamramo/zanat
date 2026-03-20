@@ -1,5 +1,6 @@
 import { ZanatConfig } from '../types';
-import { CONFIG_FILE, DEFAULT_HUB_URL, DEFAULT_HUB_BRANCH } from '../utils/paths';
+import { CONFIG_FILE } from '../utils/paths';
+import { ENV } from '../config/env';
 import fs from 'fs-extra';
 
 export async function loadConfig(): Promise<ZanatConfig | null> {
@@ -22,7 +23,7 @@ export async function saveConfig(config: ZanatConfig): Promise<void> {
 
 export function getDefaultConfig(): ZanatConfig {
   return {
-    hubUrl: DEFAULT_HUB_URL,
-    hubBranch: DEFAULT_HUB_BRANCH,
+    hubUrl: ENV.DEFAULT_HUB_URL,
+    hubBranch: ENV.DEFAULT_HUB_BRANCH,
   };
 }

@@ -25,6 +25,23 @@ zanat install yurchi/code-review
 zanat list
 ```
 
+## Configuration
+
+Zanat can be configured using environment variables. Copy `.env.example` to `.env` and customize:
+
+```bash
+cp .env.example .env
+```
+
+### Environment Variables
+
+| Variable           | Description                                      | Default                                    |
+| ------------------ | ------------------------------------------------ | ------------------------------------------ |
+| `ZANAT_HUB_URL`    | URL of the zanat hub repository                  | `https://github.com/iamramo/zanat-hub.git` |
+| `ZANAT_HUB_BRANCH` | Branch to use from the hub                       | `main`                                     |
+| `NODE_ENV`         | Environment mode (`development` or `production`) | `development`                              |
+| `DEBUG`            | Enable debug logging                             | `false`                                    |
+
 ## Documentation
 
 - [Architecture](./docs/architecture.md)
