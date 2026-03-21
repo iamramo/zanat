@@ -6,8 +6,10 @@ import {
   saveConfig,
   cloneHub,
   isHubCloned,
+  getHubStatus,
+  loadConfig,
 } from '@iamramo/zanat-core';
-import { input } from '@inquirer/prompts';
+import { input, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import { logger } from '../utils/logger.js';
 
@@ -16,6 +18,42 @@ export const initCommand = async (): Promise<void> => {
   logger.blank();
 
   try {
+    const hubExists = await isHubCloned();
+
+    if (hubExists) {
+      const status = await getHubStatus();
+      const config = await loadConfig();
+
+      logger.info('Zanat is already initialized.');
+      logger.blank();
+
+      if (status.remoteUrl) {
+        console.log(`Repository: ${status.remoteUrl}`);
+      }
+      if (status.branch) {
+        console.log(`Branch: ${status.branch}`);
+      }
+
+      logger.blank();
+
+      const shouldReinitialize = await confirm({
+        message: 'Reinitialize? Your hub directory will be replaced but added skills stay safe.',
+        default: false,
+      });
+
+      if (!shouldReinitialize) {
+        logger.blank();
+        logger.info('Keeping existing setup.');
+        return;
+      }
+
+      logger.blank();
+      logger.info('Removing existing hub...');
+      await fs.remove(HUB_DIR);
+      logger.success('Removed existing hub');
+      logger.blank();
+    }
+
     const hubUrl = await input({
       message: 'Hub repository URL:',
       default: 'https://github.com/iamramo/zanat-hub.git',
@@ -39,19 +77,14 @@ export const initCommand = async (): Promise<void> => {
 
     await fs.ensureDir(AGENTS_DIR);
 
-    const hubExists = await isHubCloned();
-    if (!hubExists) {
-      logger.blank();
-      logger.info('Cloning hub repository...');
-      const actualBranch = await cloneHub(hubUrl, hubBranch);
-      if (actualBranch !== hubBranch) {
-        config.hubBranch = actualBranch;
-        logger.warning(`Branch '${hubBranch}' not found, using '${actualBranch}' instead`);
-      }
-      logger.success(`Cloned hub to ${HUB_DIR}`);
-    } else {
-      logger.warning('Hub already exists, skipping clone');
+    logger.blank();
+    logger.info('Cloning hub repository...');
+    const actualBranch = await cloneHub(hubUrl, hubBranch);
+    if (actualBranch !== hubBranch) {
+      config.hubBranch = actualBranch;
+      logger.warning(`Branch '${hubBranch}' not found, using '${actualBranch}' instead`);
     }
+    logger.success(`Cloned hub to ${HUB_DIR}`);
 
     await saveConfig(config);
     logger.success(`Created config.json in ${CONFIG_FILE}`);
