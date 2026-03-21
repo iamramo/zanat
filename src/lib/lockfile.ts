@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 
 const LOCK_VERSION = 1;
 
-export async function loadSkillLock(): Promise<SkillLock> {
+export const loadSkillLock = async (): Promise<SkillLock> => {
   try {
     const exists = await fs.pathExists(SKILL_LOCK_FILE);
     if (!exists) {
@@ -15,18 +15,18 @@ export async function loadSkillLock(): Promise<SkillLock> {
   } catch {
     return createEmptyLock();
   }
-}
+};
 
-export async function saveSkillLock(lock: SkillLock): Promise<void> {
+export const saveSkillLock = async (lock: SkillLock): Promise<void> => {
   await fs.ensureDir(SKILL_LOCK_FILE.replace('/.skill-lock.json', ''));
   await fs.writeFile(SKILL_LOCK_FILE, JSON.stringify(lock, null, 2));
-}
+};
 
-export function addSkillToLock(
+export const addSkillToLock = (
   lock: SkillLock,
   fullSkillName: string,
   skill: LockedSkill
-): SkillLock {
+): SkillLock => {
   return {
     ...lock,
     skills: {
@@ -34,11 +34,11 @@ export function addSkillToLock(
       [fullSkillName]: skill,
     },
   };
-}
+};
 
-function createEmptyLock(): SkillLock {
+const createEmptyLock = (): SkillLock => {
   return {
     version: LOCK_VERSION,
     skills: {},
   };
-}
+};

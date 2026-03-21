@@ -3,56 +3,70 @@ import { parseSkill } from './skills.js';
 import fs from 'fs-extra';
 import path from 'node:path';
 
-export async function searchSkills(
-  query?: string
-): Promise<Array<{ source: string; name: string; description: string }>> {
+export interface SkillInfo {
+  source: string;
+  name: string;
+  description: string;
+}
+
+export const searchSkills = async (query?: string): Promise<SkillInfo[]> => {
+  const sources = await getSources();
+  const allSkills = await Promise.all(sources.map(getSkillsForSource));
+  const flattened = allSkills.flat();
+
+  return query ? filterByQuery(flattened, query) : flattened;
+};
+
+const getSources = async (): Promise<string[]> => {
   const sourcesDir = path.join(HUB_DIR, 'sources');
-  const results: Array<{ source: string; name: string; description: string }> = [];
 
   try {
-    const sources = await fs.readdir(sourcesDir);
-
-    for (const source of sources) {
-      const sourcePath = path.join(sourcesDir, source);
-      const stat = await fs.stat(sourcePath);
-
-      if (!stat.isDirectory()) continue;
-
-      const skills = await fs.readdir(sourcePath);
-
-      for (const skill of skills) {
-        const skillPath = path.join(sourcePath, skill, 'SKILL.md');
-        const skillFile = await parseSkill(skillPath);
-
-        if (!skillFile) continue;
-
-        // If no query, return all skills
-        // If query, filter by name, description, or tags
-        if (!query || matchesQuery(skillFile, query.toLowerCase())) {
-          results.push({
-            source,
-            name: skill,
-            description: skillFile.description || 'No description',
-          });
-        }
-      }
-    }
+    const entries = await fs.readdir(sourcesDir);
+    const stats = await Promise.all(
+      entries.map(async (entry) => ({
+        name: entry,
+        isDirectory: (await fs.stat(path.join(sourcesDir, entry))).isDirectory(),
+      }))
+    );
+    return stats.filter((s) => s.isDirectory).map((s) => s.name);
   } catch {
-    // Hub not initialized or empty
+    return [];
+  }
+};
+
+const getSkillsForSource = async (source: string): Promise<SkillInfo[]> => {
+  const sourcePath = path.join(HUB_DIR, 'sources', source);
+
+  try {
+    const skills = await fs.readdir(sourcePath);
+    const skillInfos = await Promise.all(skills.map((skill) => readSkill(source, skill)));
+    return skillInfos.filter((s): s is SkillInfo => s !== null);
+  } catch {
+    return [];
+  }
+};
+
+const readSkill = async (source: string, name: string): Promise<SkillInfo | null> => {
+  const skillPath = path.join(HUB_DIR, 'sources', source, name, 'SKILL.md');
+  const skill = await parseSkill(skillPath);
+
+  if (!skill) {
+    return null;
   }
 
-  return results;
-}
+  return {
+    source,
+    name,
+    description: skill.description || 'No description',
+  };
+};
 
-function matchesQuery(
-  skill: { name: string; description: string; tags?: string[] },
-  query: string
-): boolean {
-  const searchableText = [
-    skill.name.toLowerCase(),
-    skill.description.toLowerCase(),
-    ...(skill.tags || []).map((t) => t.toLowerCase()),
-  ].join(' ');
+const filterByQuery = (skills: SkillInfo[], query: string): SkillInfo[] => {
+  const normalizedQuery = query.toLowerCase();
+  return skills.filter((skill) => matchesQuery(skill, normalizedQuery));
+};
 
+const matchesQuery = (skill: SkillInfo, query: string): boolean => {
+  const searchableText = [skill.source, skill.name, skill.description].join(' ').toLowerCase();
   return searchableText.includes(query);
-}
+};

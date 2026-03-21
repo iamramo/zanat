@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-// Load environment variables first
 import './config/env.js';
 
 import { program } from 'commander';

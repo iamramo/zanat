@@ -1,7 +1,7 @@
 import { listInstalledSkills } from '../lib/skills.js';
 import chalk from 'chalk';
 
-export async function listCommand(): Promise<void> {
+export const listCommand = async (): Promise<void> => {
   console.log(chalk.blue('Installed skills:'));
   console.log();
 
@@ -26,4 +26,4 @@ export async function listCommand(): Promise<void> {
     console.error(chalk.red('Failed to list skills:'), error);
     process.exit(1);
   }
-}
+};

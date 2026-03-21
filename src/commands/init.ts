@@ -4,23 +4,19 @@ import { cloneHub, isHubCloned } from '../lib/git.js';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 
-export async function initCommand(): Promise<void> {
+export const initCommand = async (): Promise<void> => {
   console.log(chalk.blue('Initializing Zanat...'));
 
   try {
-    // Create .zanat directory
     await fs.ensureDir(ZANAT_DIR);
     console.log(chalk.green(`✓ Created ${ZANAT_DIR}`));
 
-    // Create config
     const config = getDefaultConfig();
     await saveConfig(config);
     console.log(chalk.green(`✓ Created config`));
 
-    // Ensure .agents directory exists
     await fs.ensureDir(AGENTS_DIR);
 
-    // Clone hub if not already cloned
     const hubExists = await isHubCloned();
     if (!hubExists) {
       console.log(chalk.blue('Cloning hub repository...'));
@@ -39,4 +35,4 @@ export async function initCommand(): Promise<void> {
     console.error(chalk.red('Failed to initialize:'), error);
     process.exit(1);
   }
-}
+};

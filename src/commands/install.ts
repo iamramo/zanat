@@ -3,7 +3,7 @@ import { isHubCloned } from '../lib/git.js';
 import { SkillArgSchema } from '../schemas/skill-arg.js';
 import chalk from 'chalk';
 
-export async function installCommand(skillArg: string): Promise<void> {
+export const installCommand = async (skillArg: string): Promise<void> => {
   console.log(chalk.blue(`Installing skill: ${skillArg}...`));
 
   try {
@@ -13,7 +13,6 @@ export async function installCommand(skillArg: string): Promise<void> {
       process.exit(1);
     }
 
-    // Validate skill argument using Zod schema
     const result = SkillArgSchema.safeParse(skillArg);
     if (!result.success) {
       const errorMessage = result.error.issues[0]?.message ?? 'Invalid skill format';
@@ -22,7 +21,6 @@ export async function installCommand(skillArg: string): Promise<void> {
       process.exit(1);
     }
 
-    // Parse validated skill argument
     const [source, skillName] = skillArg.split('/') as [string, string];
     await installSkill(source, skillName);
 
@@ -35,4 +33,4 @@ export async function installCommand(skillArg: string): Promise<void> {
     }
     process.exit(1);
   }
-}
+};

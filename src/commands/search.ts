@@ -2,7 +2,7 @@ import { searchSkills } from '../lib/search.js';
 import { isHubCloned } from '../lib/git.js';
 import chalk from 'chalk';
 
-export async function searchCommand(query?: string): Promise<void> {
+export const searchCommand = async (query?: string): Promise<void> => {
   try {
     const hubExists = await isHubCloned();
     if (!hubExists) {
@@ -37,4 +37,4 @@ export async function searchCommand(query?: string): Promise<void> {
     console.error(chalk.red('Failed to search:'), error);
     process.exit(1);
   }
-}
+};

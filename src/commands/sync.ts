@@ -2,7 +2,7 @@ import { pullHub, isHubCloned } from '../lib/git.js';
 import { saveConfig, loadConfig } from '../lib/config.js';
 import chalk from 'chalk';
 
-export async function syncCommand(): Promise<void> {
+export const syncCommand = async (): Promise<void> => {
   console.log(chalk.blue('Syncing with hub...'));
 
   try {
@@ -14,7 +14,6 @@ export async function syncCommand(): Promise<void> {
 
     await pullHub();
 
-    // Update last sync time
     const config = await loadConfig();
     if (config) {
       config.lastSync = new Date();
@@ -26,4 +25,4 @@ export async function syncCommand(): Promise<void> {
     console.error(chalk.red('Failed to sync:'), error);
     process.exit(1);
   }
-}
+};

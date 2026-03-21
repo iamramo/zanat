@@ -3,7 +3,7 @@ import { CONFIG_FILE } from '../utils/paths.js';
 import { ENV } from '../config/env.js';
 import fs from 'fs-extra';
 
-export async function loadConfig(): Promise<ZanatConfig | null> {
+export const loadConfig = async (): Promise<ZanatConfig | null> => {
   try {
     const exists = await fs.pathExists(CONFIG_FILE);
     if (!exists) {
@@ -14,16 +14,16 @@ export async function loadConfig(): Promise<ZanatConfig | null> {
   } catch {
     return null;
   }
-}
+};
 
-export async function saveConfig(config: ZanatConfig): Promise<void> {
+export const saveConfig = async (config: ZanatConfig): Promise<void> => {
   await fs.ensureDir(CONFIG_FILE.replace('/config.json', ''));
   await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2));
-}
+};
 
-export function getDefaultConfig(): ZanatConfig {
+export const getDefaultConfig = (): ZanatConfig => {
   return {
     hubUrl: ENV.DEFAULT_HUB_URL,
     hubBranch: ENV.DEFAULT_HUB_BRANCH,
   };
-}
+};
