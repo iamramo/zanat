@@ -2,9 +2,6 @@ import { listInstalledSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 
 export const listCommand = async (): Promise<void> => {
-  console.log(chalk.blue('Added skills:'));
-  console.log();
-
   try {
     const skills = await listInstalledSkills();
 
@@ -15,6 +12,9 @@ export const listCommand = async (): Promise<void> => {
       );
       return;
     }
+
+    console.log(chalk.blue('Added skills:'));
+    console.log();
 
     skills.forEach((skill) => {
       console.log(chalk.green('•'), skill);
