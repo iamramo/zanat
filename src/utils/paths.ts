@@ -1,4 +1,3 @@
-// Central place for all path constants
 export const ZANAT_DIR = `${process.env.HOME}/.zanat`;
 export const HUB_DIR = `${ZANAT_DIR}/hub`;
 export const CONFIG_FILE = `${ZANAT_DIR}/config.json`;

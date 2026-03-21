@@ -1,6 +1,4 @@
-// Library exports for programmatic usage
 // This file is the main entry point when importing zanat as a library
-
 export * from './types/index.js';
 export { loadConfig, saveConfig, getDefaultConfig } from './lib/config.js';
 export { loadSkillLock, saveSkillLock } from './lib/lockfile.js';
