@@ -25,5 +25,23 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "mcp",
+    "cli"
+  ],
+  "author": "Yurchi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamramo/zanat.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/iamramo/zanat/issues"
+  },
+  "homepage": "https://github.com/iamramo/zanat#readme"
 }
