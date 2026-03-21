@@ -9,3 +9,6 @@ coverage/
 *.swo
 *~
 .zanat/
+.env
+.env.local
+.env.*.local
