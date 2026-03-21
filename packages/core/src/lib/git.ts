@@ -78,3 +78,43 @@ export const getHubStatus = async (): Promise<HubStatus> => {
     return { initialized: true, behind: 0 };
   }
 };
+
+export const resolveCommit = async (ref: string): Promise<string> => {
+  const hubDir = await getHubDir();
+  const git = simpleGit(hubDir);
+
+  try {
+    const result = await git.revparse([ref]);
+    return result.trim();
+  } catch {
+    throw new Error(`Commit not found: ${ref}`);
+  }
+};
+
+export const checkoutCommit = async (sha: string): Promise<void> => {
+  const hubDir = await getHubDir();
+  const git = simpleGit(hubDir);
+
+  try {
+    await git.checkout(sha);
+  } catch (error) {
+    throw new Error(`Failed to checkout commit ${sha}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};
+
+export const checkoutMain = async (): Promise<void> => {
+  const hubDir = await getHubDir();
+  const git = simpleGit(hubDir);
+  const config = await loadConfig();
+  const branch = config?.hubBranch || 'main';
+
+  try {
+    await git.checkout(branch);
+  } catch {
+    try {
+      await git.checkout('master');
+    } catch (error) {
+      throw new Error(`Failed to checkout main/master branch: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+};
