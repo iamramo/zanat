@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "zanat": "./bin/zanat.js"
+    "zanat": "bin/zanat.js"
   },
   "files": [
     "dist",
