@@ -1,4 +1,5 @@
 import { program } from 'commander';
+import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
 import { addCommand } from './commands/add.js';
@@ -6,7 +7,7 @@ import { removeCommand } from './commands/remove.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 
-program.name('zanat').description('A skill hub for AI agents').version('0.4.2');
+program.name('zanat').description('A skill hub for AI agents').version(packageJson.version);
 
 program
   .command('init')
