@@ -4,6 +4,7 @@ import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
 import { addCommand } from './commands/add.js';
 import { removeCommand } from './commands/remove.js';
+import { updateCommand } from './commands/update.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
@@ -28,6 +29,12 @@ program
   .command('rm <skill>')
   .description('Remove a skill (format: namespace.skill-name or namespace.sub.skill-name)')
   .action(removeCommand);
+
+program
+  .command('update [skill]')
+  .description('Update skill(s) from hub (updates all if no skill specified)')
+  .option('-y, --yes', 'Skip confirmation prompt when updating all skills')
+  .action(updateCommand);
 
 program.command('list').description('List added skills').action(listCommand);
 
