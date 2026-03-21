@@ -1,46 +1,62 @@
-# Zanat
+# @iamramo/zanat-cli
 
-A skill hub for AI agents - manage and distribute agent skills.
+CLI for Zanat - a skill hub for AI agents.
 
-## What is Zanat?
-
-Zanat is a Git-backed skill registry that allows individuals, teams, and companies to manage AI agent skills together. It serves as a hub where skills can be discovered, installed, and versioned.
-
-## Quick Start
+## Installation
 
 ```bash
-# Install globally
 npm install -g @iamramo/zanat-cli
+```
 
-# Initialize (creates ~/.zanat/)
+## Usage
+
+### Initialize
+
+```bash
 zanat init
+```
 
-# Sync with the hub
+This will interactively prompt you for:
+
+- Hub repository URL (default: https://github.com/iamramo/zanat-hub.git)
+- Hub branch (default: main, falls back to master if main doesn't exist)
+
+### Sync with Hub
+
+```bash
 zanat sync
+```
 
-# Install a skill
-zanat install yurchi/code-review
+### Search Skills
 
-# List installed skills
+```bash
+zanat search [query]
+```
+
+### Install a Skill
+
+```bash
+zanat install <source>/<skill-name>
+```
+
+### List Installed Skills
+
+```bash
 zanat list
 ```
 
 ## Configuration
 
-Zanat can be configured using environment variables. Copy `.env.example` to `.env` and customize:
+Configuration is stored in `~/.zanat/config.json` and is created during `zanat init`.
 
-```bash
-cp .env.example .env
+You can manually edit this file to change settings:
+
+```json
+{
+  "hubUrl": "https://github.com/iamramo/zanat-hub.git",
+  "hubBranch": "main"
+}
 ```
-
-### Environment Variables
-
-| Variable           | Description                                      | Default                                    |
-| ------------------ | ------------------------------------------------ | ------------------------------------------ |
-| `ZANAT_HUB_URL`    | URL of the zanat hub repository                  | `https://github.com/iamramo/zanat-hub.git` |
-| `ZANAT_HUB_BRANCH` | Branch to use from the hub                       | `main`                                     |
-| `NODE_ENV`         | Environment mode (`development` or `production`) | `development`                              |
-| `DEBUG`            | Enable debug logging                             | `false`                                    |
 
 ## License
 

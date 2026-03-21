@@ -1,46 +1,31 @@
-# Zanat
+# @iamramo/zanat-core
 
-A skill hub for AI agents - manage and distribute agent skills.
+Core library for Zanat - a skill hub for AI agents.
 
-## What is Zanat?
-
-Zanat is a Git-backed skill registry that allows individuals, teams, and companies to manage AI agent skills together. It serves as a hub where skills can be discovered, installed, and versioned.
-
-## Quick Start
+This is the core library used by `@iamramo/zanat-cli`. You probably want to install the CLI instead:
 
 ```bash
-# Install globally
 npm install -g @iamramo/zanat-cli
-
-# Initialize (creates ~/.zanat/)
-zanat init
-
-# Sync with the hub
-zanat sync
-
-# Install a skill
-zanat install yurchi/code-review
-
-# List installed skills
-zanat list
 ```
 
-## Configuration
+## For Library Users
 
-Zanat can be configured using environment variables. Copy `.env.example` to `.env` and customize:
+This package provides the underlying functionality for:
+
+- Git operations (clone, pull hub repositories)
+- Skill management (install, list, search)
+- Configuration management
+- Lock file handling
+
+### Installation
 
 ```bash
-cp .env.example .env
+npm install @iamramo/zanat-core
 ```
 
-### Environment Variables
+### API
 
-| Variable           | Description                                      | Default                                    |
-| ------------------ | ------------------------------------------------ | ------------------------------------------ |
-| `ZANAT_HUB_URL`    | URL of the zanat hub repository                  | `https://github.com/iamramo/zanat-hub.git` |
-| `ZANAT_HUB_BRANCH` | Branch to use from the hub                       | `main`                                     |
-| `NODE_ENV`         | Environment mode (`development` or `production`) | `development`                              |
-| `DEBUG`            | Enable debug logging                             | `false`                                    |
+See the source code for available exports. This is primarily intended for internal use by the CLI.
 
 ## License
 
