@@ -6,6 +6,7 @@ import { addCommand } from './commands/add.js';
 import { removeCommand } from './commands/remove.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
+import { statusCommand } from './commands/status.js';
 
 program.name('zanat').description('A skill hub for AI agents').version(packageJson.version);
 
@@ -29,5 +30,7 @@ program
 program.command('list').description('List added skills').action(listCommand);
 
 program.command('search [query]').description('Search for skills in the hub').action(searchCommand);
+
+program.command('status').description('Show hub and skills status').action(statusCommand);
 
 program.parse();
