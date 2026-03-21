@@ -1,7 +1,7 @@
 import { program } from 'commander';
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
-import { installCommand } from './commands/install.js';
+import { addCommand } from './commands/add.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 
@@ -15,9 +15,9 @@ program
 program.command('sync').description('Sync with the hub repository').action(syncCommand);
 
 program
-  .command('install <skill>')
-  .description('Install a skill (format: source/skill-name)')
-  .action(installCommand);
+  .command('add <skill>')
+  .description('Add a skill (format: source/skill-name)')
+  .action(addCommand);
 
 program.command('list').description('List installed skills').action(listCommand);
 

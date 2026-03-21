@@ -33,10 +33,10 @@ zanat sync
 zanat search [query]
 ```
 
-### Install a Skill
+### Add a Skill
 
 ```bash
-zanat install <source>/<skill-name>
+zanat add <source>/<skill-name>
 ```
 
 ### List Installed Skills

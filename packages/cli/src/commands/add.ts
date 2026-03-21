@@ -2,8 +2,8 @@ import { installSkill, isHubCloned } from '@iamramo/zanat-core';
 import { SkillArgSchema } from '../schemas/skill-arg.js';
 import chalk from 'chalk';
 
-export const installCommand = async (skillArg: string): Promise<void> => {
-  console.log(chalk.blue(`Installing skill: ${skillArg}...`));
+export const addCommand = async (skillArg: string): Promise<void> => {
+  console.log(chalk.blue(`Adding skill: ${skillArg}...`));
 
   try {
     const hubExists = await isHubCloned();
@@ -23,12 +23,12 @@ export const installCommand = async (skillArg: string): Promise<void> => {
     const { source, skillName } = result.data;
     await installSkill(source, skillName);
 
-    console.log(chalk.green(`✓ Installed zanat.${source}.${skillName}`));
+    console.log(chalk.green(`✓ Added zanat.${source}.${skillName}`));
   } catch (error) {
     if (error instanceof Error) {
-      console.error(chalk.red('Failed to install:'), error.message);
+      console.error(chalk.red('Failed to add:'), error.message);
     } else {
-      console.error(chalk.red('Failed to install:'), error);
+      console.error(chalk.red('Failed to add:'), error);
     }
     process.exit(1);
   }
