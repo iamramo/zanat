@@ -2,6 +2,18 @@ import { searchSkills, logger } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 import { ensureHubExists } from '../utils/validation.js';
 
+const ELLIPSIS = '...';
+
+const truncateDescription = (description: string, maxLength = 256): string => {
+  if (description.length <= maxLength) return description;
+
+  const lastSpace = description.lastIndexOf(' ', maxLength - ELLIPSIS.length);
+  if (lastSpace === -1) {
+    return description.slice(0, maxLength - ELLIPSIS.length) + ELLIPSIS;
+  }
+  return description.slice(0, lastSpace) + ELLIPSIS;
+};
+
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
     await ensureHubExists();
@@ -22,9 +34,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     results.forEach((skill) => {
       console.log(chalk.green('•'), skill.fullName);
-      const truncatedDesc = skill.description.length > 80
-        ? skill.description.slice(0, 77) + '...'
-        : skill.description;
+      const truncatedDesc = truncateDescription(skill.description);
       logger.dim(`  ${truncatedDesc}`);
       logger.blank();
     });
