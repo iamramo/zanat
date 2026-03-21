@@ -47,7 +47,7 @@ export const statusCommand = async (): Promise<void> => {
     console.log(chalk.green('•'), 'Last sync:', chalk.bold(formatLastSync(config?.lastSync)));
 
     if (hubStatus.behind > 0) {
-      logger.warning(`  Behind: ${hubStatus.behind} commit${hubStatus.behind === 1 ? '' : 's'}`);
+      logger.warning(`Behind: ${hubStatus.behind} commit${hubStatus.behind === 1 ? '' : 's'}`);
     } else {
       console.log(chalk.green('•'), 'Behind: 0 commits (up to date)');
     }
