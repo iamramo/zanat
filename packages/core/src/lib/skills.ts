@@ -8,6 +8,18 @@ import path from 'node:path';
 const SKILL_FILENAME = 'SKILL.md';
 const DEFAULT_NAMESPACE = ['unknown'];
 
+export const skillExists = async (namespace: string[], skillName: string): Promise<boolean> => {
+  const fullSkillName = [...namespace, skillName].join('.');
+  const lock = await loadSkillLock();
+  return fullSkillName in lock.skills;
+};
+
+export const getSkillFromLock = async (namespace: string[], skillName: string): Promise<LockedSkill | null> => {
+  const fullSkillName = [...namespace, skillName].join('.');
+  const lock = await loadSkillLock();
+  return lock.skills[fullSkillName] ?? null;
+};
+
 export const addSkill = async (namespace: string[], skillName: string): Promise<void> => {
   const fullSkillName = [...namespace, skillName].join('.');
   const hubDir = await getHubDir();
@@ -25,17 +37,79 @@ export const addSkill = async (namespace: string[], skillName: string): Promise<
   await fs.copy(skillFile, path.join(targetPath, SKILL_FILENAME));
 
   const lock = await loadSkillLock();
+  const existingSkill = lock.skills[fullSkillName];
+
   const lockedSkill: LockedSkill = {
     namespace,
     skillName,
     hubPath: path.join(...namespace, skillName, SKILL_FILENAME),
-    addedAt: new Date().toISOString(),
+    addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: 'latest',
   };
 
   const updatedLock = addSkillToLock(lock, fullSkillName, lockedSkill);
   await saveSkillLock(updatedLock);
+};
+
+export const updateSkill = async (namespace: string[], skillName: string): Promise<void> => {
+  const fullSkillName = [...namespace, skillName].join('.');
+  const skillPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
+
+  const exists = await fs.pathExists(skillPath);
+  if (!exists) {
+    throw new Error(`Skill not added: ${fullSkillName}`);
+  }
+
+  const lock = await loadSkillLock();
+  const existingSkill = lock.skills[fullSkillName];
+  if (!existingSkill) {
+    throw new Error(`Skill not tracked in lock file: ${fullSkillName}`);
+  }
+
+  const hubDir = await getHubDir();
+  const sourcePath = path.join(hubDir, ...namespace, skillName);
+  const skillFile = path.join(sourcePath, SKILL_FILENAME);
+
+  const hubExists = await fs.pathExists(skillFile);
+  if (!hubExists) {
+    throw new Error(`Skill not found in hub: ${fullSkillName}`);
+  }
+
+  await fs.copy(skillFile, path.join(skillPath, SKILL_FILENAME));
+
+  const updatedSkill: LockedSkill = {
+    ...existingSkill,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const updatedLock = addSkillToLock(lock, fullSkillName, updatedSkill);
+  await saveSkillLock(updatedLock);
+};
+
+export const updateAllSkills = async (): Promise<{ updated: string[]; failed: { skill: string; error: string }[] }> => {
+  const lock = await loadSkillLock();
+  const skillNames = Object.keys(lock.skills);
+
+  const updated: string[] = [];
+  const failed: { skill: string; error: string }[] = [];
+
+  for (const fullSkillName of skillNames) {
+    const skill = lock.skills[fullSkillName];
+    if (!skill) continue;
+
+    try {
+      await updateSkill(skill.namespace, skill.skillName);
+      updated.push(fullSkillName);
+    } catch (error) {
+      failed.push({
+        skill: fullSkillName,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  return { updated, failed };
 };
 
 export const removeSkill = async (namespace: string[], skillName: string): Promise<void> => {
