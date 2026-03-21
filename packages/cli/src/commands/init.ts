@@ -33,19 +33,26 @@ export const initCommand = async (): Promise<void> => {
       hubUrl,
       hubBranch,
     };
-    await saveConfig(config);
-    console.log(chalk.green(`✓ Created config`));
 
     await fs.ensureDir(AGENTS_DIR);
 
     const hubExists = await isHubCloned();
     if (!hubExists) {
       console.log(chalk.blue('Cloning hub repository...'));
-      await cloneHub(config.hubUrl, config.hubBranch);
+      const actualBranch = await cloneHub(hubUrl, hubBranch);
+      if (actualBranch !== hubBranch) {
+        config.hubBranch = actualBranch;
+        console.log(
+          chalk.yellow(`⚠ Branch '${hubBranch}' not found, using '${actualBranch}' instead`)
+        );
+      }
       console.log(chalk.green(`✓ Cloned hub to ${HUB_DIR}`));
     } else {
       console.log(chalk.yellow('Hub already exists, skipping clone'));
     }
+
+    await saveConfig(config);
+    console.log(chalk.green(`✓ Created config`));
 
     console.log(chalk.green('\n✨ Zanat initialized successfully!'));
     console.log(chalk.gray(`\nNext steps:`));
