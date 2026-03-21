@@ -24,6 +24,7 @@ export { addSkill, removeSkill, getAddedSkills, parseSkill } from './lib/skills.
 export {
   ZANAT_DIR,
   HUB_DIR,
+  getHubDir,
   CONFIG_FILE,
   AGENTS_DIR,
   AGENTS_SKILLS_DIR,

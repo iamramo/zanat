@@ -1,8 +1,8 @@
 import {
   ZANAT_DIR,
-  HUB_DIR,
   AGENTS_DIR,
   CONFIG_FILE,
+  getHubDir,
   saveConfig,
   cloneHub,
   isHubCloned,
@@ -50,7 +50,8 @@ export const initCommand = async (): Promise<void> => {
 
       logger.blank();
       logger.info('Removing existing hub...');
-      await fs.remove(HUB_DIR);
+      const existingHubDir = await getHubDir();
+      await fs.remove(existingHubDir);
       logger.success('Removed existing hub');
       logger.blank();
     }
@@ -65,6 +66,11 @@ export const initCommand = async (): Promise<void> => {
       default: 'main',
     });
 
+    const hubDir = await input({
+      message: 'Hub directory path:',
+      default: `${ZANAT_DIR}/hub`,
+    });
+
     logger.blank();
     logger.info('Setting up directories...');
 
@@ -74,18 +80,19 @@ export const initCommand = async (): Promise<void> => {
     const config = {
       hubUrl,
       hubBranch,
+      hubDir,
     };
 
     await fs.ensureDir(AGENTS_DIR);
 
     logger.blank();
     logger.info('Cloning hub repository...');
-    const actualBranch = await cloneHub(hubUrl, hubBranch);
+    const actualBranch = await cloneHub(hubUrl, hubBranch, hubDir);
     if (actualBranch !== hubBranch) {
       config.hubBranch = actualBranch;
       logger.warning(`Branch '${hubBranch}' not found, using '${actualBranch}' instead`);
     }
-    logger.success(`Cloned hub to ${HUB_DIR}`);
+    logger.success(`Cloned hub to ${hubDir}`);
 
     await saveConfig(config);
     logger.success(`Created config.json in ${CONFIG_FILE}`);

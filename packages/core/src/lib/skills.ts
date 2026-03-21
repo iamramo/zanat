@@ -1,5 +1,5 @@
 import type { Skill, SkillFrontmatter, LockedSkill } from '../types/index.js';
-import { HUB_DIR, AGENTS_SKILLS_DIR } from '../utils/paths.js';
+import { getHubDir, AGENTS_SKILLS_DIR } from '../utils/paths.js';
 import { loadSkillLock, saveSkillLock, addSkillToLock, removeSkillFromLock } from './lockfile.js';
 import fs from 'fs-extra';
 import matter from 'gray-matter';
@@ -10,7 +10,8 @@ const DEFAULT_NAMESPACE = ['unknown'];
 
 export const addSkill = async (namespace: string[], skillName: string): Promise<void> => {
   const fullSkillName = [...namespace, skillName].join('.');
-  const sourcePath = path.join(HUB_DIR, ...namespace, skillName);
+  const hubDir = await getHubDir();
+  const sourcePath = path.join(hubDir, ...namespace, skillName);
   const targetPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
   const skillFile = path.join(sourcePath, SKILL_FILENAME);
@@ -66,7 +67,8 @@ export const parseSkill = async (filePath: string): Promise<Skill | null> => {
 
     // Extract namespace and skillName from path
     // Path format: /.../hub/namespace/segment/skillName/SKILL.md
-    const relativePath = path.relative(HUB_DIR, filePath);
+    const hubDir = await getHubDir();
+    const relativePath = path.relative(hubDir, filePath);
     const pathParts = relativePath.split(path.sep);
 
     // Remove the SKILL.md filename

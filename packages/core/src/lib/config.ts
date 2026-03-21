@@ -29,5 +29,6 @@ export const getDefaultConfig = (): ZanatConfig => {
   return {
     hubUrl: 'https://github.com/iamramo/zanat-hub.git',
     hubBranch: 'main',
+    hubDir: `${process.env.HOME}/.zanat/hub`,
   };
 };

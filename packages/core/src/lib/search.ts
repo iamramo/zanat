@@ -1,4 +1,4 @@
-import { HUB_DIR } from '../utils/paths.js';
+import { getHubDir } from '../utils/paths.js';
 import { parseSkill } from './skills.js';
 import fs from 'fs-extra';
 import path from 'node:path';
@@ -54,7 +54,8 @@ const findAllSkills = async (): Promise<SkillInfo[]> => {
     }
   };
 
-  await scanDirectory(HUB_DIR);
+  const hubDir = await getHubDir();
+  await scanDirectory(hubDir);
   return skills;
 };
 
