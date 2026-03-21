@@ -27,7 +27,7 @@ export const saveConfig = async (config: ZanatConfig): Promise<void> => {
 
 export const getDefaultConfig = (): ZanatConfig => {
   return {
-    hubUrl: ENV.DEFAULT_HUB_URL,
-    hubBranch: ENV.DEFAULT_HUB_BRANCH,
+    hubUrl: 'https://github.com/iamramo/zanat-hub.git',
+    hubBranch: 'main',
   };
 };
