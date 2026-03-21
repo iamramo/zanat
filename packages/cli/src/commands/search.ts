@@ -31,7 +31,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     console.log(chalk.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`));
     console.log();
-    console.log(chalk.gray('Install a skill with: zanat install <source>/<skill-name>'));
+    console.log(chalk.gray('Add a skill with: zanat add <source>/<skill-name>'));
   } catch (error) {
     console.error(chalk.red('Failed to search:'), error);
     process.exit(1);

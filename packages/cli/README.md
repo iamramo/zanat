@@ -13,11 +13,11 @@ npm install -g @iamramo/zanat-cli
 | Command  | Description                                                 | Usage                                |
 | -------- | ----------------------------------------------------------- | ------------------------------------ |
 | `init`   | Initialize zanat configuration and clone the hub repository | `zanat init`                         |
-| `sync`   | Sync with the hub to get latest skills                      | `zanat sync`                         |
+| `sync`   | Pull the latest changes from the hub repository             | `zanat sync`                         |
 | `search` | Search for available skills in the hub                      | `zanat search [query]`               |
-| `add`    | Add a skill to your local installation                      | `zanat add <source>/<skill-name>`    |
-| `remove` | Remove an installed skill                                   | `zanat remove <source>/<skill-name>` |
-| `list`   | List all installed skills                                   | `zanat list`                         |
+| `add`    | Add a skill to your local skills                            | `zanat add <source>/<skill-name>`    |
+| `remove` | Remove a skill from your local skills                       | `zanat remove <source>/<skill-name>` |
+| `list`   | List all added skills                                       | `zanat list`                         |
 
 ## Getting Started
 
@@ -47,7 +47,7 @@ npm install -g @iamramo/zanat-cli
    zanat remove yurchi/code-review
    ```
 
-5. **List installed skills:**
+5. **List added skills:**
    ```bash
    zanat list
    ```

@@ -2,16 +2,16 @@ import { listInstalledSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 
 export const listCommand = async (): Promise<void> => {
-  console.log(chalk.blue('Installed skills:'));
+  console.log(chalk.blue('Added skills:'));
   console.log();
 
   try {
     const skills = await listInstalledSkills();
 
     if (skills.length === 0) {
-      console.log(chalk.gray('No skills installed.'));
+      console.log(chalk.gray('No skills added.'));
       console.log(
-        chalk.gray('Run `zanat search` to find skills or `zanat install <skill>` to install one.')
+        chalk.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.')
       );
       return;
     }

@@ -58,7 +58,7 @@ export const initCommand = async (): Promise<void> => {
     console.log(chalk.gray(`\nNext steps:`));
     console.log(chalk.gray(`  zanat sync        - Update skills from hub`));
     console.log(chalk.gray(`  zanat search      - Find available skills`));
-    console.log(chalk.gray(`  zanat install     - Install a skill`));
+    console.log(chalk.gray(`  zanat add         - Add a skill`));
   } catch (error) {
     console.error(chalk.red('Failed to initialize:'), error);
     process.exit(1);

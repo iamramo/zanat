@@ -25,7 +25,7 @@ program
   .description('Remove a skill (format: source/skill-name)')
   .action(removeCommand);
 
-program.command('list').description('List installed skills').action(listCommand);
+program.command('list').description('List added skills').action(listCommand);
 
 program.command('search [query]').description('Search for skills in the hub').action(searchCommand);
 
