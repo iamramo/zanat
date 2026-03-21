@@ -1,4 +1,10 @@
-import { addSkill, logger } from '@iamramo/zanat-core';
+import {
+  addSkill,
+  updateSkill,
+  skillExists,
+  logger,
+  confirm,
+} from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 export const addCommand = async (skillArg: string): Promise<void> => {
@@ -7,8 +13,25 @@ export const addCommand = async (skillArg: string): Promise<void> => {
   try {
     await ensureHubExists();
     const { namespace, skillName } = validateSkillArg(skillArg);
-    await addSkill(namespace, skillName);
 
+    const exists = await skillExists(namespace, skillName);
+    if (exists) {
+      const shouldUpdate = await confirm({
+        message: `Skill ${skillArg} is already added. Update from hub?`,
+        default: true,
+      });
+
+      if (!shouldUpdate) {
+        logger.info('Cancelled');
+        return;
+      }
+
+      await updateSkill(namespace, skillName);
+      logger.success(`Updated ${skillArg}`);
+      return;
+    }
+
+    await addSkill(namespace, skillName);
     logger.success(`Added ${skillArg}`);
   } catch (error) {
     logger.error('Failed to add', error);
