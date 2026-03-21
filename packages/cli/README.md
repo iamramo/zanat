@@ -39,6 +39,12 @@ zanat search [query]
 zanat add <source>/<skill-name>
 ```
 
+### Remove a Skill
+
+```bash
+zanat remove <source>/<skill-name>
+```
+
 ### List Installed Skills
 
 ```bash
