@@ -1,0 +1,38 @@
+{
+  "name": "@iamramo/zanat-cli",
+  "version": "0.1.0",
+  "description": "CLI for zanat - a skill hub for AI agents",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "zanat": "./bin/zanat.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prebuild": "npm run build -w ../core",
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@iamramo/zanat-core": "*",
+    "chalk": "^4.1.2",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

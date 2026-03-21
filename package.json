@@ -1,18 +1,20 @@
 {
-  "name": "zanat",
+  "name": "@iamramo/zanat",
   "version": "0.1.0",
+  "private": true,
   "description": "A skill hub for AI agents - manage and distribute agent skills",
-  "type": "module",
-  "main": "dist/index.js",
-  "bin": {
-    "zanat": "./dist/cli.js"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch src/cli.ts",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "clean": "rm -rf packages/*/dist",
+    "prebuild": "npm run clean",
+    "build": "npm run build --workspaces",
+    "build:core": "npm run build -w packages/core",
+    "build:cli": "npm run build -w packages/cli",
+    "dev:cli": "npm run dev -w packages/cli",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "eslint packages/*/src/**/*.ts"
   },
   "keywords": [
     "ai",
@@ -23,26 +25,14 @@
   ],
   "author": "Yurchi",
   "license": "MIT",
-  "dependencies": {
-    "chalk": "^4.1.2",
-    "commander": "^12.0.0",
-    "dotenv": "^17.3.1",
-    "fs-extra": "^11.2.0",
-    "gray-matter": "^4.0.3",
-    "simple-git": "^3.22.0",
-    "zod": "^4.3.6"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamramo/zanat.git"
   },
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+  "bugs": {
+    "url": "https://github.com/iamramo/zanat/issues"
   },
+  "homepage": "https://github.com/iamramo/zanat#readme",
   "engines": {
     "node": ">=22.0.0"
   }

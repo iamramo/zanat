@@ -1,7 +1,3 @@
-#!/usr/bin/env node
-
-import './config/env.js';
-
 import { program } from 'commander';
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';

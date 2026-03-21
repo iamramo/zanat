@@ -1,6 +1,8 @@
 import type { SkillLock, LockedSkill } from '../types/index.js';
 import { SKILL_LOCK_FILE } from '../utils/paths.js';
 import fs from 'fs-extra';
+import path from 'node:path';
+import { ENV } from '../config/env.js';
 
 const LOCK_VERSION = 1;
 
@@ -12,13 +14,16 @@ export const loadSkillLock = async (): Promise<SkillLock> => {
     }
     const content = await fs.readFile(SKILL_LOCK_FILE, 'utf-8');
     return JSON.parse(content);
-  } catch {
+  } catch (error) {
+    if (ENV.DEBUG) {
+      console.warn('[zanat] Failed to load skill lock file, starting fresh:', error);
+    }
     return createEmptyLock();
   }
 };
 
 export const saveSkillLock = async (lock: SkillLock): Promise<void> => {
-  await fs.ensureDir(SKILL_LOCK_FILE.replace('/.skill-lock.json', ''));
+  await fs.ensureDir(path.dirname(SKILL_LOCK_FILE));
   await fs.writeFile(SKILL_LOCK_FILE, JSON.stringify(lock, null, 2));
 };
 

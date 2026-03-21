@@ -1,4 +1,4 @@
-import { listInstalledSkills } from '../lib/skills.js';
+import { listInstalledSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 
 export const listCommand = async (): Promise<void> => {

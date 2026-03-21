@@ -1,5 +1,4 @@
-import { pullHub, isHubCloned } from '../lib/git.js';
-import { saveConfig, loadConfig } from '../lib/config.js';
+import { pullHub, isHubCloned, saveConfig, loadConfig } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 
 export const syncCommand = async (): Promise<void> => {
@@ -16,7 +15,7 @@ export const syncCommand = async (): Promise<void> => {
 
     const config = await loadConfig();
     if (config) {
-      config.lastSync = new Date();
+      config.lastSync = new Date().toISOString();
       await saveConfig(config);
     }
 

@@ -1,5 +1,4 @@
-import { searchSkills } from '../lib/search.js';
-import { isHubCloned } from '../lib/git.js';
+import { searchSkills, isHubCloned } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 
 export const searchCommand = async (query?: string): Promise<void> => {

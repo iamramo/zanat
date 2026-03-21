@@ -3,8 +3,6 @@
     "target": "ES2024",
     "module": "NodeNext",
     "lib": ["ES2024"],
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,10 +14,6 @@
     "moduleResolution": "NodeNext",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "noUncheckedIndexedAccess": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+    "noUncheckedIndexedAccess": true
+  }
 }

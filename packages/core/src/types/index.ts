@@ -22,7 +22,7 @@ export interface SkillFrontmatter {
 export interface ZanatConfig {
   hubUrl: string;
   hubBranch: string;
-  lastSync?: Date;
+  lastSync?: string;
 }
 
 export interface SkillLock {
