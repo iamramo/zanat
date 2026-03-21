@@ -10,7 +10,7 @@ Zanat is a Git-backed skill registry that allows individuals, teams, and compani
 
 ```bash
 # Install globally
-npm install -g zanat
+npm install -g @iamramo/zanat-cli
 
 # Initialize (creates ~/.zanat/)
 zanat init
