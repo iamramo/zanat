@@ -22,5 +22,8 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.0",
     "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
