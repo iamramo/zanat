@@ -15,7 +15,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "prebuild": "npm run build -w ../core",
+    "prebuild": "npm run build -w packages/core",
     "build": "tsc",
     "dev": "tsx watch src/cli.ts",
     "typecheck": "tsc --noEmit"
