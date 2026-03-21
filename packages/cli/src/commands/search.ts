@@ -10,11 +10,10 @@ export const searchCommand = async (query?: string): Promise<void> => {
     }
 
     if (query) {
-      console.log(chalk.blue(`Searching for: "${query}"...`));
+      console.log(chalk.blue(`Searching for: "${query}"...\n`));
     } else {
-      console.log(chalk.blue('Available skills:'));
+      console.log(chalk.blue('Available skills:\n'));
     }
-    console.log();
 
     const results = await searchSkills(query);
 
@@ -25,13 +24,14 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     results.forEach((skill) => {
       console.log(chalk.green('•'), `${skill.source}/${skill.name}`);
-      console.log(chalk.gray(`  ${skill.description}`));
-      console.log();
+      console.log(chalk.gray(`  ${skill.description}\n`));
     });
 
-    console.log(chalk.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`));
-    console.log();
-    console.log(chalk.gray('Add a skill with: zanat add <source>/<skill-name>'));
+    console.log(
+      chalk.gray(
+        `Found ${results.length} skill${results.length === 1 ? '' : 's'}\nAdd a skill with: zanat add <source>/<skill-name>`
+      )
+    );
   } catch (error) {
     console.error(chalk.red('Failed to search:'), error);
     process.exit(1);
