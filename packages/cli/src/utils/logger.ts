@@ -19,7 +19,7 @@ class ConsoleLogger implements Logger {
   }
 
   warning(message: string): void {
-    console.log(chalk.yellow(`⚠ ${message}`));
+    console.log(chalk.yellow('•'), message);
   }
 
   error(message: string, error?: unknown): void {
