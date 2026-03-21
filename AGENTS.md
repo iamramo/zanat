@@ -144,9 +144,7 @@ zanat search [query]          # Search available skills
 ## Repository
 
 - GitHub: iamramo/zanat (will move to yurchi/zanat)
-- npm: zanat (unscoped, available)
-
-## Development Guidelines
+- npm: @iamramo/zanat-cli
 
 ## License
 
