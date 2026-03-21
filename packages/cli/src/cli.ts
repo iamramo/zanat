@@ -6,7 +6,7 @@ import { removeCommand } from './commands/remove.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 
-program.name('zanat').description('A skill hub for AI agents').version('0.2.1');
+program.name('zanat').description('A skill hub for AI agents').version('0.3.0');
 
 program
   .command('init')
