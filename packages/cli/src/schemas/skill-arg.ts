@@ -1,20 +1,26 @@
 import { z } from 'zod';
-import { SourceNameSchema } from './source-name.js';
-import { SkillNameSchema } from './skill-name.js';
+import { SegmentNameSchema } from './segment-name.js';
 
 export const SkillArgSchema = z
   .string()
-  .transform((val) => {
-    const parts = val.split('/');
-    if (parts.length !== 2) {
-      throw new Error('Invalid format. Use: source/skill-name (e.g., mycompany/hello-world)');
+  .transform((val, ctx) => {
+    const parts = val.split('.');
+    if (parts.length < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Invalid format. Use: namespace.skill-name or namespace.subnamespace.skill-name (e.g., mycompany.hello-world or mycompany.team.hello-world)',
+      });
+      return z.NEVER;
     }
-    return { source: parts[0], skillName: parts[1] };
+    const skillName = parts[parts.length - 1];
+    const namespace = parts.slice(0, -1);
+    return { namespace, skillName };
   })
   .pipe(
     z.object({
-      source: SourceNameSchema,
-      skillName: SkillNameSchema,
+      namespace: z.array(SegmentNameSchema).min(1),
+      skillName: SegmentNameSchema,
     })
   );
 

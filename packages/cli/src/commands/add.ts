@@ -7,10 +7,10 @@ export const addCommand = async (skillArg: string): Promise<void> => {
 
   try {
     await ensureHubExists();
-    const { source, skillName } = validateSkillArg(skillArg);
-    await installSkill(source, skillName);
+    const { namespace, skillName } = validateSkillArg(skillArg);
+    await installSkill(namespace, skillName);
 
-    logger.success(`Added zanat.${source}.${skillName}`);
+    logger.success(`Added ${skillArg}`);
   } catch (error) {
     logger.error('Failed to add', error);
     process.exit(1);

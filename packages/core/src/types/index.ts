@@ -6,7 +6,8 @@ export interface Skill {
   version: string;
   tags?: string[];
   content: string;
-  source: string;
+  namespace: string[];
+  skillName: string;
   path: string;
 }
 
@@ -31,8 +32,9 @@ export interface SkillLock {
 }
 
 export interface LockedSkill {
-  source: string;
-  skillPath: string;
+  namespace: string[];
+  skillName: string;
+  hubPath: string;
   installedAt: string;
   updatedAt: string;
   version: string;

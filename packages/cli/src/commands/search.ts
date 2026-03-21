@@ -22,14 +22,14 @@ export const searchCommand = async (query?: string): Promise<void> => {
     }
 
     results.forEach((skill) => {
-      console.log(chalk.green('•'), `${skill.source}/${skill.name}`);
+      console.log(chalk.green('•'), skill.fullName);
       logger.dim(`  ${skill.description}`);
       logger.blank();
     });
 
     logger.dim(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
     logger.blank();
-    logger.dim('Add a skill with: zanat add <source>/<skill-name>');
+    logger.dim('Add a skill with: zanat add <namespace.skill-name>');
   } catch (error) {
     logger.error('Failed to search', error);
     process.exit(1);

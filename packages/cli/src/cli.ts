@@ -19,12 +19,12 @@ program.command('sync').description('Sync with the hub repository').action(syncC
 
 program
   .command('add <skill>')
-  .description('Add a skill (format: source/skill-name)')
+  .description('Add a skill (format: namespace.skill-name or namespace.sub.skill-name)')
   .action(addCommand);
 
 program
   .command('remove <skill>')
-  .description('Remove a skill (format: source/skill-name)')
+  .description('Remove a skill (format: namespace.skill-name or namespace.sub.skill-name)')
   .action(removeCommand);
 
 program.command('list').description('List added skills').action(listCommand);

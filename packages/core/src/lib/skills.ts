@@ -5,21 +5,19 @@ import fs from 'fs-extra';
 import matter from 'gray-matter';
 import path from 'node:path';
 
-const SKILL_PREFIX = 'zanat.';
-const SOURCE_PREFIX = 'zanat/';
 const SKILL_FILENAME = 'SKILL.md';
-const DEFAULT_SOURCE = 'unknown';
+const DEFAULT_NAMESPACE = ['unknown'];
 
-export const installSkill = async (source: string, skillName: string): Promise<void> => {
-  const fullSkillName = `${SKILL_PREFIX}${source}.${skillName}`;
-  const sourcePath = path.join(HUB_DIR, source, skillName);
+export const installSkill = async (namespace: string[], skillName: string): Promise<void> => {
+  const fullSkillName = [...namespace, skillName].join('.');
+  const sourcePath = path.join(HUB_DIR, ...namespace, skillName);
   const targetPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
   const skillFile = path.join(sourcePath, SKILL_FILENAME);
   const exists = await fs.pathExists(skillFile);
 
   if (!exists) {
-    throw new Error(`Skill not found: ${source}/${skillName}`);
+    throw new Error(`Skill not found: ${fullSkillName}`);
   }
 
   await fs.ensureDir(targetPath);
@@ -27,8 +25,9 @@ export const installSkill = async (source: string, skillName: string): Promise<v
 
   const lock = await loadSkillLock();
   const lockedSkill: LockedSkill = {
-    source: `${SOURCE_PREFIX}${source}`,
-    skillPath: `${source}/${skillName}/${SKILL_FILENAME}`,
+    namespace,
+    skillName,
+    hubPath: path.join(...namespace, skillName, SKILL_FILENAME),
     installedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: 'latest',
@@ -38,13 +37,13 @@ export const installSkill = async (source: string, skillName: string): Promise<v
   await saveSkillLock(updatedLock);
 };
 
-export const removeSkill = async (source: string, skillName: string): Promise<void> => {
-  const fullSkillName = `${SKILL_PREFIX}${source}.${skillName}`;
+export const removeSkill = async (namespace: string[], skillName: string): Promise<void> => {
+  const fullSkillName = [...namespace, skillName].join('.');
   const skillPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
   const exists = await fs.pathExists(skillPath);
   if (!exists) {
-    throw new Error(`Skill not added: ${source}/${skillName}`);
+    throw new Error(`Skill not added: ${fullSkillName}`);
   }
 
   await fs.remove(skillPath);
@@ -56,7 +55,7 @@ export const removeSkill = async (source: string, skillName: string): Promise<vo
 
 export const getAddedSkills = async (): Promise<string[]> => {
   const lock = await loadSkillLock();
-  return Object.keys(lock.skills).filter((name) => name.startsWith(SKILL_PREFIX));
+  return Object.keys(lock.skills);
 };
 
 export const parseSkill = async (filePath: string): Promise<Skill | null> => {
@@ -65,14 +64,23 @@ export const parseSkill = async (filePath: string): Promise<Skill | null> => {
     const parsed = matter(content);
     const frontmatter = parsed.data as SkillFrontmatter;
 
-    const parts = filePath.split('/');
-    const hubIndex = parts.indexOf('hub');
-    const source = hubIndex >= 0 ? (parts[hubIndex + 1] ?? DEFAULT_SOURCE) : DEFAULT_SOURCE;
+    // Extract namespace and skillName from path
+    // Path format: /.../hub/namespace/segment/skillName/SKILL.md
+    const relativePath = path.relative(HUB_DIR, filePath);
+    const pathParts = relativePath.split(path.sep);
+
+    // Remove the SKILL.md filename
+    pathParts.pop();
+
+    // Last part is skill name, rest is namespace
+    const skillName = pathParts.pop() || 'unknown';
+    const namespace = pathParts.length > 0 ? pathParts : DEFAULT_NAMESPACE;
 
     return {
       ...frontmatter,
       content: parsed.content,
-      source,
+      namespace,
+      skillName,
       path: filePath,
     };
   } catch {

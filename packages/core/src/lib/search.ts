@@ -4,59 +4,58 @@ import fs from 'fs-extra';
 import path from 'node:path';
 
 export interface SkillInfo {
-  source: string;
-  name: string;
+  namespace: string[];
+  skillName: string;
+  fullName: string;
   description: string;
 }
 
 export const searchSkills = async (query?: string): Promise<SkillInfo[]> => {
-  const sources = await getSources();
-  const allSkills = await Promise.all(sources.map(getSkillsForSource));
-  const flattened = allSkills.flat();
+  const allSkills = await findAllSkills();
 
-  return query ? filterByQuery(flattened, query) : flattened;
+  return query ? filterByQuery(allSkills, query) : allSkills;
 };
 
-const getSources = async (): Promise<string[]> => {
-  try {
-    const entries = await fs.readdir(HUB_DIR);
-    const stats = await Promise.all(
-      entries.map(async (entry) => ({
-        name: entry,
-        isDirectory: (await fs.stat(path.join(HUB_DIR, entry))).isDirectory(),
-      }))
-    );
-    return stats.filter((s) => s.isDirectory).map((s) => s.name);
-  } catch {
-    return [];
-  }
-};
+const findAllSkills = async (): Promise<SkillInfo[]> => {
+  const skills: SkillInfo[] = [];
 
-const getSkillsForSource = async (source: string): Promise<SkillInfo[]> => {
-  const sourcePath = path.join(HUB_DIR, source);
+  const scanDirectory = async (dir: string, namespace: string[] = []): Promise<void> => {
+    try {
+      const entries = await fs.readdir(dir);
 
-  try {
-    const skills = await fs.readdir(sourcePath);
-    const skillInfos = await Promise.all(skills.map((skill) => readSkill(source, skill)));
-    return skillInfos.filter((s): s is SkillInfo => s !== null);
-  } catch {
-    return [];
-  }
-};
+      for (const entry of entries) {
+        const entryPath = path.join(dir, entry);
+        const stat = await fs.stat(entryPath);
 
-const readSkill = async (source: string, name: string): Promise<SkillInfo | null> => {
-  const skillPath = path.join(HUB_DIR, source, name, 'SKILL.md');
-  const skill = await parseSkill(skillPath);
+        if (stat.isDirectory()) {
+          // Check if this directory contains a SKILL.md
+          const skillFile = path.join(entryPath, 'SKILL.md');
+          const hasSkillFile = await fs.pathExists(skillFile);
 
-  if (!skill) {
-    return null;
-  }
-
-  return {
-    source,
-    name,
-    description: skill.description || 'No description',
+          if (hasSkillFile) {
+            // This is a skill directory
+            const skill = await parseSkill(skillFile);
+            if (skill) {
+              skills.push({
+                namespace,
+                skillName: entry,
+                fullName: [...namespace, entry].join('.'),
+                description: skill.description || 'No description',
+              });
+            }
+          } else {
+            // Continue scanning deeper
+            await scanDirectory(entryPath, [...namespace, entry]);
+          }
+        }
+      }
+    } catch {
+      // Directory doesn't exist or can't be read, skip
+    }
   };
+
+  await scanDirectory(HUB_DIR);
+  return skills;
 };
 
 const filterByQuery = (skills: SkillInfo[], query: string): SkillInfo[] => {
@@ -65,6 +64,6 @@ const filterByQuery = (skills: SkillInfo[], query: string): SkillInfo[] => {
 };
 
 const matchesQuery = (skill: SkillInfo, query: string): boolean => {
-  const searchableText = [skill.source, skill.name, skill.description].join(' ').toLowerCase();
+  const searchableText = [skill.fullName, skill.description].join(' ').toLowerCase();
   return searchableText.includes(query);
 };

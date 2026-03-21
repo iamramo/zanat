@@ -7,7 +7,7 @@ export const validateSkillArg = (skillArg: string): SkillArg => {
   if (!result.success) {
     const errorMessage = result.error.issues[0]?.message ?? 'Invalid skill format';
     logger.error(errorMessage);
-    logger.dim('Example: mycompany/hello-world');
+    logger.dim('Example: mycompany.hello-world or mycompany.team.hello-world');
     process.exit(1);
   }
   return result.data;

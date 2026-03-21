@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import path from 'node:path';
 import { ENV } from '../config/env.js';
 
-const LOCK_VERSION = 1;
+const LOCK_VERSION = 2;
 
 export const loadSkillLock = async (): Promise<SkillLock> => {
   try {

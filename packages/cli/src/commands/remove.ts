@@ -7,10 +7,10 @@ export const removeCommand = async (skillArg: string): Promise<void> => {
 
   try {
     await ensureHubExists();
-    const { source, skillName } = validateSkillArg(skillArg);
-    await removeSkill(source, skillName);
+    const { namespace, skillName } = validateSkillArg(skillArg);
+    await removeSkill(namespace, skillName);
 
-    logger.success(`Removed zanat.${source}.${skillName}`);
+    logger.success(`Removed ${skillArg}`);
   } catch (error) {
     logger.error('Failed to remove', error);
     process.exit(1);
