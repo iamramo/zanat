@@ -1,11 +1,12 @@
 import { searchSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 import { logger } from '../utils/logger.js';
-import { ensureHubExists } from '../utils/validation.js';
+import { ensureHubExists, checkHubBehind } from '../utils/validation.js';
 
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
     await ensureHubExists();
+    await checkHubBehind();
 
     if (query) {
       logger.info(`Searching for: "${query}"...`);

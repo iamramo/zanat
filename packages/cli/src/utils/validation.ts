@@ -1,4 +1,4 @@
-import { isHubCloned } from '@iamramo/zanat-core';
+import { getHubStatus, isHubCloned } from '@iamramo/zanat-core';
 import { SkillArgSchema, type SkillArg } from '../schemas/skill-arg.js';
 import { logger } from './logger.js';
 
@@ -19,4 +19,17 @@ export const ensureHubExists = async (): Promise<void> => {
     logger.error('Hub not found. Run `zanat init` first.');
     process.exit(1);
   }
+};
+
+export const checkHubBehind = async (): Promise<void> => {
+  try {
+    const status = await getHubStatus();
+
+    if (status.behind > 0) {
+      logger.warning(
+        `Your skills hub is ${status.behind} commit${status.behind === 1 ? '' : 's'} behind. Run 'zanat sync' to update.`
+      );
+      logger.blank();
+    }
+  } catch {}
 };

@@ -6,7 +6,7 @@ export type {
   LockedSkill,
 } from './types/index.js';
 
-export { cloneHub, pullHub, isHubCloned } from './lib/git.js';
+export { cloneHub, pullHub, isHubCloned, getHubStatus, type HubStatus } from './lib/git.js';
 
 export { loadConfig, saveConfig, getDefaultConfig } from './lib/config.js';
 

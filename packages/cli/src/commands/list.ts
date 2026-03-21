@@ -1,9 +1,12 @@
 import { getAddedSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
 import { logger } from '../utils/logger.js';
+import { checkHubBehind } from '../utils/validation.js';
 
 export const listCommand = async (): Promise<void> => {
   try {
+    await checkHubBehind();
+
     const skills = await getAddedSkills();
 
     if (skills.length === 0) {
