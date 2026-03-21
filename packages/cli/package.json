@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@iamramo/zanat-core": "^0.5.2"
+    "@iamramo/zanat-core": "0.6.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

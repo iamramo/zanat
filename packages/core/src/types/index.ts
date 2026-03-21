@@ -35,7 +35,7 @@ export interface LockedSkill {
   namespace: string[];
   skillName: string;
   hubPath: string;
-  installedAt: string;
+  addedAt: string;
   updatedAt: string;
   version: string;
 }

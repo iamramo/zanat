@@ -1,4 +1,4 @@
-import { installSkill, logger } from '@iamramo/zanat-core';
+import { addSkill, logger } from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 export const addCommand = async (skillArg: string): Promise<void> => {
@@ -7,7 +7,7 @@ export const addCommand = async (skillArg: string): Promise<void> => {
   try {
     await ensureHubExists();
     const { namespace, skillName } = validateSkillArg(skillArg);
-    await installSkill(namespace, skillName);
+    await addSkill(namespace, skillName);
 
     logger.success(`Added ${skillArg}`);
   } catch (error) {

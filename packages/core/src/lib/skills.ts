@@ -8,7 +8,7 @@ import path from 'node:path';
 const SKILL_FILENAME = 'SKILL.md';
 const DEFAULT_NAMESPACE = ['unknown'];
 
-export const installSkill = async (namespace: string[], skillName: string): Promise<void> => {
+export const addSkill = async (namespace: string[], skillName: string): Promise<void> => {
   const fullSkillName = [...namespace, skillName].join('.');
   const sourcePath = path.join(HUB_DIR, ...namespace, skillName);
   const targetPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
@@ -28,7 +28,7 @@ export const installSkill = async (namespace: string[], skillName: string): Prom
     namespace,
     skillName,
     hubPath: path.join(...namespace, skillName, SKILL_FILENAME),
-    installedAt: new Date().toISOString(),
+    addedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: 'latest',
   };

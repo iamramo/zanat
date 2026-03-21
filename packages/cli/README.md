@@ -10,14 +10,14 @@ npm install -g @iamramo/zanat-cli
 
 ## Commands
 
-| Command  | Description                                                 | Usage                                 |
-| -------- | ----------------------------------------------------------- | ------------------------------------- |
-| `init`   | Initialize zanat configuration and clone the hub repository | `zanat init`                          |
-| `sync`   | Pull the latest changes from the hub repository             | `zanat sync`                          |
-| `search` | Search for available skills in the hub                      | `zanat search [query]`                |
-| `add`    | Add a skill to your local skills                            | `zanat add <namespace.skill-name>`    |
-| `remove` | Remove a skill from your local skills                       | `zanat remove <namespace.skill-name>` |
-| `list`   | List all added skills                                       | `zanat list`                          |
+| Command  | Description                                                 | Usage                              |
+| -------- | ----------------------------------------------------------- | ---------------------------------- |
+| `init`   | Initialize zanat configuration and clone the hub repository | `zanat init`                       |
+| `sync`   | Pull the latest changes from the hub repository             | `zanat sync`                       |
+| `search` | Search for available skills in the hub                      | `zanat search [query]`             |
+| `add`    | Add a skill to your local skills                            | `zanat add <namespace.skill-name>` |
+| `rm`     | Remove a skill from your local skills                       | `zanat rm <namespace.skill-name>`  |
+| `list`   | List all added skills                                       | `zanat list`                       |
 
 ## Getting Started
 
@@ -50,7 +50,7 @@ npm install -g @iamramo/zanat-cli
 4. **Remove a skill:**
 
    ```bash
-   zanat remove yurchi.code-review
+   zanat rm yurchi.code-review
    ```
 
 5. **List added skills:**

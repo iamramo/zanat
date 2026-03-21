@@ -24,7 +24,7 @@ program
   .action(addCommand);
 
 program
-  .command('remove <skill>')
+  .command('rm <skill>')
   .description('Remove a skill (format: namespace.skill-name or namespace.sub.skill-name)')
   .action(removeCommand);
 
