@@ -41,6 +41,14 @@ export const addSkillToLock = (
   };
 };
 
+export const removeSkillFromLock = (lock: SkillLock, fullSkillName: string): SkillLock => {
+  const { [fullSkillName]: _, ...remainingSkills } = lock.skills;
+  return {
+    ...lock,
+    skills: remainingSkills,
+  };
+};
+
 const createEmptyLock = (): SkillLock => {
   return {
     version: LOCK_VERSION,

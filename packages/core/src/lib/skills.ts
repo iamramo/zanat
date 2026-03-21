@@ -1,6 +1,6 @@
 import type { Skill, SkillFrontmatter, LockedSkill } from '../types/index.js';
 import { HUB_DIR, AGENTS_SKILLS_DIR } from '../utils/paths.js';
-import { loadSkillLock, saveSkillLock, addSkillToLock } from './lockfile.js';
+import { loadSkillLock, saveSkillLock, addSkillToLock, removeSkillFromLock } from './lockfile.js';
 import fs from 'fs-extra';
 import matter from 'gray-matter';
 import path from 'node:path';
@@ -30,6 +30,22 @@ export const installSkill = async (source: string, skillName: string): Promise<v
   };
 
   const updatedLock = addSkillToLock(lock, fullSkillName, lockedSkill);
+  await saveSkillLock(updatedLock);
+};
+
+export const removeSkill = async (source: string, skillName: string): Promise<void> => {
+  const fullSkillName = `zanat.${source}.${skillName}`;
+  const skillPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
+
+  const exists = await fs.pathExists(skillPath);
+  if (!exists) {
+    throw new Error(`Skill not installed: ${source}/${skillName}`);
+  }
+
+  await fs.remove(skillPath);
+
+  const lock = await loadSkillLock();
+  const updatedLock = removeSkillFromLock(lock, fullSkillName);
   await saveSkillLock(updatedLock);
 };
 

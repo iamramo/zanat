@@ -2,6 +2,7 @@ import { program } from 'commander';
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
 import { addCommand } from './commands/add.js';
+import { removeCommand } from './commands/remove.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 
@@ -18,6 +19,11 @@ program
   .command('add <skill>')
   .description('Add a skill (format: source/skill-name)')
   .action(addCommand);
+
+program
+  .command('remove <skill>')
+  .description('Remove a skill (format: source/skill-name)')
+  .action(removeCommand);
 
 program.command('list').description('List installed skills').action(listCommand);
 

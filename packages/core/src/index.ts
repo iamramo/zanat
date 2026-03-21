@@ -10,11 +10,16 @@ export { cloneHub, pullHub, isHubCloned } from './lib/git.js';
 
 export { loadConfig, saveConfig, getDefaultConfig } from './lib/config.js';
 
-export { loadSkillLock, saveSkillLock, addSkillToLock } from './lib/lockfile.js';
+export {
+  loadSkillLock,
+  saveSkillLock,
+  addSkillToLock,
+  removeSkillFromLock,
+} from './lib/lockfile.js';
 
 export { searchSkills, type SkillInfo } from './lib/search.js';
 
-export { installSkill, listInstalledSkills, parseSkill } from './lib/skills.js';
+export { installSkill, removeSkill, listInstalledSkills, parseSkill } from './lib/skills.js';
 
 export {
   ZANAT_DIR,
