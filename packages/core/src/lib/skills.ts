@@ -65,16 +65,12 @@ export const parseSkill = async (filePath: string): Promise<Skill | null> => {
     const parsed = matter(content);
     const frontmatter = parsed.data as SkillFrontmatter;
 
-    // Extract namespace and skillName from path
-    // Path format: /.../hub/namespace/segment/skillName/SKILL.md
     const hubDir = await getHubDir();
     const relativePath = path.relative(hubDir, filePath);
     const pathParts = relativePath.split(path.sep);
 
-    // Remove the SKILL.md filename
     pathParts.pop();
 
-    // Last part is skill name, rest is namespace
     const skillName = pathParts.pop() || 'unknown';
     const namespace = pathParts.length > 0 ? pathParts : DEFAULT_NAMESPACE;
 

@@ -19,12 +19,14 @@ export const cloneHub = async (hubUrl: string, branch: string, hubDir: string): 
     await git.clone(hubUrl, hubDir, ['--branch', branch, '--single-branch']);
     return branch;
   } catch (error) {
+    console.error('Clone error:', error);
     if (branch === 'main') {
       console.log(`Branch 'main' not found, trying 'master'...`);
       try {
         await git.clone(hubUrl, hubDir, ['--branch', 'master', '--single-branch']);
         return 'master';
-      } catch {
+      } catch (error2) {
+        console.error('Clone error (master):', error2);
         throw new Error(`Failed to clone repository. Neither 'main' nor 'master' branch found.`);
       }
     }

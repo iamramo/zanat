@@ -12,12 +12,5 @@ export const SKILL_LOCK_FILE = `${AGENTS_DIR}/.skill-lock.json`;
 
 export const getHubDir = async (): Promise<string> => {
   const config = await loadConfig();
-  if (config?.hubDir) {
-    return config.hubDir;
-  }
-  // Fallback for backwards compatibility
-  return `${ZANAT_DIR}/hub`;
+  return config?.hubDir ?? `${ZANAT_DIR}/hub`;
 };
-
-// Deprecated: Use getHubDir() instead
-export const HUB_DIR = `${ZANAT_DIR}/hub`;

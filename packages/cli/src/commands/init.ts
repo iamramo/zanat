@@ -81,6 +81,7 @@ export const initCommand = async (): Promise<void> => {
       hubUrl,
       hubBranch,
       hubDir,
+      lastSync: new Date().toISOString(),
     };
 
     await fs.ensureDir(AGENTS_DIR);
