@@ -1,6 +1,7 @@
 import type { Skill, SkillFrontmatter, LockedSkill } from '../types/index.js';
 import { getHubDir, AGENTS_SKILLS_DIR } from '../utils/paths.js';
 import { loadSkillLock, saveSkillLock, addSkillToLock, removeSkillFromLock } from './lockfile.js';
+import { resolveCommit, checkoutCommit, checkoutMain } from './git.js';
 import fs from 'fs-extra';
 import matter from 'gray-matter';
 import path from 'node:path';
@@ -20,7 +21,7 @@ export const getSkillFromLock = async (namespace: string[], skillName: string): 
   return lock.skills[fullSkillName] ?? null;
 };
 
-export const addSkill = async (namespace: string[], skillName: string): Promise<void> => {
+export const addSkill = async (namespace: string[], skillName: string, commitSha?: string): Promise<void> => {
   const fullSkillName = [...namespace, skillName].join('.');
   const hubDir = await getHubDir();
   const sourcePath = path.join(hubDir, ...namespace, skillName);
@@ -34,7 +35,7 @@ export const addSkill = async (namespace: string[], skillName: string): Promise<
   }
 
   await fs.ensureDir(targetPath);
-  await fs.copy(skillFile, path.join(targetPath, SKILL_FILENAME));
+  const resolvedSha = await copySkillWithCheckout(skillFile, path.join(targetPath, SKILL_FILENAME), commitSha);
 
   const lock = await loadSkillLock();
   const existingSkill = lock.skills[fullSkillName];
@@ -45,14 +46,41 @@ export const addSkill = async (namespace: string[], skillName: string): Promise<
     hubPath: path.join(...namespace, skillName, SKILL_FILENAME),
     addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    version: 'latest',
+    version: resolvedSha ?? 'latest',
   };
 
   const updatedLock = addSkillToLock(lock, fullSkillName, lockedSkill);
   await saveSkillLock(updatedLock);
 };
 
-export const updateSkill = async (namespace: string[], skillName: string): Promise<void> => {
+export const isSkillPinned = (skill: LockedSkill): boolean => {
+  return skill.version !== 'latest';
+};
+
+const copySkillWithCheckout = async (
+  sourceFile: string,
+  targetFile: string,
+  commitSha?: string
+): Promise<string | undefined> => {
+  let resolvedSha: string | undefined;
+
+  if (commitSha) {
+    resolvedSha = await resolveCommit(commitSha);
+    await checkoutCommit(resolvedSha);
+  }
+
+  try {
+    await fs.copy(sourceFile, targetFile);
+  } finally {
+    if (resolvedSha) {
+      await checkoutMain();
+    }
+  }
+
+  return resolvedSha;
+};
+
+export const updateSkill = async (namespace: string[], skillName: string, commitSha?: string): Promise<void> => {
   const fullSkillName = [...namespace, skillName].join('.');
   const skillPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
@@ -76,11 +104,12 @@ export const updateSkill = async (namespace: string[], skillName: string): Promi
     throw new Error(`Skill not found in hub: ${fullSkillName}`);
   }
 
-  await fs.copy(skillFile, path.join(skillPath, SKILL_FILENAME));
+  const resolvedSha = await copySkillWithCheckout(skillFile, path.join(skillPath, SKILL_FILENAME), commitSha);
 
   const updatedSkill: LockedSkill = {
     ...existingSkill,
     updatedAt: new Date().toISOString(),
+    version: resolvedSha ?? 'latest',
   };
 
   const updatedLock = addSkillToLock(lock, fullSkillName, updatedSkill);

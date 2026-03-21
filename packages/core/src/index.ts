@@ -37,6 +37,7 @@ export {
   getSkillFromLock,
   updateSkill,
   updateAllSkills,
+  isSkillPinned,
 } from './lib/skills.js';
 
 export {
