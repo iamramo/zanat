@@ -28,8 +28,8 @@ export const statusCommand = async (): Promise<void> => {
     logger.blank();
 
     if (!hubStatus.initialized) {
-      logger.dim('  Not initialized');
-      logger.dim('  Run `zanat init` to set up');
+      logger.dim('Not initialized');
+      logger.dim('Run `zanat init` to set up');
       return;
     }
 

@@ -22,7 +22,10 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     results.forEach((skill) => {
       console.log(chalk.green('•'), skill.fullName);
-      logger.dim(`  ${skill.description}`);
+      const truncatedDesc = skill.description.length > 80
+        ? skill.description.slice(0, 77) + '...'
+        : skill.description;
+      logger.dim(`  ${truncatedDesc}`);
       logger.blank();
     });
 
