@@ -15,12 +15,12 @@ This file provides context about the Zanat project for future AI agents.
 
 ### Naming Convention
 
-Skills are installed with the format: `zanat.<source>.<skill-name>`
+Skills are added with the format: `zanat.<source>.<skill-name>`
 
 Examples:
 
 - `zanat.yurchi.code-review` - Skills authored by Yurchi
-- `zanat.vercel.pr-review` - Vercel skills installed via Zanat
+- `zanat.vercel.pr-review` - Vercel skills added via Zanat
 - `zanat.anthropic.web-accessibility` - Anthropic skills via Zanat
 
 This prevents conflicts with other skill managers (like npx skills).
@@ -100,8 +100,8 @@ Planned but not part of MVP:
 ```bash
 zanat init                    # Create ~/.zanat/, clone hub repo
 zanat sync                    # Pull latest hub changes
-zanat install <source>/<skill> # Install skill
-zanat list                    # List installed skills
+zanat add <source>/<skill> # Add skill
+zanat list                    # List added skills
 zanat search [query]          # Search available skills
 ```
 
@@ -121,7 +121,7 @@ zanat search [query]          # Search available skills
 
 - Git-based skill storage
 - CLI for init, sync, install, list, search
-- Local skill installation to `~/.agents/skills/`
+- Local skill add to `~/.agents/skills/`
 - Basic full-text search (grep-based)
 
 **Not Included (Future):**
@@ -140,6 +140,22 @@ zanat search [query]          # Search available skills
 - **Standard directories:** Use `~/.agents/skills/` for compatibility
 - **Namespace collision prevention:** Always prefix with `zanat.<source>.`
 - **Incremental:** Start simple, add complexity as needed
+
+### Code Style
+
+**Import Ordering:**
+Import order matters for consistency. Follow this pattern:
+
+1. External dependencies (e.g., `commander`, `chalk`, `zod`)
+2. Local/core imports (e.g., `@iamramo/zanat-core`)
+3. Relative imports (e.g., `./schemas/skill-arg.js`)
+4. Styling (e.g., `chalk`) - always last if used
+
+**Output Formatting:**
+Use inline `\n` for newlines instead of separate `console.log()` calls.
+
+**Error Handling:**
+Use the logger abstraction for all output. Don't call `console.log()` or `console.error()` directly in commands.
 
 ## Repository
 

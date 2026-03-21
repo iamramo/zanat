@@ -1,39 +1,35 @@
-import { searchSkills, isHubCloned } from '@iamramo/zanat-core';
+import { searchSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
+import { logger } from '../utils/logger.js';
+import { ensureHubExists } from '../utils/validation.js';
 
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
-    const hubExists = await isHubCloned();
-    if (!hubExists) {
-      console.error(chalk.red('Hub not found. Run `zanat init` first.'));
-      process.exit(1);
-    }
+    await ensureHubExists();
 
     if (query) {
-      console.log(chalk.blue(`Searching for: "${query}"...\n`));
+      logger.info(`Searching for: "${query}"...\n`);
     } else {
-      console.log(chalk.blue('Available skills:\n'));
+      logger.info('Available skills:\n');
     }
 
     const results = await searchSkills(query);
 
     if (results.length === 0) {
-      console.log(chalk.gray('No skills found.'));
+      logger.dim('No skills found.');
       return;
     }
 
     results.forEach((skill) => {
       console.log(chalk.green('•'), `${skill.source}/${skill.name}`);
-      console.log(chalk.gray(`  ${skill.description}\n`));
+      logger.dim(`  ${skill.description}\n`);
     });
 
-    console.log(
-      chalk.gray(
-        `Found ${results.length} skill${results.length === 1 ? '' : 's'}\nAdd a skill with: zanat add <source>/<skill-name>`
-      )
+    logger.dim(
+      `Found ${results.length} skill${results.length === 1 ? '' : 's'}\nAdd a skill with: zanat add <source>/<skill-name>`
     );
   } catch (error) {
-    console.error(chalk.red('Failed to search:'), error);
+    logger.error('Failed to search', error);
     process.exit(1);
   }
 };

@@ -5,12 +5,18 @@ import fs from 'fs-extra';
 import matter from 'gray-matter';
 import path from 'node:path';
 
+const SKILL_PREFIX = 'zanat.';
+const SOURCE_PREFIX = 'zanat/';
+const SOURCES_DIR = 'sources';
+const SKILL_FILENAME = 'SKILL.md';
+const DEFAULT_SOURCE = 'unknown';
+
 export const installSkill = async (source: string, skillName: string): Promise<void> => {
-  const fullSkillName = `zanat.${source}.${skillName}`;
-  const sourcePath = path.join(HUB_DIR, 'sources', source, skillName);
+  const fullSkillName = `${SKILL_PREFIX}${source}.${skillName}`;
+  const sourcePath = path.join(HUB_DIR, SOURCES_DIR, source, skillName);
   const targetPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
-  const skillFile = path.join(sourcePath, 'SKILL.md');
+  const skillFile = path.join(sourcePath, SKILL_FILENAME);
   const exists = await fs.pathExists(skillFile);
 
   if (!exists) {
@@ -18,12 +24,12 @@ export const installSkill = async (source: string, skillName: string): Promise<v
   }
 
   await fs.ensureDir(targetPath);
-  await fs.copy(skillFile, path.join(targetPath, 'SKILL.md'));
+  await fs.copy(skillFile, path.join(targetPath, SKILL_FILENAME));
 
   const lock = await loadSkillLock();
   const lockedSkill: LockedSkill = {
-    source: `zanat/${source}`,
-    skillPath: `sources/${source}/${skillName}/SKILL.md`,
+    source: `${SOURCE_PREFIX}${source}`,
+    skillPath: `${SOURCES_DIR}/${source}/${skillName}/${SKILL_FILENAME}`,
     installedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: 'latest',
@@ -34,12 +40,12 @@ export const installSkill = async (source: string, skillName: string): Promise<v
 };
 
 export const removeSkill = async (source: string, skillName: string): Promise<void> => {
-  const fullSkillName = `zanat.${source}.${skillName}`;
+  const fullSkillName = `${SKILL_PREFIX}${source}.${skillName}`;
   const skillPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
   const exists = await fs.pathExists(skillPath);
   if (!exists) {
-    throw new Error(`Skill not installed: ${source}/${skillName}`);
+    throw new Error(`Skill not added: ${source}/${skillName}`);
   }
 
   await fs.remove(skillPath);
@@ -49,9 +55,9 @@ export const removeSkill = async (source: string, skillName: string): Promise<vo
   await saveSkillLock(updatedLock);
 };
 
-export const listInstalledSkills = async (): Promise<string[]> => {
+export const getAddedSkills = async (): Promise<string[]> => {
   const lock = await loadSkillLock();
-  return Object.keys(lock.skills).filter((name) => name.startsWith('zanat.'));
+  return Object.keys(lock.skills).filter((name) => name.startsWith(SKILL_PREFIX));
 };
 
 export const parseSkill = async (filePath: string): Promise<Skill | null> => {
@@ -61,8 +67,8 @@ export const parseSkill = async (filePath: string): Promise<Skill | null> => {
     const frontmatter = parsed.data as SkillFrontmatter;
 
     const parts = filePath.split('/');
-    const sourceIndex = parts.indexOf('sources');
-    const source = sourceIndex >= 0 ? (parts[sourceIndex + 1] ?? 'unknown') : 'unknown';
+    const sourceIndex = parts.indexOf(SOURCES_DIR);
+    const source = sourceIndex >= 0 ? (parts[sourceIndex + 1] ?? DEFAULT_SOURCE) : DEFAULT_SOURCE;
 
     return {
       ...frontmatter,

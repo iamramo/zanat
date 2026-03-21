@@ -8,10 +8,10 @@ import {
 } from '@iamramo/zanat-core';
 import { input } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import chalk from 'chalk';
+import { logger } from '../utils/logger.js';
 
 export const initCommand = async (): Promise<void> => {
-  console.log(chalk.blue('Initializing Zanat...\n'));
+  logger.info('Initializing Zanat...\n');
 
   try {
     const hubUrl = await input({
@@ -24,10 +24,10 @@ export const initCommand = async (): Promise<void> => {
       default: 'main',
     });
 
-    console.log(chalk.blue('\nSetting up directories...'));
+    logger.info('\nSetting up directories...');
 
     await fs.ensureDir(ZANAT_DIR);
-    console.log(chalk.green(`✓ Created ${ZANAT_DIR}`));
+    logger.success(`Created ${ZANAT_DIR}`);
 
     const config = {
       hubUrl,
@@ -38,30 +38,26 @@ export const initCommand = async (): Promise<void> => {
 
     const hubExists = await isHubCloned();
     if (!hubExists) {
-      console.log(chalk.blue('Cloning hub repository...'));
+      logger.info('Cloning hub repository...');
       const actualBranch = await cloneHub(hubUrl, hubBranch);
       if (actualBranch !== hubBranch) {
         config.hubBranch = actualBranch;
-        console.log(
-          chalk.yellow(`⚠ Branch '${hubBranch}' not found, using '${actualBranch}' instead`)
-        );
+        logger.warning(`Branch '${hubBranch}' not found, using '${actualBranch}' instead`);
       }
-      console.log(chalk.green(`✓ Cloned hub to ${HUB_DIR}`));
+      logger.success(`Cloned hub to ${HUB_DIR}`);
     } else {
-      console.log(chalk.yellow('Hub already exists, skipping clone'));
+      logger.warning('Hub already exists, skipping clone');
     }
 
     await saveConfig(config);
-    console.log(chalk.green(`✓ Created config`));
+    logger.success(`Created config`);
 
-    console.log(chalk.green('\n✨ Zanat initialized successfully!'));
-    console.log(
-      chalk.gray(
-        `\nNext steps:\n  zanat sync        - Update skills from hub\n  zanat search      - Find available skills\n  zanat add         - Add a skill`
-      )
+    logger.success('\n✨ Zanat initialized successfully!');
+    logger.dim(
+      `\nNext steps:\n  zanat sync        - Update skills from hub\n  zanat search      - Find available skills\n  zanat add         - Add a skill`
     );
   } catch (error) {
-    console.error(chalk.red('Failed to initialize:'), error);
+    logger.error('Failed to initialize', error);
     process.exit(1);
   }
 };

@@ -1,27 +1,26 @@
-import { listInstalledSkills } from '@iamramo/zanat-core';
+import { getAddedSkills } from '@iamramo/zanat-core';
 import chalk from 'chalk';
+import { logger } from '../utils/logger.js';
 
 export const listCommand = async (): Promise<void> => {
   try {
-    const skills = await listInstalledSkills();
+    const skills = await getAddedSkills();
 
     if (skills.length === 0) {
-      console.log(chalk.gray('No skills added.'));
-      console.log(
-        chalk.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.')
-      );
+      logger.dim('No skills added.');
+      logger.dim('Run `zanat search` to find skills or `zanat add <skill>` to add one.');
       return;
     }
 
-    console.log(chalk.blue('Added skills:\n'));
+    logger.info('Added skills:\n');
 
-    skills.forEach((skill) => {
+    skills.forEach((skill: string) => {
       console.log(chalk.green('•'), skill);
     });
 
-    console.log(chalk.gray(`\nTotal: ${skills.length} skill${skills.length === 1 ? '' : 's'}`));
+    logger.dim(`\nTotal: ${skills.length} skill${skills.length === 1 ? '' : 's'}`);
   } catch (error) {
-    console.error(chalk.red('Failed to list skills:'), error);
+    logger.error('Failed to list skills', error);
     process.exit(1);
   }
 };

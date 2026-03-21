@@ -1,6 +1,5 @@
 {
   "name": "@iamramo/zanat",
-  "version": "0.1.0",
   "private": true,
   "description": "A skill hub for AI agents - manage and distribute agent skills",
   "workspaces": [

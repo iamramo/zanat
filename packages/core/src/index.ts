@@ -19,7 +19,7 @@ export {
 
 export { searchSkills, type SkillInfo } from './lib/search.js';
 
-export { installSkill, removeSkill, listInstalledSkills, parseSkill } from './lib/skills.js';
+export { installSkill, removeSkill, getAddedSkills, parseSkill } from './lib/skills.js';
 
 export {
   ZANAT_DIR,

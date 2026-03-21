@@ -1,16 +1,12 @@
-import { pullHub, isHubCloned, saveConfig, loadConfig } from '@iamramo/zanat-core';
-import chalk from 'chalk';
+import { pullHub, saveConfig, loadConfig } from '@iamramo/zanat-core';
+import { logger } from '../utils/logger.js';
+import { ensureHubExists } from '../utils/validation.js';
 
 export const syncCommand = async (): Promise<void> => {
-  console.log(chalk.blue('Syncing with hub...'));
+  logger.info('Syncing with hub...');
 
   try {
-    const hubExists = await isHubCloned();
-    if (!hubExists) {
-      console.error(chalk.red('Hub not found. Run `zanat init` first.'));
-      process.exit(1);
-    }
-
+    await ensureHubExists();
     await pullHub();
 
     const config = await loadConfig();
@@ -19,9 +15,9 @@ export const syncCommand = async (): Promise<void> => {
       await saveConfig(config);
     }
 
-    console.log(chalk.green('✓ Hub synced successfully'));
+    logger.success('Hub synced successfully');
   } catch (error) {
-    console.error(chalk.red('Failed to sync:'), error);
+    logger.error('Failed to sync', error);
     process.exit(1);
   }
 };
