@@ -2,6 +2,7 @@ import {
   ZANAT_DIR,
   HUB_DIR,
   AGENTS_DIR,
+  CONFIG_FILE,
   saveConfig,
   cloneHub,
   isHubCloned,
@@ -11,7 +12,8 @@ import fs from 'fs-extra';
 import { logger } from '../utils/logger.js';
 
 export const initCommand = async (): Promise<void> => {
-  logger.info('Initializing Zanat...\n');
+  logger.info('Initializing Zanat...');
+  logger.blank();
 
   try {
     const hubUrl = await input({
@@ -24,7 +26,8 @@ export const initCommand = async (): Promise<void> => {
       default: 'main',
     });
 
-    logger.info('\nSetting up directories...');
+    logger.blank();
+    logger.info('Setting up directories...');
 
     await fs.ensureDir(ZANAT_DIR);
     logger.success(`Created ${ZANAT_DIR}`);
@@ -38,6 +41,7 @@ export const initCommand = async (): Promise<void> => {
 
     const hubExists = await isHubCloned();
     if (!hubExists) {
+      logger.blank();
       logger.info('Cloning hub repository...');
       const actualBranch = await cloneHub(hubUrl, hubBranch);
       if (actualBranch !== hubBranch) {
@@ -50,12 +54,10 @@ export const initCommand = async (): Promise<void> => {
     }
 
     await saveConfig(config);
-    logger.success(`Created config`);
+    logger.success(`Created config.json in ${CONFIG_FILE}`);
 
-    logger.success('\n✨ Zanat initialized successfully!');
-    logger.dim(
-      `\nNext steps:\n  zanat sync        - Update skills from hub\n  zanat search      - Find available skills\n  zanat add         - Add a skill`
-    );
+    logger.blank();
+    logger.success('Zanat initialized successfully!');
   } catch (error) {
     logger.error('Failed to initialize', error);
     process.exit(1);

@@ -12,13 +12,15 @@ export const listCommand = async (): Promise<void> => {
       return;
     }
 
-    logger.info('Added skills:\n');
+    logger.info('Added skills:');
+    logger.blank();
 
     skills.forEach((skill: string) => {
       console.log(chalk.green('•'), skill);
     });
 
-    logger.dim(`\nTotal: ${skills.length} skill${skills.length === 1 ? '' : 's'}`);
+    logger.blank();
+    logger.dim(`Total: ${skills.length} skill${skills.length === 1 ? '' : 's'}`);
   } catch (error) {
     logger.error('Failed to list skills', error);
     process.exit(1);

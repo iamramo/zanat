@@ -6,6 +6,7 @@ export interface Logger {
   warning(message: string): void;
   error(message: string, error?: unknown): void;
   dim(message: string): void;
+  blank(): void;
 }
 
 class ConsoleLogger implements Logger {
@@ -33,6 +34,10 @@ class ConsoleLogger implements Logger {
 
   dim(message: string): void {
     console.log(chalk.gray(message));
+  }
+
+  blank(): void {
+    console.log();
   }
 }
 

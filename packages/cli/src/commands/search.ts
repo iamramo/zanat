@@ -8,10 +8,11 @@ export const searchCommand = async (query?: string): Promise<void> => {
     await ensureHubExists();
 
     if (query) {
-      logger.info(`Searching for: "${query}"...\n`);
+      logger.info(`Searching for: "${query}"...`);
     } else {
-      logger.info('Available skills:\n');
+      logger.info('Available skills:');
     }
+    logger.blank();
 
     const results = await searchSkills(query);
 
@@ -22,12 +23,13 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     results.forEach((skill) => {
       console.log(chalk.green('•'), `${skill.source}/${skill.name}`);
-      logger.dim(`  ${skill.description}\n`);
+      logger.dim(`  ${skill.description}`);
+      logger.blank();
     });
 
-    logger.dim(
-      `Found ${results.length} skill${results.length === 1 ? '' : 's'}\nAdd a skill with: zanat add <source>/<skill-name>`
-    );
+    logger.dim(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
+    logger.blank();
+    logger.dim('Add a skill with: zanat add <source>/<skill-name>');
   } catch (error) {
     logger.error('Failed to search', error);
     process.exit(1);
