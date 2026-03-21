@@ -3,21 +3,36 @@ import {
   HUB_DIR,
   AGENTS_DIR,
   saveConfig,
-  getDefaultConfig,
   cloneHub,
   isHubCloned,
 } from '@iamramo/zanat-core';
+import { input } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import chalk from 'chalk';
 
 export const initCommand = async (): Promise<void> => {
-  console.log(chalk.blue('Initializing Zanat...'));
+  console.log(chalk.blue('Initializing Zanat...\n'));
 
   try {
+    const hubUrl = await input({
+      message: 'Hub repository URL:',
+      default: 'https://github.com/iamramo/zanat-hub.git',
+    });
+
+    const hubBranch = await input({
+      message: 'Hub branch:',
+      default: 'main',
+    });
+
+    console.log(chalk.blue('\nSetting up directories...'));
+
     await fs.ensureDir(ZANAT_DIR);
     console.log(chalk.green(`✓ Created ${ZANAT_DIR}`));
 
-    const config = getDefaultConfig();
+    const config = {
+      hubUrl,
+      hubBranch,
+    };
     await saveConfig(config);
     console.log(chalk.green(`✓ Created config`));
 
