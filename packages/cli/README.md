@@ -8,54 +8,53 @@ CLI for Zanat - a skill hub for AI agents.
 npm install -g @iamramo/zanat-cli
 ```
 
-## Usage
+## Commands
 
-### Initialize
+| Command  | Description                                                 | Usage                                |
+| -------- | ----------------------------------------------------------- | ------------------------------------ |
+| `init`   | Initialize zanat configuration and clone the hub repository | `zanat init`                         |
+| `sync`   | Sync with the hub to get latest skills                      | `zanat sync`                         |
+| `search` | Search for available skills in the hub                      | `zanat search [query]`               |
+| `add`    | Add a skill to your local installation                      | `zanat add <source>/<skill-name>`    |
+| `remove` | Remove an installed skill                                   | `zanat remove <source>/<skill-name>` |
+| `list`   | List all installed skills                                   | `zanat list`                         |
 
-```bash
-zanat init
-```
+## Getting Started
 
-This will interactively prompt you for:
+1. **Initialize zanat:**
 
-- Hub repository URL (default: https://github.com/iamramo/zanat-hub.git)
-- Hub branch (default: main, falls back to master if main doesn't exist)
+   ```bash
+   zanat init
+   ```
 
-### Sync with Hub
+   This will prompt you for the hub repository URL and branch.
 
-```bash
-zanat sync
-```
+2. **Search for skills:**
 
-### Search Skills
+   ```bash
+   zanat search code-review
+   ```
 
-```bash
-zanat search [query]
-```
+3. **Add a skill:**
 
-### Add a Skill
+   ```bash
+   zanat add yurchi/code-review
+   ```
 
-```bash
-zanat add <source>/<skill-name>
-```
+4. **Remove a skill:**
 
-### Remove a Skill
+   ```bash
+   zanat remove yurchi/code-review
+   ```
 
-```bash
-zanat remove <source>/<skill-name>
-```
-
-### List Installed Skills
-
-```bash
-zanat list
-```
+5. **List installed skills:**
+   ```bash
+   zanat list
+   ```
 
 ## Configuration
 
-Configuration is stored in `~/.zanat/config.json` and is created during `zanat init`.
-
-You can manually edit this file to change settings:
+Configuration is stored in `~/.zanat/config.json`:
 
 ```json
 {
