@@ -1,2 +1,25 @@
+# Source files
+src/
+tsconfig.json
+
+# Maps and build info
 **/*.map
 **/*.tsbuildinfo
+
+# Development files
+.env
+.env.local
+.env.*.local
+
+# Tests
+**/*.test.ts
+**/*.spec.ts
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
