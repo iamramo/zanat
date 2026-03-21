@@ -28,16 +28,17 @@
   },
   "dependencies": {
     "@iamramo/zanat-core": "workspace:*",
-    "chalk": "^4.1.2",
-    "commander": "^12.0.0",
-    "fs-extra": "^11.2.0",
+    "@inquirer/prompts": "^8.3.2",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "fs-extra": "^11.3.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.11.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=22.0.0"
