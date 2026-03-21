@@ -4,6 +4,7 @@
   "description": "CLI for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
   "bin": {
     "zanat": "./bin/zanat.js"
   },
