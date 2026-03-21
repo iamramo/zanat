@@ -31,3 +31,9 @@ export {
 } from './utils/paths.js';
 
 export { ENV } from './config/env.js';
+
+export { logger, type Logger } from './utils/logger.js';
+
+export { prompts, input, confirm, select } from './utils/prompts.js';
+
+export { createProgram, Command } from './utils/cli.js';

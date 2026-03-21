@@ -1,6 +1,5 @@
-import { getHubStatus, getAddedSkills, loadConfig } from '@iamramo/zanat-core';
+import { getHubStatus, getAddedSkills, loadConfig, logger } from '@iamramo/zanat-core';
 import chalk from 'chalk';
-import { logger } from '../utils/logger.js';
 
 const formatLastSync = (lastSync?: string): string => {
   if (!lastSync) return 'Never';

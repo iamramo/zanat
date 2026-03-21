@@ -1,5 +1,4 @@
-import { removeSkill } from '@iamramo/zanat-core';
-import { logger } from '../utils/logger.js';
+import { removeSkill, logger } from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 export const removeCommand = async (skillArg: string): Promise<void> => {

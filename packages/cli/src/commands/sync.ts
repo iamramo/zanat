@@ -1,5 +1,4 @@
-import { pullHub, saveConfig, loadConfig } from '@iamramo/zanat-core';
-import { logger } from '../utils/logger.js';
+import { pullHub, saveConfig, loadConfig, logger } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const syncCommand = async (): Promise<void> => {

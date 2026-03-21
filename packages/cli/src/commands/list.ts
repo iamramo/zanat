@@ -1,6 +1,5 @@
-import { getAddedSkills } from '@iamramo/zanat-core';
+import { getAddedSkills, logger } from '@iamramo/zanat-core';
 import chalk from 'chalk';
-import { logger } from '../utils/logger.js';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const listCommand = async (): Promise<void> => {

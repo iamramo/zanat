@@ -8,10 +8,11 @@ import {
   isHubCloned,
   getHubStatus,
   loadConfig,
+  logger,
+  input,
+  confirm,
 } from '@iamramo/zanat-core';
-import { input, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import { logger } from '../utils/logger.js';
 
 export const initCommand = async (): Promise<void> => {
   logger.info('Initializing Zanat...');

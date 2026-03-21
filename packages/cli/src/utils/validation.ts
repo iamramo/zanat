@@ -1,6 +1,5 @@
-import { isHubCloned } from '@iamramo/zanat-core';
+import { isHubCloned, logger } from '@iamramo/zanat-core';
 import { SkillArgSchema, type SkillArg } from '../schemas/skill-arg.js';
-import { logger } from './logger.js';
 
 export const validateSkillArg = (skillArg: string): SkillArg => {
   const result = SkillArgSchema.safeParse(skillArg);

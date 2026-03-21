@@ -1,4 +1,4 @@
-import { program } from 'commander';
+import { createProgram } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
@@ -8,6 +8,7 @@ import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
 
+const program = createProgram();
 program.name('zanat').description('A skill hub for AI agents').version(packageJson.version);
 
 program

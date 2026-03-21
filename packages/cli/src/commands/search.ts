@@ -1,6 +1,5 @@
-import { searchSkills } from '@iamramo/zanat-core';
+import { searchSkills, logger } from '@iamramo/zanat-core';
 import chalk from 'chalk';
-import { logger } from '../utils/logger.js';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const searchCommand = async (query?: string): Promise<void> => {
