@@ -42,12 +42,6 @@ cp .env.example .env
 | `NODE_ENV`         | Environment mode (`development` or `production`) | `development`                              |
 | `DEBUG`            | Enable debug logging                             | `false`                                    |
 
-## Documentation
-
-- [Architecture](./docs/architecture.md)
-- [Creating Skills](./docs/creating-skills.md)
-- [MCP Server](./docs/mcp-server.md) (Coming soon)
-
 ## License
 
 MIT
