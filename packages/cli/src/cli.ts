@@ -10,6 +10,7 @@ import { statusCommand } from './commands/status.js';
 
 const program = createProgram();
 program.name('zanat').description('A skill hub for AI agents').version(packageJson.version);
+program.helpCommand(false);
 
 program
   .command('init')
