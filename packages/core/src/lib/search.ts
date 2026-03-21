@@ -18,14 +18,12 @@ export const searchSkills = async (query?: string): Promise<SkillInfo[]> => {
 };
 
 const getSources = async (): Promise<string[]> => {
-  const sourcesDir = path.join(HUB_DIR, 'sources');
-
   try {
-    const entries = await fs.readdir(sourcesDir);
+    const entries = await fs.readdir(HUB_DIR);
     const stats = await Promise.all(
       entries.map(async (entry) => ({
         name: entry,
-        isDirectory: (await fs.stat(path.join(sourcesDir, entry))).isDirectory(),
+        isDirectory: (await fs.stat(path.join(HUB_DIR, entry))).isDirectory(),
       }))
     );
     return stats.filter((s) => s.isDirectory).map((s) => s.name);
@@ -35,7 +33,7 @@ const getSources = async (): Promise<string[]> => {
 };
 
 const getSkillsForSource = async (source: string): Promise<SkillInfo[]> => {
-  const sourcePath = path.join(HUB_DIR, 'sources', source);
+  const sourcePath = path.join(HUB_DIR, source);
 
   try {
     const skills = await fs.readdir(sourcePath);
@@ -47,7 +45,7 @@ const getSkillsForSource = async (source: string): Promise<SkillInfo[]> => {
 };
 
 const readSkill = async (source: string, name: string): Promise<SkillInfo | null> => {
-  const skillPath = path.join(HUB_DIR, 'sources', source, name, 'SKILL.md');
+  const skillPath = path.join(HUB_DIR, source, name, 'SKILL.md');
   const skill = await parseSkill(skillPath);
 
   if (!skill) {

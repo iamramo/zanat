@@ -7,13 +7,12 @@ import path from 'node:path';
 
 const SKILL_PREFIX = 'zanat.';
 const SOURCE_PREFIX = 'zanat/';
-const SOURCES_DIR = 'sources';
 const SKILL_FILENAME = 'SKILL.md';
 const DEFAULT_SOURCE = 'unknown';
 
 export const installSkill = async (source: string, skillName: string): Promise<void> => {
   const fullSkillName = `${SKILL_PREFIX}${source}.${skillName}`;
-  const sourcePath = path.join(HUB_DIR, SOURCES_DIR, source, skillName);
+  const sourcePath = path.join(HUB_DIR, source, skillName);
   const targetPath = path.join(AGENTS_SKILLS_DIR, fullSkillName);
 
   const skillFile = path.join(sourcePath, SKILL_FILENAME);
@@ -29,7 +28,7 @@ export const installSkill = async (source: string, skillName: string): Promise<v
   const lock = await loadSkillLock();
   const lockedSkill: LockedSkill = {
     source: `${SOURCE_PREFIX}${source}`,
-    skillPath: `${SOURCES_DIR}/${source}/${skillName}/${SKILL_FILENAME}`,
+    skillPath: `${source}/${skillName}/${SKILL_FILENAME}`,
     installedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     version: 'latest',
@@ -67,8 +66,8 @@ export const parseSkill = async (filePath: string): Promise<Skill | null> => {
     const frontmatter = parsed.data as SkillFrontmatter;
 
     const parts = filePath.split('/');
-    const sourceIndex = parts.indexOf(SOURCES_DIR);
-    const source = sourceIndex >= 0 ? (parts[sourceIndex + 1] ?? DEFAULT_SOURCE) : DEFAULT_SOURCE;
+    const hubIndex = parts.indexOf('hub');
+    const source = hubIndex >= 0 ? (parts[hubIndex + 1] ?? DEFAULT_SOURCE) : DEFAULT_SOURCE;
 
     return {
       ...frontmatter,
