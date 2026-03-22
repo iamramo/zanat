@@ -11,5 +11,5 @@ export { Display } from './services/display.js';
 export { Format } from './services/format.js';
 export { Prompt } from './services/prompt.js';
 export { Command } from './services/command.js';
-
+export { Zod } from './services/zod.js';
 
