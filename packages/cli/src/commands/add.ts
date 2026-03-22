@@ -1,33 +1,18 @@
-import { CommitShaSchema, Log, Prompt, LockFile, Skill, Path } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, Skill, Path } from '@iamramo/zanat-core';
 import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
-interface AddOptions {
-  commit?: string;
-}
-
-export const addCommand = async (skillArg: string, options: AddOptions): Promise<void> => {
+export const addCommand = async (skillArg: string): Promise<void> => {
   try {
     await ensureHubExists();
 
     Log.blue(`Adding skill: ${skillArg}...`);
 
     const { namespace, skillName } = validateSkillArg(skillArg);
-
-    if (options.commit) {
-      CommitShaSchema.parse(options.commit);
-    }
-
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const exists = !!(await LockFile.find(fullSkillName));
-    if (exists) {
-      if (options.commit) {
-        Log.red(
-          `Skill ${skillArg} is already added. Use \`zanat update\` to change the pinned version.`
-        );
-        process.exit(1);
-      }
 
+    if (exists) {
       const shouldUpdate = await Prompt.confirm({
         message: `Skill ${skillArg} is already added. Update from hub?`,
         default: true,
@@ -47,10 +32,8 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
     const targetPath = Path.getSkillTargetDir(fullSkillName);
     const skillFile = Path.getSkillFile(sourcePath);
 
-    await Skill.add(namespace, skillName, skillFile, targetPath, options.commit);
-    Log.green(
-      `Added ${skillArg}${options.commit ? ` (pinned to ${options.commit.slice(0, 7)})` : ''}`
-    );
+    await Skill.add(namespace, skillName, skillFile, targetPath);
+    Log.green(`Added ${skillArg}`);
   } catch {
     Log.red('Failed to add', { prefix: '✗' });
     process.exit(1);

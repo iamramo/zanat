@@ -23,7 +23,6 @@ program.command('sync').description('Sync with the hub repository').action(syncC
 program
   .command('add <skill>')
   .description('Add a skill (format: namespace.skill-name or namespace.sub.skill-name)')
-  .option('-c, --commit <sha>', 'Pin to specific commit SHA (at least 7 characters)')
   .action(addCommand);
 
 program
