@@ -1,8 +1,8 @@
 import {
   Config,
   CommitShaSchema,
-  Logger,
-  confirm,
+  Log,
+  Prompt,
   LockFile,
   Display,
   Path,
@@ -26,7 +26,7 @@ export const updateCommand = async (
     if (options.commit) {
       const result = CommitShaSchema.safeParse(options.commit);
       if (!result.success) {
-        Logger.red('Invalid commit SHA format. Must be 7-40 hexadecimal characters.', {
+        Log.red('Invalid commit SHA format. Must be 7-40 hexadecimal characters.', {
           prefix: '✗',
         });
         process.exit(1);
@@ -35,7 +35,7 @@ export const updateCommand = async (
 
     // Cannot use --commit when updating all skills
     if (options.commit && !skillArg) {
-      Logger.red('Cannot use --commit when updating all skills. Please specify a specific skill.', {
+      Log.red('Cannot use --commit when updating all skills. Please specify a specific skill.', {
         prefix: '✗',
       });
       process.exit(1);
@@ -55,28 +55,28 @@ export const updateCommand = async (
           const isPinned = await LockFile.isPinned(skillLock.version);
           if (isPinned) {
             const shortSha = Display.getShortSha(skillLock.version);
-            const shouldContinue = await confirm({
+            const shouldContinue = await Prompt.confirm({
               message: `Skill ${skillArg} is pinned to ${shortSha}. This will update to ${branchName} and unpin. Continue?`,
               default: true,
             });
 
             if (!shouldContinue) {
-              Logger.blue('Update cancelled');
+              Log.blue('Update cancelled');
               return;
             }
           }
         }
       }
 
-      Logger.blue(`Updating skill: ${skillArg}...`);
+      Log.blue(`Updating skill: ${skillArg}...`);
       await Skill.update(namespace, skillName);
 
       if (options.commit) {
-        Logger.green(`Updated ${skillArg} and pinned to ${options.commit.slice(0, 7)}`, {
+        Log.green(`Updated ${skillArg} and pinned to ${options.commit.slice(0, 7)}`, {
           prefix: '✓',
         });
       } else {
-        Logger.green(`Updated ${skillArg}`, { prefix: '✓' });
+        Log.green(`Updated ${skillArg}`, { prefix: '✓' });
       }
     } else {
       // Update all skills
@@ -84,28 +84,28 @@ export const updateCommand = async (
       const addedSkills = Object.keys(skills);
 
       if (addedSkills.length === 0) {
-        Logger.blue('No skills to update');
+        Log.blue('No skills to update');
         return;
       }
 
       if (!options.yes) {
-        const shouldUpdate = await confirm({
+        const shouldUpdate = await Prompt.confirm({
           message: `This will update ${addedSkills.length} skill(s). Continue?`,
           default: true,
         });
 
         if (!shouldUpdate) {
-          Logger.blue('Update cancelled');
+          Log.blue('Update cancelled');
           return;
         }
       }
 
-      Logger.blue(`Updating ${addedSkills.length} skill(s)...`);
+      Log.blue(`Updating ${addedSkills.length} skill(s)...`);
       await Skill.updateAll();
-      Logger.green('Updated all skills', { prefix: '✓' });
+      Log.green('Updated all skills', { prefix: '✓' });
     }
   } catch {
-    Logger.red('Failed to update', { prefix: '✗' });
+    Log.red('Failed to update', { prefix: '✗' });
     process.exit(1);
   }
 };

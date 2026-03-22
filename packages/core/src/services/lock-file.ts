@@ -1,10 +1,10 @@
-import type { SkillLock, LockedSkill } from '../types/lock-file.js';
+import type { ILockFile, ISkillLock } from '../types/lock-file.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 
 export const LockFile = {
-  async get(): Promise<SkillLock> {
+  async get(): Promise<ILockFile> {
     try {
       const content = await Fs.readFile(Path.SKILL_LOCK_FILE);
       return JSON.parse(content);
@@ -13,7 +13,7 @@ export const LockFile = {
     }
   },
 
-  async update(lock: SkillLock): Promise<void> {
+  async update(lock: ILockFile): Promise<void> {
     try {
       await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(lock));
     } catch {
@@ -21,7 +21,7 @@ export const LockFile = {
     }
   },
 
-  async add(fullSkillName: string, skill: LockedSkill): Promise<void> {
+  async add(fullSkillName: string, skill: ISkillLock): Promise<void> {
     const lock = await this.get();
     const updatedLock = {
       ...lock,
@@ -43,12 +43,12 @@ export const LockFile = {
     await this.update(updatedLock);
   },
 
-  async find(fullSkillName: string): Promise<LockedSkill | undefined> {
+  async find(fullSkillName: string): Promise<ISkillLock | undefined> {
     const lock = await this.get();
     return lock.skills[fullSkillName];
   },
 
-  async findAll(): Promise<Record<string, LockedSkill>> {
+  async findAll(): Promise<Record<string, ISkillLock>> {
     const lock = await this.get();
     return lock.skills;
   },

@@ -1,5 +1,5 @@
-import type { Skill as SkillType } from '../types/skills.js';
-import type { LockedSkill } from '../types/lock-file.js';
+import type { ISkill } from '../types/skills.js';
+import type { ISkillLock } from '../types/lock-file.js';
 import { Path } from '../path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';
@@ -8,7 +8,7 @@ import matter from 'gray-matter';
 import path from 'node:path';
 
 export const Skill = {
-  async parse(filePath: string): Promise<SkillType> {
+  async parse(filePath: string): Promise<ISkill> {
     try {
       const content = await Fs.readFile(filePath);
       const parsed = matter(content);
@@ -49,7 +49,7 @@ export const Skill = {
     }
   },
 
-  async find(fullName: string): Promise<SkillType | undefined> {
+  async find(fullName: string): Promise<ISkill | undefined> {
     const config = await Config.get();
     const parts = fullName.split('.');
 
@@ -64,13 +64,13 @@ export const Skill = {
     return this.parse(skillPath).catch(() => undefined);
   },
 
-  async findAll(): Promise<SkillType[]> {
+  async findAll(): Promise<ISkill[]> {
     const config = await Config.get();
     const files = await Fs.glob('**/SKILL.md', config.hubDir);
     return Promise.all(files.map((f) => this.parse(path.join(config.hubDir, f))));
   },
 
-  async search(query: string): Promise<SkillType[]> {
+  async search(query: string): Promise<ISkill[]> {
     const skills = await this.findAll();
     return skills.filter((skill) => skill.fullName.toLowerCase().includes(query.toLowerCase()));
   },
@@ -97,7 +97,7 @@ export const Skill = {
 
     const existingSkill = await LockFile.find(fullSkillName);
 
-    const lockedSkill: LockedSkill = {
+    const lockedSkill: ISkillLock = {
       namespace,
       skillName,
       hubPath: Path.getSkillFilePath(namespace, skillName),

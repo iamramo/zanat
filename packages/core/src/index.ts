@@ -1,5 +1,3 @@
-export { input, confirm } from '@inquirer/prompts';
-
 import { Command } from 'commander';
 export const createProgram = (): Command => new Command();
 
@@ -11,8 +9,9 @@ export { Time } from './services/date.js';
 export { LockFile } from './services/lock-file.js';
 export { Git } from './services/git.js';
 export { Skill } from './services/skills.js';
-export { Logger } from './services/logger.js';
+export { Log } from './services/log.js';
 export { Display } from './services/display.js';
 export { Format } from './services/format.js';
+export { Prompt } from './services/prompt.js';
 
 export { CommitShaSchema, type CommitSha } from './schemas/commit-sha.js';

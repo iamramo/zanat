@@ -1,4 +1,4 @@
-export interface ZanatConfig {
+export interface IConfig {
   hubUrl: string;
   hubBranch: string;
   hubDir: string;

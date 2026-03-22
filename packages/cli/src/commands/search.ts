@@ -1,4 +1,4 @@
-import { Skill, Logger } from '@iamramo/zanat-core';
+import { Skill, Log } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 const ELLIPSIS = '...';
@@ -18,31 +18,31 @@ export const searchCommand = async (query?: string): Promise<void> => {
     await ensureHubExists();
 
     if (query) {
-      Logger.blue(`Searching for: "${query}"...`);
+      Log.blue(`Searching for: "${query}"...`);
     } else {
-      Logger.blue('Available skills:');
+      Log.blue('Available skills:');
     }
-    Logger.blank();
+    Log.blank();
 
     const results = query ? await Skill.search(query) : await Skill.findAll();
 
     if (results.length === 0) {
-      Logger.gray('No skills found.');
+      Log.gray('No skills found.');
       return;
     }
 
     results.forEach((skill) => {
-      Logger.green(skill.fullName, { prefix: '•' });
+      Log.green(skill.fullName, { prefix: '•' });
       const truncatedDesc = truncateDescription(skill.description);
-      Logger.gray(truncatedDesc, { spacing: 2 });
-      Logger.blank();
+      Log.gray(truncatedDesc, { spacing: 2 });
+      Log.blank();
     });
 
-    Logger.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
-    Logger.blank();
-    Logger.gray('Add a skill with: zanat add <namespace.skill-name>');
+    Log.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
+    Log.blank();
+    Log.gray('Add a skill with: zanat add <namespace.skill-name>');
   } catch {
-    Logger.red('Failed to search', { prefix: '✗' });
+    Log.red('Failed to search', { prefix: '✗' });
     process.exit(1);
   }
 };

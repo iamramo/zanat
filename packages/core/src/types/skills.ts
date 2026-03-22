@@ -1,4 +1,4 @@
-export interface SkillFrontmatter {
+export interface ISkillFrontmatter {
   id: string;
   name: string;
   description: string;
@@ -7,7 +7,7 @@ export interface SkillFrontmatter {
   tags?: string[];
 }
 
-export interface Skill extends SkillFrontmatter {
+export interface ISkill extends ISkillFrontmatter {
   content: string;
   namespace: string[];
   skill: string;

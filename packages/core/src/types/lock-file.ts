@@ -1,9 +1,9 @@
-export interface SkillLock {
+export interface ILockFile {
   version: number;
-  skills: Record<string, LockedSkill>;
+  skills: Record<string, ISkillLock>;
 }
 
-export interface LockedSkill {
+export interface ISkillLock {
   namespace: string[];
   skillName: string;
   hubPath: string;

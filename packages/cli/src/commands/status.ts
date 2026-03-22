@@ -1,4 +1,4 @@
-import { Time, Fs, Git, LockFile, Display, Config, Logger } from '@iamramo/zanat-core';
+import { Time, Fs, Git, LockFile, Display, Config, Log } from '@iamramo/zanat-core';
 
 export const statusCommand = async (): Promise<void> => {
   try {
@@ -6,47 +6,47 @@ export const statusCommand = async (): Promise<void> => {
     const skillNames = Object.keys(skills);
     const config = await Config.get();
 
-    Logger.blue('Hub Status:');
-    Logger.blank();
+    Log.blue('Hub Status:');
+    Log.blank();
 
     const hubExists = await Fs.exists(`${config.hubDir}/.git`);
     if (!hubExists) {
-      Logger.gray('Not initialized');
-      Logger.gray('Run `zanat init` to set up');
+      Log.gray('Not initialized');
+      Log.gray('Run `zanat init` to set up');
       return;
     }
 
-    Logger.green(`Initialized: ${Logger.bold('yes')}`, { prefix: '•' });
-    Logger.green(`Repository: ${Logger.bold(config.hubUrl)}`, { prefix: '•' });
-    Logger.green(`Branch: ${Logger.bold(config.hubBranch)}`, { prefix: '•' });
-    Logger.green(`Last sync: ${Logger.bold(Time.ago(config?.lastSync))}`, { prefix: '•' });
+    Log.green(`Initialized: ${Log.bold('yes')}`, { prefix: '•' });
+    Log.green(`Repository: ${Log.bold(config.hubUrl)}`, { prefix: '•' });
+    Log.green(`Branch: ${Log.bold(config.hubBranch)}`, { prefix: '•' });
+    Log.green(`Last sync: ${Log.bold(Time.ago(config?.lastSync))}`, { prefix: '•' });
 
     const behind = await Git.behind(config.hubDir, config.hubBranch);
     if (behind > 0) {
-      Logger.yellow(`Behind: ${behind} commit${behind === 1 ? '' : 's'}`, { prefix: '•' });
+      Log.yellow(`Behind: ${behind} commit${behind === 1 ? '' : 's'}`, { prefix: '•' });
     } else {
-      Logger.green(`Behind: ${Logger.bold('0 commits (up-to-date)')}`, { prefix: '•' });
+      Log.green(`Behind: ${Log.bold('0 commits (up-to-date)')}`, { prefix: '•' });
     }
 
-    Logger.blank();
-    Logger.blue('Skills:');
-    Logger.blank();
-    Logger.green(`Added: ${Logger.bold(skillNames.length.toString())}`, { prefix: '•' });
+    Log.blank();
+    Log.blue('Skills:');
+    Log.blank();
+    Log.green(`Added: ${Log.bold(skillNames.length.toString())}`, { prefix: '•' });
 
     if (skillNames.length > 0) {
       skillNames.forEach((skillName: string) => {
         const skill = skills[skillName];
 
-        Logger.gray(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
+        Log.gray(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
           prefix: '•',
           spacing: 2,
         });
       });
     }
 
-    Logger.blank();
+    Log.blank();
   } catch {
-    Logger.red('Failed to get status', { prefix: '✗' });
+    Log.red('Failed to get status', { prefix: '✗' });
     process.exit(1);
   }
 };

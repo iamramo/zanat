@@ -1,4 +1,4 @@
-import { LockFile, Display, Logger } from '@iamramo/zanat-core';
+import { LockFile, Display, Log } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const listCommand = async (): Promise<void> => {
@@ -9,25 +9,25 @@ export const listCommand = async (): Promise<void> => {
     const skillNames = Object.keys(skills);
 
     if (skillNames.length === 0) {
-      Logger.gray('No skills added.');
-      Logger.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.');
+      Log.gray('No skills added.');
+      Log.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.');
       return;
     }
 
-    Logger.blue('Added skills:');
-    Logger.blank();
+    Log.blue('Added skills:');
+    Log.blank();
 
     skillNames.forEach((skillName: string) => {
       const skill = skills[skillName];
-      Logger.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
+      Log.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
         prefix: '•',
       });
     });
 
-    Logger.blank();
-    Logger.gray(`Total: ${skillNames.length} skill${skillNames.length === 1 ? '' : 's'}`);
+    Log.blank();
+    Log.gray(`Total: ${skillNames.length} skill${skillNames.length === 1 ? '' : 's'}`);
   } catch {
-    Logger.red('Failed to list skills', { prefix: '✗' });
+    Log.red('Failed to list skills', { prefix: '✗' });
     process.exit(1);
   }
 };

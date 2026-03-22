@@ -7,7 +7,7 @@ type Option = {
   spacing?: number;
 };
 
-export const Logger = {
+export const Log = {
   getPrefix(prefix?: Prefix) {
     return prefix ? `${prefix} ` : '';
   },

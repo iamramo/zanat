@@ -1,10 +1,10 @@
-import type { ZanatConfig } from '../types/config.js';
+import type { IConfig } from '../types/config.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 
 export const Config = {
-  async get(): Promise<ZanatConfig> {
+  async get(): Promise<IConfig> {
     try {
       const content = await Fs.readFile(Path.CONFIG_FILE);
       return JSON.parse(content);
@@ -13,7 +13,7 @@ export const Config = {
     }
   },
 
-  async update(config: ZanatConfig): Promise<void> {
+  async update(config: IConfig): Promise<void> {
     try {
       await Fs.writeFile(Path.CONFIG_FILE, Format.json(config));
     } catch {
