@@ -24,11 +24,13 @@ export const Skill = {
       if (!skillName) {
         throw new Error('Could not extract skill name from path.');
       }
+      Zod.SegmentSchema.parse(skillName);
 
       const namespace = pathParts;
       if (namespace.length === 0) {
         throw new Error('Could not extract namespace from path.');
       }
+      namespace.forEach((part) => Zod.SegmentSchema.parse(part));
 
       const fullName = namespace.join('.') + '.' + skillName;
 

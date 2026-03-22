@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FULL_SKILL_NAME_REGEX } from './common.js';
+import { FULL_SKILL_NAME_REGEX, SEGMENT_REGEX } from './common.js';
 
 export const FullSkillNameSchema = z
   .string()
@@ -7,6 +7,14 @@ export const FullSkillNameSchema = z
   .regex(
     FULL_SKILL_NAME_REGEX,
     'Skill name must be in format: namespace.skill-name (lowercase, hyphens, dots only)'
+  );
+
+export const SegmentSchema = z
+  .string()
+  .min(1, 'Segment cannot be empty')
+  .regex(
+    SEGMENT_REGEX,
+    'Segment must start with a letter and contain only lowercase letters, numbers, and hyphens'
   );
 
 export const SkillOpenStandardSchema = z

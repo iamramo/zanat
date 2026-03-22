@@ -1,6 +1,7 @@
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { Config } from './services/config.js';
+import { Zod } from './services/zod.js';
 
 const home = homedir();
 
@@ -34,12 +35,13 @@ export const Path = {
     return path.join(skillDir, this.SKILL_FILENAME);
   },
 
-  toSkillParts(skillArg: string): { namespace: string[]; skillName: string } {
-    const parts = skillArg.split('.');
+  toSkillParts(fullSkillName: string): { namespace: string[]; skillName: string } {
+    const parts = fullSkillName.split('.');
     const skillName = parts.pop()!;
-    if (!skillName) {
-      throw new Error('Invalid skill name format');
-    }
+    
+    Zod.SegmentSchema.parse(skillName);
+    parts.forEach((part) => Zod.SegmentSchema.parse(part));
+    
     return { namespace: parts, skillName };
   },
 };
