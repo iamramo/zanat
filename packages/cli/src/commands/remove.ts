@@ -1,6 +1,6 @@
 import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
 import path from 'node:path';
-import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
+import { ensureHubExists } from '../utils/validation.js';
 
 export const removeCommand = async (skillArg: string): Promise<void> => {
   try {
@@ -8,7 +8,7 @@ export const removeCommand = async (skillArg: string): Promise<void> => {
 
     Log.blue(`Removing skill: ${skillArg}...`);
 
-    const { namespace, skillName } = validateSkillArg(skillArg);
+    const { namespace, skillName } = Path.toSkillParts(skillArg);
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
