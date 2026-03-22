@@ -1,13 +1,9 @@
 import { Log, Prompt, LockFile, Path, Skill } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
-interface UpdateOptions {
-  yes?: boolean;
-}
-
 export const updateCommand = async (
   skillArg: string | undefined,
-  options: UpdateOptions
+  options: { yes?: boolean }
 ): Promise<void> => {
   try {
     await ensureHubExists();

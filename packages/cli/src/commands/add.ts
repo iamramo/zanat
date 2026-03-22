@@ -1,5 +1,4 @@
 import { Log, Prompt, LockFile, Skill, Path } from '@iamramo/zanat-core';
-import path from 'node:path';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const addCommand = async (skillArg: string): Promise<void> => {
@@ -12,6 +11,7 @@ export const addCommand = async (skillArg: string): Promise<void> => {
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
 
     const exists = await LockFile.find(fullSkillName);
+
     if (exists) {
       const shouldUpdate = await Prompt.confirm({
         message: `Skill ${skillArg} is already added. Update from hub?`,
