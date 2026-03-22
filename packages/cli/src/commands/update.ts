@@ -9,7 +9,6 @@ export const updateCommand = async (skillArg: string | undefined): Promise<void>
     if (skillArg) {
       const { namespace, skillName } = Path.toSkillParts(skillArg);
 
-      Log.blue(`Updating skill: ${skillArg}...`);
       await Skill.update(namespace, skillName);
       Log.green(`Updated ${skillArg}`, { prefix: '✓' });
       return;

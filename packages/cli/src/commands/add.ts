@@ -5,8 +5,6 @@ export const addCommand = async (skillArg: string): Promise<void> => {
   try {
     await ensureHubExists();
 
-    Log.blue(`Adding skill: ${skillArg}...`);
-
     const { namespace, skillName } = Path.toSkillParts(skillArg);
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
 
