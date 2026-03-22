@@ -1,7 +1,7 @@
 import { homedir } from 'node:os';
 import path from 'node:path';
-import { Config } from './services/config.js';
-import { Zod } from './services/zod.js';
+import { Config } from './config.js';
+import { Zod } from './zod.js';
 
 const home = homedir();
 

@@ -1,4 +1,4 @@
-import { Path } from '../path.js';
+import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 import { type IConfig } from '../schemas/config.js';

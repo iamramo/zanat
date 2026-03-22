@@ -1,8 +1,6 @@
-export { Path } from './path.js';
-
 export { Config } from './services/config.js';
+export { Path } from './services/path.js';
 export { Fs } from './services/fs.js';
-
 export { LockFile } from './services/lock-file.js';
 export { Git } from './services/git.js';
 export { Skill } from './services/skills.js';
@@ -12,4 +10,3 @@ export { Format } from './services/format.js';
 export { Prompt } from './services/prompt.js';
 export { Command } from './services/command.js';
 export { Zod } from './services/zod.js';
-
