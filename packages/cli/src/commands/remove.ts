@@ -3,10 +3,11 @@ import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 export const removeCommand = async (skillArg: string): Promise<void> => {
-  Log.blue(`Removing skill: ${skillArg}...`);
-
   try {
     await ensureHubExists();
+
+    Log.blue(`Removing skill: ${skillArg}...`);
+
     const { namespace, skillName } = validateSkillArg(skillArg);
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);

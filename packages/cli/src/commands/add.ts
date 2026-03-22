@@ -7,10 +7,11 @@ interface AddOptions {
 }
 
 export const addCommand = async (skillArg: string, options: AddOptions): Promise<void> => {
-  Log.blue(`Adding skill: ${skillArg}...`);
-
   try {
     await ensureHubExists();
+
+    Log.blue(`Adding skill: ${skillArg}...`);
+
     const { namespace, skillName } = validateSkillArg(skillArg);
 
     if (options.commit) {

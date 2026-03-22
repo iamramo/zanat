@@ -1,25 +1,20 @@
-import { Time, Fs, Git, LockFile, Display, Config, Log } from '@iamramo/zanat-core';
+import { Fs, Git, LockFile, Display, Config, Log } from '@iamramo/zanat-core';
+import { ensureHubExists } from '../utils/validation.js';
 
 export const statusCommand = async (): Promise<void> => {
   try {
+    await ensureHubExists();
+
     const skills = await LockFile.findAll();
     const skillNames = Object.keys(skills);
     const config = await Config.get();
 
     Log.blue('Hub Status:');
     Log.blank();
-
-    const hubExists = await Fs.exists(`${config.hubDir}/.git`);
-    if (!hubExists) {
-      Log.gray('Not initialized');
-      Log.gray('Run `zanat init` to set up');
-      return;
-    }
-
     Log.green(`Initialized: ${Log.bold('yes')}`, { prefix: '•' });
     Log.green(`Repository: ${Log.bold(config.hubUrl)}`, { prefix: '•' });
     Log.green(`Branch: ${Log.bold(config.hubBranch)}`, { prefix: '•' });
-    Log.green(`Last sync: ${Log.bold(Time.ago(config?.lastSync))}`, { prefix: '•' });
+    Log.green(`Last sync: ${Log.bold(Display.timeAgo(config?.lastSync))}`, { prefix: '•' });
 
     const behind = await Git.behind(config.hubDir, config.hubBranch);
     if (behind > 0) {
