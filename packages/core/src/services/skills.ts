@@ -1,5 +1,5 @@
-import type { ISkill } from '../types/skills.js';
-import type { ISkillLock } from '../types/lock-file.js';
+import type { ISkill } from '../schemas/skill.js';
+import type { ISkillLock } from '../schemas/lock-file.js';
 import { Path } from '../path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';

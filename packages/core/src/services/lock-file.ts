@@ -1,4 +1,4 @@
-import type { ILockFile, ISkillLock } from '../types/lock-file.js';
+import type { ILockFile, ISkillLock } from '../schemas/lock-file.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
