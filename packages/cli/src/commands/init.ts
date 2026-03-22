@@ -1,41 +1,30 @@
 import {
-  ZANAT_DIR,
-  AGENTS_DIR,
-  CONFIG_FILE,
-  getHubDir,
-  saveConfig,
-  cloneHub,
-  isHubCloned,
-  getHubStatus,
-  loadConfig,
-  logger,
+  Path,
+  Config,
+  Fs,
+  Git,
+  Logger,
   input,
   confirm,
 } from '@iamramo/zanat-core';
-import fs from 'fs-extra';
+import path from 'node:path';
 
 export const initCommand = async (): Promise<void> => {
-  logger.info('Initializing Zanat...');
-  logger.blank();
+  Logger.blue('Initializing Zanat...');
+  Logger.blank();
 
   try {
-    const hubExists = await isHubCloned();
+    const existingConfig = await Config.get();
+    const hubExists = await Fs.exists(`${existingConfig.hubDir}/.git`);
 
     if (hubExists) {
-      const status = await getHubStatus();
-      const config = await loadConfig();
+      Logger.blue('Zanat is already initialized.');
+      Logger.blank();
 
-      logger.info('Zanat is already initialized.');
-      logger.blank();
+      Logger.blue(`Repository: ${existingConfig.hubUrl}`);
+      Logger.blue(`Branch: ${existingConfig.hubBranch}`);
 
-      if (status.remoteUrl) {
-        console.log(`Repository: ${status.remoteUrl}`);
-      }
-      if (status.branch) {
-        console.log(`Branch: ${status.branch}`);
-      }
-
-      logger.blank();
+      Logger.blank();
 
       const shouldReinitialize = await confirm({
         message: 'Reinitialize? Your hub directory will be replaced but added skills stay safe.',
@@ -43,17 +32,16 @@ export const initCommand = async (): Promise<void> => {
       });
 
       if (!shouldReinitialize) {
-        logger.blank();
-        logger.info('Keeping existing setup.');
+        Logger.blank();
+        Logger.blue('Keeping existing setup.');
         return;
       }
 
-      logger.blank();
-      logger.info('Removing existing hub...');
-      const existingHubDir = await getHubDir();
-      await fs.remove(existingHubDir);
-      logger.success('Removed existing hub');
-      logger.blank();
+      Logger.blank();
+      Logger.blue('Removing existing hub...');
+      await Fs.remove(existingConfig.hubDir);
+      Logger.green('Removed existing hub', { prefix: '✓' });
+      Logger.blank();
     }
 
     const hubUrl = await input({
@@ -68,14 +56,14 @@ export const initCommand = async (): Promise<void> => {
 
     const hubDir = await input({
       message: 'Hub directory path:',
-      default: `${ZANAT_DIR}/hub`,
+      default: `${Path.ZANAT_DIR}/hub`,
     });
 
-    logger.blank();
-    logger.info('Setting up directories...');
+    Logger.blank();
+    Logger.blue('Setting up directories...');
 
-    await fs.ensureDir(ZANAT_DIR);
-    logger.success(`Created ${ZANAT_DIR}`);
+    await Fs.ensureDir(Path.ZANAT_DIR);
+    Logger.green(`Created ${Path.ZANAT_DIR}`, { prefix: '✓' });
 
     const config = {
       hubUrl,
@@ -84,24 +72,21 @@ export const initCommand = async (): Promise<void> => {
       lastSync: new Date().toISOString(),
     };
 
-    await fs.ensureDir(AGENTS_DIR);
+    await Fs.ensureDir(Path.AGENTS_DIR);
 
-    logger.blank();
-    logger.info('Cloning hub repository...');
-    const actualBranch = await cloneHub(hubUrl, hubBranch, hubDir);
-    if (actualBranch !== hubBranch) {
-      config.hubBranch = actualBranch;
-      logger.warning(`Branch '${hubBranch}' not found, using '${actualBranch}' instead`);
-    }
-    logger.success(`Cloned hub to ${hubDir}`);
+    Logger.blank();
+    Logger.blue('Cloning hub repository...');
+    await Git.clone(hubUrl, hubBranch, hubDir);
+    Logger.green(`Cloned hub to ${hubDir}`, { prefix: '✓' });
 
-    await saveConfig(config);
-    logger.success(`Created config.json in ${CONFIG_FILE}`);
+    await Fs.ensureDir(path.dirname(Path.CONFIG_FILE));
+    await Fs.writeFile(Path.CONFIG_FILE, JSON.stringify(config, null, 2));
+    Logger.green(`Created config.json in ${Path.CONFIG_FILE}`, { prefix: '✓' });
 
-    logger.blank();
-    logger.success('Zanat initialized successfully!');
+    Logger.blank();
+    Logger.green('Zanat initialized successfully!', { prefix: '✓' });
   } catch (error) {
-    logger.error('Failed to initialize', error);
+    Logger.red('Failed to initialize', { prefix: '✗' });
     process.exit(1);
   }
 };

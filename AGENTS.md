@@ -47,7 +47,7 @@ This prevents conflicts with other skill managers (like npx skills).
 
 ```
 ~/.agents/
-├── .skill-lock.json
+├── .zanat-lock.json
 └── skills/
     ├── zanat.yurchi.code-review/
     │   └── SKILL.md

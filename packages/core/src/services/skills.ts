@@ -1,0 +1,108 @@
+import type { Skill } from '../types/skills.js';
+import type { LockedSkill } from '../types/lock-file.js';
+import { Path } from '../paths.js';
+import { Config } from './config.js';
+import { Fs } from './fs.js';
+import { LockFile } from './lock-file.js';
+import matter from 'gray-matter';
+import path from 'node:path';
+
+export const Skills = {
+  async parse(filePath: string): Promise<Skill> {
+    try {
+      const content = await Fs.readFile(filePath);
+      const parsed = matter(content);
+
+      const config = await Config.get();
+      const relativePath = path.relative(config.hubDir, filePath);
+      const pathParts = relativePath.split(path.sep);
+
+      pathParts.pop();
+
+      const skillName = pathParts.pop();
+      if (!skillName) {
+        throw new Error('Could not extract skill name from path.');
+      }
+
+      const namespace = pathParts;
+      if (namespace.length === 0) {
+        throw new Error('Could not extract namespace from path.');
+      }
+
+      const fullName = namespace.join('.') + '.' + skillName;
+
+      return {
+        id: parsed.data.id,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        author: parsed.data.author,
+        version: parsed.data.version,
+        tags: parsed.data.tags,
+        content: parsed.content,
+        namespace,
+        skill: skillName,
+        fullName,
+        path: filePath,
+      };
+    } catch {
+      throw new Error('Failed to parse skill.');
+    }
+  },
+
+  async find(fullName: string): Promise<Skill> {
+    const config = await Config.get();
+    const parts = fullName.split('.');
+
+    const skillName = parts.pop();
+    if (!skillName) {
+      throw new Error('Invalid skill name.');
+    }
+
+    const namespace = parts;
+
+    const skillPath = path.join(config.hubDir, ...namespace, skillName, Path.SKILL_FILENAME);
+    return this.parse(skillPath);
+  },
+
+  async findAll(): Promise<Skill[]> {
+    const config = await Config.get();
+    const files = await Fs.glob('**/SKILL.md', config.hubDir);
+    return Promise.all(files.map((f) => this.parse(path.join(config.hubDir, f))));
+  },
+
+  async search(query: string): Promise<Skill[]> {
+    const skills = await this.findAll();
+    return skills.filter((skill) => skill.fullName.toLowerCase().includes(query.toLowerCase()));
+  },
+
+  async remove(skillPath: string): Promise<void> {
+    await Fs.remove(skillPath);
+  },
+
+  async add(
+    namespace: string[],
+    skillName: string,
+    sourceFile: string,
+    targetDir: string,
+    version: string = 'latest'
+  ): Promise<void> {
+    const fullSkillName = [...namespace, skillName].join('.');
+    const targetFile = path.join(targetDir, Path.SKILL_FILENAME);
+
+    await Fs.ensureDir(targetDir);
+    await Fs.copy(sourceFile, targetFile);
+
+    const existingSkill = await LockFile.find(fullSkillName);
+
+    const lockedSkill: LockedSkill = {
+      namespace,
+      skillName,
+      hubPath: path.join(...namespace, skillName, Path.SKILL_FILENAME),
+      addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      version,
+    };
+
+    await LockFile.add(fullSkillName, lockedSkill);
+  },
+} as const;

@@ -1,17 +1,22 @@
-import { removeSkill, logger } from '@iamramo/zanat-core';
+import { LockFile, Skills, Path, Logger } from '@iamramo/zanat-core';
+import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 export const removeCommand = async (skillArg: string): Promise<void> => {
-  logger.info(`Removing skill: ${skillArg}...`);
+  Logger.blue(`Removing skill: ${skillArg}...`);
 
   try {
     await ensureHubExists();
     const { namespace, skillName } = validateSkillArg(skillArg);
-    await removeSkill(namespace, skillName);
+    const fullSkillName = [...namespace, skillName].join('.');
+    const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
-    logger.success(`Removed ${skillArg}`);
+    await Skills.remove(skillPath);
+    await LockFile.remove(fullSkillName);
+
+    Logger.green(`Removed ${skillArg}`, { prefix: '✓' });
   } catch (error) {
-    logger.error('Failed to remove', error);
+    Logger.red('Failed to remove', { prefix: '✗' });
     process.exit(1);
   }
 };

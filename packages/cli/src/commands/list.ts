@@ -1,30 +1,31 @@
-import { getAddedSkills, logger } from '@iamramo/zanat-core';
-import chalk from 'chalk';
+import { LockFile, Display, Logger } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const listCommand = async (): Promise<void> => {
   try {
     await ensureHubExists();
 
-    const skills = await getAddedSkills();
+    const skills = await LockFile.findAll();
+    const skillNames = Object.keys(skills);
 
-    if (skills.length === 0) {
-      logger.dim('No skills added.');
-      logger.dim('Run `zanat search` to find skills or `zanat add <skill>` to add one.');
+    if (skillNames.length === 0) {
+      Logger.gray('No skills added.');
+      Logger.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.');
       return;
     }
 
-    logger.info('Added skills:');
-    logger.blank();
+    Logger.blue('Added skills:');
+    Logger.blank();
 
-    skills.forEach((skill: string) => {
-      console.log(chalk.green('•'), skill);
+    skillNames.forEach((skillName: string) => {
+      const skill = skills[skillName];
+      Logger.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, { prefix: '•' });
     });
 
-    logger.blank();
-    logger.dim(`Total: ${skills.length} skill${skills.length === 1 ? '' : 's'}`);
+    Logger.blank();
+    Logger.gray(`Total: ${skillNames.length} skill${skillNames.length === 1 ? '' : 's'}`);
   } catch (error) {
-    logger.error('Failed to list skills', error);
+    Logger.red('Failed to list skills', { prefix: '✗' });
     process.exit(1);
   }
 };

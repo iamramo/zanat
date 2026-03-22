@@ -1,37 +1,38 @@
 import {
-  addSkill,
   updateSkill,
-  skillExists,
-  logger,
+  CommitShaSchema,
+  Logger,
   confirm,
+  LockFile,
+  Skills,
+  Config,
+  Path,
 } from '@iamramo/zanat-core';
+import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
 interface AddOptions {
   commit?: string;
 }
 
-const validateCommitSha = (sha: string): void => {
-  if (!/^[a-f0-9]{7,40}$/i.test(sha)) {
-    throw new Error('Invalid commit SHA format. Use at least 7 hexadecimal characters.');
-  }
-};
-
 export const addCommand = async (skillArg: string, options: AddOptions): Promise<void> => {
-  logger.info(`Adding skill: ${skillArg}...`);
+  Logger.blue(`Adding skill: ${skillArg}...`);
 
   try {
     await ensureHubExists();
     const { namespace, skillName } = validateSkillArg(skillArg);
 
     if (options.commit) {
-      validateCommitSha(options.commit);
+      CommitShaSchema.parse(options.commit);
     }
 
-    const exists = await skillExists(namespace, skillName);
+    const fullSkillName = [...namespace, skillName].join('.');
+    const exists = !!(await LockFile.find(fullSkillName));
     if (exists) {
       if (options.commit) {
-        logger.error(`Skill ${skillArg} is already added. Use \`zanat update\` to change the pinned version.`);
+        Logger.red(
+          `Skill ${skillArg} is already added. Use \`zanat update\` to change the pinned version.`
+        );
         process.exit(1);
       }
 
@@ -41,19 +42,26 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
       });
 
       if (!shouldUpdate) {
-        logger.info('Cancelled');
+        Logger.blue('Cancelled');
         return;
       }
 
       await updateSkill(namespace, skillName);
-      logger.success(`Updated ${skillArg}`);
+      Logger.green(`Updated ${skillArg}`, { prefix: '✓' });
       return;
     }
 
-    await addSkill(namespace, skillName, options.commit);
-    logger.success(`Added ${skillArg}${options.commit ? ` (pinned to ${options.commit.slice(0, 7)})` : ''}`);
+    const config = await Config.get();
+    const sourcePath = path.join(config.hubDir, ...namespace, skillName);
+    const targetPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
+    const skillFile = path.join(sourcePath, Path.SKILL_FILENAME);
+
+    await Skills.add(namespace, skillName, skillFile, targetPath, options.commit);
+    Logger.green(
+      `Added ${skillArg}${options.commit ? ` (pinned to ${options.commit.slice(0, 7)})` : ''}`
+    );
   } catch (error) {
-    logger.error('Failed to add', error);
+    Logger.red('Failed to add', { prefix: '✗' });
     process.exit(1);
   }
 };

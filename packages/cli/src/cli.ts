@@ -35,6 +35,7 @@ program
   .command('update [skill]')
   .description('Update skill(s) from hub (updates all if no skill specified)')
   .option('-y, --yes', 'Skip confirmation prompt when updating all skills')
+  .option('-c, --commit <sha>', 'Pin to specific commit SHA (at least 7 characters, requires skill name)')
   .action(updateCommand);
 
 program.command('list').description('List added skills').action(listCommand);

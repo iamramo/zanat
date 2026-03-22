@@ -1,70 +1,60 @@
-import { getHubStatus, getAddedSkills, loadConfig, logger } from '@iamramo/zanat-core';
-import chalk from 'chalk';
-
-const formatLastSync = (lastSync?: string): string => {
-  if (!lastSync) return 'Never';
-
-  const last = new Date(lastSync);
-  const now = new Date();
-  const diffMs = now.getTime() - last.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
-  return last.toLocaleDateString();
-};
+import {
+  Time,
+  Fs,
+  Git,
+  LockFile,
+  Display,
+  Config,
+  Logger,
+} from '@iamramo/zanat-core';
 
 export const statusCommand = async (): Promise<void> => {
   try {
-    const hubStatus = await getHubStatus();
-    const skills = await getAddedSkills();
-    const config = await loadConfig();
+    const skills = await LockFile.findAll();
+    const skillNames = Object.keys(skills);
+    const config = await Config.get();
 
-    logger.info('Hub Status:');
-    logger.blank();
+    Logger.blue('Hub Status:');
+    Logger.blank();
 
-    if (!hubStatus.initialized) {
-      logger.dim('Not initialized');
-      logger.dim('Run `zanat init` to set up');
+    const hubExists = await Fs.exists(`${config.hubDir}/.git`);
+    if (!hubExists) {
+      Logger.gray('Not initialized');
+      Logger.gray('Run `zanat init` to set up');
       return;
     }
 
-    console.log(chalk.green('•'), 'Initialized:', chalk.bold('yes'));
+    Logger.green(`Initialized: ${Logger.bold('yes')}`, { prefix: '•' });
+    Logger.green(`Repository: ${Logger.bold(config.hubUrl)}`, { prefix: '•' });
+    Logger.green(`Branch: ${Logger.bold(config.hubBranch)}`, { prefix: '•' });
+    Logger.green(`Last sync: ${Logger.bold(Time.ago(config?.lastSync))}`, { prefix: '•' });
 
-    if (hubStatus.remoteUrl) {
-      console.log(chalk.green('•'), 'Repository:', chalk.bold(hubStatus.remoteUrl));
-    }
-
-    if (hubStatus.branch) {
-      console.log(chalk.green('•'), 'Branch:', chalk.bold(hubStatus.branch));
-    }
-
-    console.log(chalk.green('•'), 'Last sync:', chalk.bold(formatLastSync(config?.lastSync)));
-
-    if (hubStatus.behind > 0) {
-      logger.warning(`Behind: ${hubStatus.behind} commit${hubStatus.behind === 1 ? '' : 's'}`);
+    const behind = await Git.behind(config.hubDir, config.hubBranch);
+    if (behind > 0) {
+      Logger.yellow(`Behind: ${behind} commit${behind === 1 ? '' : 's'}`, { prefix: '•' });
     } else {
-      console.log(chalk.green('•'), 'Behind: 0 commits (up-to-date)');
+      Logger.green(`Behind: ${Logger.bold('0 commits (up-to-date)')}`, { prefix: '•' });
     }
 
-    logger.blank();
-    logger.info('Skills:');
-    logger.blank();
-    console.log(chalk.green('•'), 'Added:', chalk.bold(skills.length.toString()));
+    Logger.blank();
+    Logger.blue('Skills:');
+    Logger.blank();
+    Logger.green(`Added: ${Logger.bold(skillNames.length.toString())}`, { prefix: '•' });
 
-    if (skills.length > 0) {
-      skills.forEach((skill: string) => {
-        console.log('  ', chalk.dim('•'), skill);
+    if (skillNames.length > 0) {
+      skillNames.forEach((skillName: string) => {
+        const skill = skills[skillName];
+
+        Logger.gray(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
+          prefix: '•',
+          spacing: 2,
+        });
       });
     }
 
-    logger.blank();
+    Logger.blank();
   } catch (error) {
-    logger.error('Failed to get status', error);
+    Logger.red('Failed to get status', { prefix: '✗' });
     process.exit(1);
   }
 };

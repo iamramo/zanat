@@ -1,22 +1,20 @@
-import { pullHub, saveConfig, loadConfig, logger } from '@iamramo/zanat-core';
+import { Git, Config, Logger } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 export const syncCommand = async (): Promise<void> => {
-  logger.info('Syncing with hub...');
+  Logger.blue('Syncing with hub...');
 
   try {
     await ensureHubExists();
-    await pullHub();
+    const config = await Config.get();
+    await Git.pull(config.hubDir);
 
-    const config = await loadConfig();
-    if (config) {
-      config.lastSync = new Date().toISOString();
-      await saveConfig(config);
-    }
+    config.lastSync = new Date().toISOString();
+    await Config.update(config);
 
-    logger.success('Hub synced successfully');
+    Logger.green('Hub synced successfully', { prefix: '✓' });
   } catch (error) {
-    logger.error('Failed to sync', error);
+    Logger.red('Failed to sync', { prefix: '✗' });
     process.exit(1);
   }
 };
