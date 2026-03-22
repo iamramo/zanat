@@ -33,4 +33,10 @@ export const Path = {
   getSkillFile(skillDir: string): string {
     return path.join(skillDir, this.SKILL_FILENAME);
   },
+
+  toSkillParts(skillArg: string): { namespace: string[]; skillName: string } {
+    const parts = skillArg.split('.');
+    const skillName = parts.pop()!;
+    return { namespace: parts, skillName };
+  },
 };

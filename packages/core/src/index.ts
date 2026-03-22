@@ -18,8 +18,4 @@ export { Display } from './services/display.js';
 
 export { CommitShaSchema, type CommitSha } from './schemas/commit-sha.js';
 
-export {
-  validateSegment,
-  parseSkillArg,
-  type ParsedNamespace,
-} from './domain/namespace.js';
+
