@@ -2,6 +2,7 @@ import type { ILockFile, ISkillLock } from '../schemas/lock-file.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
+import { Zod } from '../index.js';
 
 const DEFAULT_LOCK_FILE: ILockFile = {
   version: 1,
@@ -12,7 +13,8 @@ export const LockFile = {
   async get(): Promise<ILockFile> {
     try {
       const content = await Fs.readFile(Path.SKILL_LOCK_FILE);
-      return JSON.parse(content);
+      const parsed = JSON.parse(content);
+      return Zod.LockFileSchema.parse(parsed);
     } catch {
       throw new Error('Could not read the lock file.');
     }
@@ -28,19 +30,21 @@ export const LockFile = {
 
   async update(lock: ILockFile): Promise<void> {
     try {
-      await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(lock));
+      const validated = Zod.LockFileSchema.parse(lock);
+      await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(validated));
     } catch {
       throw new Error('Could not update the lock file.');
     }
   },
 
   async add(fullSkillName: string, skill: ISkillLock): Promise<void> {
+    const validatedSkill = Zod.SkillLockSchema.parse(skill);
     const lock = await this.get();
     const updatedLock = {
       ...lock,
       skills: {
         ...lock.skills,
-        [fullSkillName]: skill,
+        [fullSkillName]: validatedSkill,
       },
     };
     await this.update(updatedLock);

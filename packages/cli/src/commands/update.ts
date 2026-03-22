@@ -1,15 +1,17 @@
-import { Log, Prompt, LockFile, Path, Skill, Config } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, Path, Skill, Config, Zod } from '@iamramo/zanat-core';
 
-export const updateCommand = async (skillArg: string | undefined): Promise<void> => {
+export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
   try {
     await Config.validate();
 
     // Update one skill
-    if (skillArg) {
-      const { namespace, skillName } = Path.toSkillParts(skillArg);
+    if (fullSkillName) {
+      Zod.FullSkillNameSchema.parse(fullSkillName);
+
+      const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
       await Skill.update(namespace, skillName);
-      Log.green(`Updated ${skillArg}`, { prefix: '✓' });
+      Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
       return;
     }
 

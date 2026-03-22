@@ -1,9 +1,10 @@
 import { ConfigSchema } from '../schemas/config.js';
-import { SkillOpenStandardSchema, SkillSchema } from '../schemas/skill.js';
+import { FullSkillNameSchema, SkillOpenStandardSchema, SkillSchema } from '../schemas/skill.js';
 import { LockFileSchema, SkillLockSchema } from '../schemas/lock-file.js';
 
 export const Zod = {
   ConfigSchema,
+  FullSkillNameSchema,
   SkillOpenStandardSchema,
   SkillSchema,
   LockFileSchema,

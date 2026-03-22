@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { FULL_SKILL_NAME_REGEX } from './common.js';
+
+export const FullSkillNameSchema = z
+  .string()
+  .min(1, 'Skill name is required')
+  .regex(
+    FULL_SKILL_NAME_REGEX,
+    'Skill name must be in format: namespace.skill-name (lowercase, hyphens, dots only)'
+  );
 
 export const SkillOpenStandardSchema = z
   .object({

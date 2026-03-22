@@ -4,6 +4,7 @@ import { Path } from '../path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
+import { Zod } from '../index.js';
 import matter from 'gray-matter';
 import path from 'node:path';
 
@@ -31,13 +32,10 @@ export const Skill = {
 
       const fullName = namespace.join('.') + '.' + skillName;
 
+      const frontmatter = Zod.SkillOpenStandardSchema.parse(parsed.data);
+
       return {
-        id: parsed.data.id,
-        name: parsed.data.name,
-        description: parsed.data.description,
-        author: parsed.data.author,
-        version: parsed.data.version,
-        tags: parsed.data.tags,
+        ...frontmatter,
         content: parsed.content,
         namespace,
         skill: skillName,

@@ -1,17 +1,17 @@
-import { Log, Prompt, LockFile, Skill, Path, Config } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, Skill, Path, Config, Zod } from '@iamramo/zanat-core';
 
-export const addCommand = async (skillArg: string): Promise<void> => {
+export const addCommand = async (fullSkillName: string): Promise<void> => {
   try {
     await Config.validate();
+    Zod.FullSkillNameSchema.parse(fullSkillName);
 
-    const { namespace, skillName } = Path.toSkillParts(skillArg);
-    const fullSkillName = Path.getFullSkillName(namespace, skillName);
+    const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
     const exists = await LockFile.find(fullSkillName);
 
     if (exists) {
       const shouldUpdate = await Prompt.confirm({
-        message: `Skill ${skillArg} is already added. Update from hub?`,
+        message: `Skill ${fullSkillName} is already added. Update from hub?`,
         default: true,
       });
 
@@ -21,7 +21,7 @@ export const addCommand = async (skillArg: string): Promise<void> => {
       }
 
       await Skill.update(namespace, skillName);
-      Log.green(`Updated ${skillArg}`, { prefix: '✓' });
+      Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
       return;
     }
 
@@ -30,7 +30,7 @@ export const addCommand = async (skillArg: string): Promise<void> => {
     const skillFile = Path.getSkillFile(sourcePath);
 
     await Skill.add(namespace, skillName, skillFile, targetPath);
-    Log.green(`Added ${skillArg}`);
+    Log.green(`Added ${fullSkillName}`);
   } catch {
     Log.red('Failed to add', { prefix: '✗' });
     process.exit(1);

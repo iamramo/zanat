@@ -24,7 +24,8 @@ export const Config = {
   async get(): Promise<IConfig> {
     try {
       const content = await Fs.readFile(Path.CONFIG_FILE);
-      return JSON.parse(content);
+      const parsed = JSON.parse(content);
+      return Zod.ConfigSchema.parse(parsed);
     } catch {
       throw new Error('Could not get the config.');
     }
@@ -32,7 +33,8 @@ export const Config = {
 
   async update(config: IConfig): Promise<void> {
     try {
-      await Fs.writeFile(Path.CONFIG_FILE, Format.json(config));
+      const validated = Zod.ConfigSchema.parse(config);
+      await Fs.writeFile(Path.CONFIG_FILE, Format.json(validated));
     } catch {
       throw new Error('Could not update the config.');
     }
