@@ -1,7 +1,5 @@
 import { z } from 'zod';
-
-// Regex for git URLs: https://, http://, or git@ (SSH)
-const GIT_URL_REGEX = /^(https?:\/\/|git@)[^\s]+$/;
+import { GIT_URL_REGEX } from './common.js';
 
 export const ConfigSchema = z.object({
   hubUrl: z

@@ -5,6 +5,9 @@ import { type IConfig } from '../schemas/config.js';
 import { Zod } from '../index.js';
 
 export const Config = {
+  async exists(): Promise<boolean> {
+    return !!(await Config.get().catch(() => undefined));
+  },
   async validate(): Promise<void> {
     // Check if exists
     const config = await this.get().catch(() => undefined);

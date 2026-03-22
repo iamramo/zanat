@@ -1,2 +1,1 @@
-export const STARTS_WITH_LOWERCASE = /^[a-z]/;
-export const ALLOWED_CHARS_ONLY = /^[a-z0-9_-]+$/;
+export const GIT_URL_REGEX = /^(https?:\/\/|git@)[^\s]+$/;

@@ -1,18 +1,20 @@
-import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt } from '@iamramo/zanat-core';
+import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod } from '@iamramo/zanat-core';
 
 export const initCommand = async (): Promise<void> => {
   Log.blue('Initializing Zanat...');
   Log.blank();
 
   try {
-    const existingConfig = await Config.get().catch(() => undefined);
+    const hasConfig = await Config.exists();
 
-    if (existingConfig) {
+    if (hasConfig) {
       Log.blue('Zanat is already initialized.');
       Log.blank();
 
-      Log.blue(`Repository: ${existingConfig.hubUrl}`);
-      Log.blue(`Branch: ${existingConfig.hubBranch}`);
+      const config = await Config.get();
+
+      Log.blue(`Repository: ${config.hubUrl}`);
+      Log.blue(`Branch: ${config.hubBranch}`);
 
       Log.blank();
 
@@ -29,7 +31,7 @@ export const initCommand = async (): Promise<void> => {
 
       Log.blank();
       Log.blue('Removing existing hub...');
-      await Fs.remove(existingConfig.hubDir);
+      await Fs.remove(config.hubDir);
       Log.green('Removed existing hub', { prefix: '✓' });
       Log.blank();
     }
@@ -37,6 +39,7 @@ export const initCommand = async (): Promise<void> => {
     const hubUrl = await Prompt.input({
       message: 'Hub repository URL:',
       required: true,
+      validate: Prompt.validate(Zod.ConfigSchema),
     });
 
     const hubBranch = await Prompt.input({
