@@ -1,17 +1,5 @@
-import { Skill, Log } from '@iamramo/zanat-core';
+import { Skill, Log, Display } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
-
-const ELLIPSIS = '...';
-
-const truncateDescription = (description: string, maxLength = 256): string => {
-  if (description.length <= maxLength) return description;
-
-  const lastSpace = description.lastIndexOf(' ', maxLength - ELLIPSIS.length);
-  if (lastSpace === -1) {
-    return description.slice(0, maxLength - ELLIPSIS.length) + ELLIPSIS;
-  }
-  return description.slice(0, lastSpace) + ELLIPSIS;
-};
 
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
@@ -33,7 +21,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
     results.forEach((skill) => {
       Log.green(skill.fullName, { prefix: '•' });
-      const truncatedDesc = truncateDescription(skill.description);
+      const truncatedDesc = Display.truncate(skill.description);
       Log.gray(truncatedDesc, { spacing: 2 });
       Log.blank();
     });
