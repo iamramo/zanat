@@ -59,18 +59,18 @@ This prevents conflicts with other skill managers (like npx skills).
 
 ```markdown
 ---
-id: code-review
-name: Code Review
+name: code-review
 description: Helps review code for quality and best practices
-author: yurchi
-version: 1.0.0
-tags: [review, quality, best-practices]
 ---
 
 # Code Review
 
 Instructions for the agent go here...
 ```
+
+**Required fields:** `name`, `description`
+
+**Optional fields:** `license`, `compatibility`, `disable-model-invocation`, `user-invocable`, `argument-hint`, `metadata`
 
 ### Storage Approach
 

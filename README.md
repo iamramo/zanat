@@ -107,7 +107,14 @@ Configuration is stored in `~/.zanat/config.json`:
 
 ## Creating Skills
 
-Skills are markdown files with YAML frontmatter. See the [zanat-hub](https://github.com/iamramo/zanat-hub) repository for examples.
+Skills are markdown files with YAML frontmatter. Required fields: `name`, `description`. Optional fields: `license`, `compatibility`, `disable-model-invocation`, `user-invocable`, `argument-hint`, `metadata`.
+
+**Naming Requirements:**
+- Skill names must be lowercase with hyphens (e.g., `code-review`, `react-hooks`)
+- Names must match the folder name
+- Namespaced format: `namespace.skill-name` or `company.team.skill-name`
+
+See the [zanat-hub](https://github.com/iamramo/zanat-hub) repository for examples.
 
 ## License
 
