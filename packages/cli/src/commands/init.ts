@@ -1,4 +1,4 @@
-import { Path, Config, Fs, Git, Log, Format, Prompt } from '@iamramo/zanat-core';
+import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt } from '@iamramo/zanat-core';
 
 export const initCommand = async (): Promise<void> => {
   Log.blue('Initializing Zanat...');
@@ -56,6 +56,10 @@ export const initCommand = async (): Promise<void> => {
     Log.green(`Created ${Path.ZANAT_DIR}`, { prefix: '✓' });
 
     await Fs.ensureDir(Path.AGENTS_DIR);
+    Log.green(`Created ${Path.AGENTS_DIR}`, { prefix: '✓' });
+
+    await LockFile.ensure();
+    Log.green(`Created ${Path.SKILL_LOCK_FILE}`, { prefix: '✓' });
 
     Log.blank();
     Log.blue('Cloning hub repository...');

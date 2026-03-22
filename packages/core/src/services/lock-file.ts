@@ -3,6 +3,11 @@ import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 
+const DEFAULT_LOCK_FILE: ILockFile = {
+  version: 1,
+  skills: {},
+};
+
 export const LockFile = {
   async get(): Promise<ILockFile> {
     try {
@@ -10,6 +15,14 @@ export const LockFile = {
       return JSON.parse(content);
     } catch {
       throw new Error('Could not read the lock file.');
+    }
+  },
+
+  async ensure(): Promise<void> {
+    try {
+      await Fs.readFile(Path.SKILL_LOCK_FILE);
+    } catch {
+      await this.update(DEFAULT_LOCK_FILE);
     }
   },
 
