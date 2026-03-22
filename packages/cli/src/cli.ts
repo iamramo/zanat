@@ -33,7 +33,6 @@ program
 program
   .command('update [skill]')
   .description('Update skill(s) from hub (updates all if no skill specified)')
-  .option('-y, --yes', 'Skip confirmation prompt when updating all skills')
   .action(updateCommand);
 
 program.command('list').description('List added skills').action(listCommand);

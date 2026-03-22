@@ -1,10 +1,7 @@
 import { Log, Prompt, LockFile, Path, Skill } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
-export const updateCommand = async (
-  skillArg: string | undefined,
-  options: { yes?: boolean }
-): Promise<void> => {
+export const updateCommand = async (skillArg: string | undefined): Promise<void> => {
   try {
     await ensureHubExists();
 
@@ -27,16 +24,14 @@ export const updateCommand = async (
       return;
     }
 
-    if (!options.yes) {
-      const shouldUpdate = await Prompt.confirm({
-        message: `This will update ${addedSkills.length} skill(s). Continue?`,
-        default: true,
-      });
+    const shouldUpdate = await Prompt.confirm({
+      message: `This will update ${addedSkills.length} skill(s). Continue?`,
+      default: true,
+    });
 
-      if (!shouldUpdate) {
-        Log.blue('Update cancelled');
-        return;
-      }
+    if (!shouldUpdate) {
+      Log.blue('Update cancelled');
+      return;
     }
 
     Log.blue(`Updating ${addedSkills.length} skill(s)...`);
