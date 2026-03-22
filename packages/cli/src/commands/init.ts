@@ -39,7 +39,7 @@ export const initCommand = async (): Promise<void> => {
     const hubUrl = await Prompt.input({
       message: 'Hub repository URL:',
       required: true,
-      validate: Prompt.validate(Zod.ConfigSchema),
+      validate: Prompt.validate(Zod.ConfigSchema.shape.hubUrl),
     });
 
     const hubBranch = await Prompt.input({
