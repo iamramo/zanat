@@ -45,11 +45,13 @@ export const initCommand = async (): Promise<void> => {
     const hubBranch = await Prompt.input({
       message: 'Hub branch:',
       default: 'main',
+      validate: Prompt.validate(Zod.ConfigSchema.shape.hubBranch),
     });
 
     const hubDir = await Prompt.input({
       message: 'Hub directory path:',
       default: `${Path.ZANAT_DIR}/hub`,
+      validate: Prompt.validate(Zod.ConfigSchema.shape.hubDir),
     });
 
     Log.blank();
