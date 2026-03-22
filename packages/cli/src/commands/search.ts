@@ -5,11 +5,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
   try {
     await ensureHubExists();
 
-    if (query) {
-      Log.blue(`Searching for: "${query}"...`);
-    } else {
-      Log.blue('Available skills:');
-    }
+    query ? Log.blue(`Searching for: "${query}"...`) : Log.blue('Available skills:');
     Log.blank();
 
     const results = query ? await Skill.search(query) : await Skill.findAll();
@@ -26,9 +22,9 @@ export const searchCommand = async (query?: string): Promise<void> => {
       Log.blank();
     });
 
-    Log.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
+    Log.gray(`Found ${results.length} skill(s)`);
     Log.blank();
-    Log.gray('Add a skill with: zanat add <namespace.skill-name>');
+    Log.gray('Add a skill with: zanat add <skill>');
   } catch {
     Log.red('Failed to search', { prefix: '✗' });
     process.exit(1);

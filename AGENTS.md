@@ -15,7 +15,7 @@ This file provides context about the Zanat project for future AI agents.
 
 ### Naming Convention
 
-Skills are added with the format: `zanat.<source>.<skill-name>`
+Skills are added with the format: `<source>.<skill-name>`
 
 Examples:
 
@@ -100,7 +100,7 @@ Planned but not part of MVP:
 ```bash
 zanat init                    # Create ~/.zanat/, clone hub repo
 zanat sync                    # Pull latest hub changes
-zanat add <source>/<skill> # Add skill
+zanat add <skill>             # Add skill
 zanat list                    # List added skills
 zanat search [query]          # Search available skills
 ```
