@@ -1,11 +1,9 @@
 import {
-  updateSkill,
   CommitShaSchema,
   Logger,
   confirm,
   LockFile,
   Skills,
-  Config,
   Path,
 } from '@iamramo/zanat-core';
 import path from 'node:path';
@@ -46,15 +44,14 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
         return;
       }
 
-      await updateSkill(namespace, skillName);
+      await Skills.update(namespace, skillName);
       Logger.green(`Updated ${skillArg}`, { prefix: '✓' });
       return;
     }
 
-    const config = await Config.get();
-    const sourcePath = path.join(config.hubDir, ...namespace, skillName);
-    const targetPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
-    const skillFile = path.join(sourcePath, Path.SKILL_FILENAME);
+    const sourcePath = await Path.getSkillHubDir(namespace, skillName);
+    const targetPath = Path.getSkillTargetDir(fullSkillName);
+    const skillFile = Path.getSkillFile(sourcePath);
 
     await Skills.add(namespace, skillName, skillFile, targetPath, options.commit);
     Logger.green(

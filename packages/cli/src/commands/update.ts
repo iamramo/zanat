@@ -1,6 +1,4 @@
 import {
-  updateSkill,
-  updateAllSkills,
   Config,
   CommitShaSchema,
   Logger,
@@ -8,6 +6,7 @@ import {
   LockFile,
   Display,
   Path,
+  Skills,
 } from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
@@ -70,7 +69,7 @@ export const updateCommand = async (
       }
 
       Logger.blue(`Updating skill: ${skillArg}...`);
-      await updateSkill(namespace, skillName, options.commit);
+      await Skills.update(namespace, skillName);
 
       if (options.commit) {
         Logger.green(`Updated ${skillArg} and pinned to ${options.commit.slice(0, 7)}`, {
@@ -102,22 +101,8 @@ export const updateCommand = async (
       }
 
       Logger.blue(`Updating ${addedSkills.length} skill(s)...`);
-      const { updated, failed } = await updateAllSkills();
-
-      if (updated.length > 0) {
-        Logger.green(`Updated ${updated.length} skill(s)`, { prefix: '✓' });
-        for (const skill of updated) {
-          Logger.green(skill, { prefix: '✓', spacing: 2 });
-        }
-      }
-
-      if (failed.length > 0) {
-        Logger.red(`Failed to update ${failed.length} skill(s)`, { prefix: '✗' });
-        for (const { skill, error } of failed) {
-          Logger.red(`${skill}: ${error}`, { prefix: '✗', spacing: 2 });
-        }
-        process.exit(1);
-      }
+      await Skills.updateAll();
+      Logger.green('Updated all skills', { prefix: '✓' });
     }
   } catch (error) {
     Logger.red('Failed to update', { prefix: '✗' });

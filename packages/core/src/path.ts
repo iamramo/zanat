@@ -1,5 +1,6 @@
 import { homedir } from 'node:os';
 import path from 'node:path';
+import { Config } from './services/config.js';
 
 const home = homedir();
 
@@ -11,10 +12,25 @@ export const Path = {
   AGENTS_SKILLS_DIR: `${home}/.agents/skills`,
   SKILL_LOCK_FILE: `${home}/.agents/.zanat-lock.json`,
   SKILL_FILENAME: 'SKILL.md',
+
   getFullSkillName(namespace: string[], skillName: string): string {
     return [...namespace, skillName].join('.');
   },
+
   getSkillFilePath(namespace: string[], skillName: string): string {
     return path.join(...namespace, skillName, this.SKILL_FILENAME);
+  },
+
+  async getSkillHubDir(namespace: string[], skillName: string): Promise<string> {
+    const config = await Config.get();
+    return path.join(config.hubDir, ...namespace, skillName);
+  },
+
+  getSkillTargetDir(fullSkillName: string): string {
+    return path.join(this.AGENTS_SKILLS_DIR, fullSkillName);
+  },
+
+  getSkillFile(skillDir: string): string {
+    return path.join(skillDir, this.SKILL_FILENAME);
   },
 };

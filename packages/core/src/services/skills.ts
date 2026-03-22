@@ -105,4 +105,39 @@ export const Skills = {
 
     await LockFile.add(fullSkillName, lockedSkill);
   },
-} as const;
+
+  async update(namespace: string[], skillName: string): Promise<void> {
+    const fullSkillName = Path.getFullSkillName(namespace, skillName);
+    const skillPath = Path.getSkillTargetDir(fullSkillName);
+
+    const exists = await Fs.exists(skillPath);
+    if (!exists) {
+      throw new Error(`Skill not added: ${fullSkillName}`);
+    }
+
+    const existingSkill = await LockFile.find(fullSkillName);
+    if (!existingSkill) {
+      throw new Error(`Skill not tracked in lock file: ${fullSkillName}`);
+    }
+
+    const sourcePath = await Path.getSkillHubDir(namespace, skillName);
+    const skillFile = Path.getSkillFile(sourcePath);
+
+    const hubExists = await Fs.exists(skillFile);
+    if (!hubExists) {
+      throw new Error(`Skill not found in hub: ${fullSkillName}`);
+    }
+
+    await this.add(namespace, skillName, skillFile, skillPath, 'latest');
+  },
+
+  async updateAll(): Promise<void> {
+    const skills = await LockFile.findAll();
+
+    for (const fullSkillName of Object.keys(skills)) {
+      const skill = skills[fullSkillName];
+      if (!skill) continue;
+      await this.update(skill.namespace, skill.skillName);
+    }
+  },
+};

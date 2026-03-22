@@ -14,10 +14,7 @@ export { Skills } from './services/skills.js';
 export { Logger } from './services/logger.js';
 export { Display } from './services/display.js';
 
-export {
-  updateSkill,
-  updateAllSkills,
-} from './domain/skills.js';
+
 
 export { CommitShaSchema, type CommitSha } from './schemas/commit-sha.js';
 
