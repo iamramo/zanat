@@ -1,4 +1,4 @@
-import type { Skill } from '../types/skills.js';
+import type { Skill as SkillType } from '../types/skills.js';
 import type { LockedSkill } from '../types/lock-file.js';
 import { Path } from '../path.js';
 import { Config } from './config.js';
@@ -7,8 +7,8 @@ import { LockFile } from './lock-file.js';
 import matter from 'gray-matter';
 import path from 'node:path';
 
-export const Skills = {
-  async parse(filePath: string): Promise<Skill> {
+export const Skill = {
+  async parse(filePath: string): Promise<SkillType> {
     try {
       const content = await Fs.readFile(filePath);
       const parsed = matter(content);
@@ -49,7 +49,7 @@ export const Skills = {
     }
   },
 
-  async find(fullName: string): Promise<Skill> {
+  async find(fullName: string): Promise<SkillType | undefined> {
     const config = await Config.get();
     const parts = fullName.split('.');
 
@@ -61,22 +61,25 @@ export const Skills = {
     const namespace = parts;
 
     const skillPath = path.join(config.hubDir, ...namespace, skillName, Path.SKILL_FILENAME);
-    return this.parse(skillPath);
+    return this.parse(skillPath).catch(() => undefined);
   },
 
-  async findAll(): Promise<Skill[]> {
+  async findAll(): Promise<SkillType[]> {
     const config = await Config.get();
     const files = await Fs.glob('**/SKILL.md', config.hubDir);
     return Promise.all(files.map((f) => this.parse(path.join(config.hubDir, f))));
   },
 
-  async search(query: string): Promise<Skill[]> {
+  async search(query: string): Promise<SkillType[]> {
     const skills = await this.findAll();
     return skills.filter((skill) => skill.fullName.toLowerCase().includes(query.toLowerCase()));
   },
 
   async remove(skillPath: string): Promise<void> {
     await Fs.remove(skillPath);
+
+    const fullSkillName = path.basename(skillPath);
+    await LockFile.remove(fullSkillName);
   },
 
   async add(

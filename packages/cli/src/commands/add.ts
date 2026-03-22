@@ -1,4 +1,4 @@
-import { CommitShaSchema, Logger, confirm, LockFile, Skills, Path } from '@iamramo/zanat-core';
+import { CommitShaSchema, Logger, confirm, LockFile, Skill, Path } from '@iamramo/zanat-core';
 import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
@@ -37,7 +37,7 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
         return;
       }
 
-      await Skills.update(namespace, skillName);
+      await Skill.update(namespace, skillName);
       Logger.green(`Updated ${skillArg}`, { prefix: '✓' });
       return;
     }
@@ -46,11 +46,11 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
     const targetPath = Path.getSkillTargetDir(fullSkillName);
     const skillFile = Path.getSkillFile(sourcePath);
 
-    await Skills.add(namespace, skillName, skillFile, targetPath, options.commit);
+    await Skill.add(namespace, skillName, skillFile, targetPath, options.commit);
     Logger.green(
       `Added ${skillArg}${options.commit ? ` (pinned to ${options.commit.slice(0, 7)})` : ''}`
     );
-  } catch (error) {
+  } catch {
     Logger.red('Failed to add', { prefix: '✗' });
     process.exit(1);
   }

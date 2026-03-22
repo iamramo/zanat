@@ -13,7 +13,7 @@ export const syncCommand = async (): Promise<void> => {
     await Config.update(config);
 
     Logger.green('Hub synced successfully', { prefix: '✓' });
-  } catch (error) {
+  } catch {
     Logger.red('Failed to sync', { prefix: '✗' });
     process.exit(1);
   }

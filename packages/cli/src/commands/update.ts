@@ -6,7 +6,7 @@ import {
   LockFile,
   Display,
   Path,
-  Skills,
+  Skill,
 } from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
@@ -69,7 +69,7 @@ export const updateCommand = async (
       }
 
       Logger.blue(`Updating skill: ${skillArg}...`);
-      await Skills.update(namespace, skillName);
+      await Skill.update(namespace, skillName);
 
       if (options.commit) {
         Logger.green(`Updated ${skillArg} and pinned to ${options.commit.slice(0, 7)}`, {
@@ -101,10 +101,10 @@ export const updateCommand = async (
       }
 
       Logger.blue(`Updating ${addedSkills.length} skill(s)...`);
-      await Skills.updateAll();
+      await Skill.updateAll();
       Logger.green('Updated all skills', { prefix: '✓' });
     }
-  } catch (error) {
+  } catch {
     Logger.red('Failed to update', { prefix: '✗' });
     process.exit(1);
   }

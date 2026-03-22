@@ -75,7 +75,7 @@ export const initCommand = async (): Promise<void> => {
 
     Logger.blank();
     Logger.green('Zanat initialized successfully!', { prefix: '✓' });
-  } catch (error) {
+  } catch {
     Logger.red('Failed to initialize', { prefix: '✗' });
     process.exit(1);
   }

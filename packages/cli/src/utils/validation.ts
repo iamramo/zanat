@@ -6,16 +6,14 @@ export const validateSkillArg = (skillArg: string): SkillArg => {
   if (!result.success) {
     const errorMessage = result.error.issues[0]?.message ?? 'Invalid skill format';
     Logger.red(errorMessage, { prefix: '✗' });
-    Logger.gray('Example: mycompany.hello-world or mycompany.team.hello-world');
     process.exit(1);
   }
   return result.data;
 };
 
 export const ensureHubExists = async (): Promise<void> => {
-  const config = await Config.get();
-  const hubExists = await Fs.exists(`${config.hubDir}/.git`);
-  if (!hubExists) {
+  const config = await Config.get().catch(() => undefined);
+  if (!config) {
     Logger.red('Hub not found. Run `zanat init` first.', { prefix: '✗' });
     process.exit(1);
   }

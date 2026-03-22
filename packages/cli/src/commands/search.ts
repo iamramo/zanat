@@ -1,4 +1,4 @@
-import { Skills, Logger } from '@iamramo/zanat-core';
+import { Skill, Logger } from '@iamramo/zanat-core';
 import { ensureHubExists } from '../utils/validation.js';
 
 const ELLIPSIS = '...';
@@ -24,7 +24,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
     }
     Logger.blank();
 
-    const results = query ? await Skills.search(query) : await Skills.findAll();
+    const results = query ? await Skill.search(query) : await Skill.findAll();
 
     if (results.length === 0) {
       Logger.gray('No skills found.');
@@ -41,7 +41,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
     Logger.gray(`Found ${results.length} skill${results.length === 1 ? '' : 's'}`);
     Logger.blank();
     Logger.gray('Add a skill with: zanat add <namespace.skill-name>');
-  } catch (error) {
+  } catch {
     Logger.red('Failed to search', { prefix: '✗' });
     process.exit(1);
   }
