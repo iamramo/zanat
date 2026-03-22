@@ -51,14 +51,7 @@ export const Skill = {
 
   async find(fullName: string): Promise<ISkill | undefined> {
     const config = await Config.get();
-    const parts = fullName.split('.');
-
-    const skillName = parts.pop();
-    if (!skillName) {
-      throw new Error('Invalid skill name.');
-    }
-
-    const namespace = parts;
+    const { namespace, skillName } = Path.toSkillParts(fullName);
 
     const skillPath = path.join(config.hubDir, ...namespace, skillName, Path.SKILL_FILENAME);
     return this.parse(skillPath).catch(() => undefined);

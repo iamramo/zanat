@@ -12,8 +12,7 @@ export const removeCommand = async (skillArg: string): Promise<void> => {
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
-    const skill = await Skill.find(skillPath);
-
+    const skill = await Skill.find(fullSkillName);
     if (!skill) {
       Log.red('Skill not found.', { prefix: '✗' });
       return;

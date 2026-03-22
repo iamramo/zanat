@@ -37,6 +37,9 @@ export const Path = {
   toSkillParts(skillArg: string): { namespace: string[]; skillName: string } {
     const parts = skillArg.split('.');
     const skillName = parts.pop()!;
+    if (!skillName) {
+      throw new Error('Invalid skill name format');
+    }
     return { namespace: parts, skillName };
   },
 };

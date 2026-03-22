@@ -18,9 +18,9 @@ export const statusCommand = async (): Promise<void> => {
 
     const behind = await Git.behind(config.hubDir, config.hubBranch);
     if (behind > 0) {
-      Log.yellow(`Behind: ${behind} commit${behind === 1 ? '' : 's'}`, { prefix: '•' });
+      Log.yellow(`Behind: ${behind} commit(s)`, { prefix: '•' });
     } else {
-      Log.green(`Behind: ${Log.bold('0 commits (up-to-date)')}`, { prefix: '•' });
+      Log.green(`Behind: ${Log.bold('up-to-date')}`, { prefix: '•' });
     }
 
     Log.blank();
@@ -38,6 +38,7 @@ export const statusCommand = async (): Promise<void> => {
         });
       });
     }
+    // TODO: Add if no skills found
 
     Log.blank();
   } catch {
