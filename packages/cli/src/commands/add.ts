@@ -1,11 +1,4 @@
-import {
-  CommitShaSchema,
-  Logger,
-  confirm,
-  LockFile,
-  Skills,
-  Path,
-} from '@iamramo/zanat-core';
+import { CommitShaSchema, Logger, confirm, LockFile, Skills, Path } from '@iamramo/zanat-core';
 import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 

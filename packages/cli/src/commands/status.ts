@@ -1,12 +1,4 @@
-import {
-  Time,
-  Fs,
-  Git,
-  LockFile,
-  Display,
-  Config,
-  Logger,
-} from '@iamramo/zanat-core';
+import { Time, Fs, Git, LockFile, Display, Config, Logger } from '@iamramo/zanat-core';
 
 export const statusCommand = async (): Promise<void> => {
   try {

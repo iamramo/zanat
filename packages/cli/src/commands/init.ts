@@ -1,12 +1,4 @@
-import {
-  Path,
-  Config,
-  Fs,
-  Git,
-  Logger,
-  input,
-  confirm,
-} from '@iamramo/zanat-core';
+import { Path, Config, Fs, Git, Logger, input, confirm } from '@iamramo/zanat-core';
 import path from 'node:path';
 
 export const initCommand = async (): Promise<void> => {

@@ -19,7 +19,9 @@ export const listCommand = async (): Promise<void> => {
 
     skillNames.forEach((skillName: string) => {
       const skill = skills[skillName];
-      Logger.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, { prefix: '•' });
+      Logger.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
+        prefix: '•',
+      });
     });
 
     Logger.blank();
