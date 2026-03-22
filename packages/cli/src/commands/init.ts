@@ -1,15 +1,13 @@
-import { Path, Config, Fs, Git, Logger, input, confirm } from '@iamramo/zanat-core';
-import path from 'node:path';
+import { Path, Config, Fs, Git, Logger, Format, input, confirm } from '@iamramo/zanat-core';
 
 export const initCommand = async (): Promise<void> => {
   Logger.blue('Initializing Zanat...');
   Logger.blank();
 
   try {
-    const existingConfig = await Config.get();
-    const hubExists = await Fs.exists(`${existingConfig.hubDir}/.git`);
+    const existingConfig = await Config.get().catch(() => undefined);
 
-    if (hubExists) {
+    if (existingConfig) {
       Logger.blue('Zanat is already initialized.');
       Logger.blank();
 
@@ -38,7 +36,7 @@ export const initCommand = async (): Promise<void> => {
 
     const hubUrl = await input({
       message: 'Hub repository URL:',
-      default: 'https://github.com/iamramo/zanat-hub.git',
+      required: true,
     });
 
     const hubBranch = await input({
@@ -57,22 +55,22 @@ export const initCommand = async (): Promise<void> => {
     await Fs.ensureDir(Path.ZANAT_DIR);
     Logger.green(`Created ${Path.ZANAT_DIR}`, { prefix: '✓' });
 
-    const config = {
-      hubUrl,
-      hubBranch,
-      hubDir,
-      lastSync: new Date().toISOString(),
-    };
-
     await Fs.ensureDir(Path.AGENTS_DIR);
 
     Logger.blank();
     Logger.blue('Cloning hub repository...');
     await Git.clone(hubUrl, hubBranch, hubDir);
-    Logger.green(`Cloned hub to ${hubDir}`, { prefix: '✓' });
+    Logger.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });
 
-    await Fs.ensureDir(path.dirname(Path.CONFIG_FILE));
-    await Fs.writeFile(Path.CONFIG_FILE, JSON.stringify(config, null, 2));
+    await Fs.writeFile(
+      Path.CONFIG_FILE,
+      Format.json({
+        hubUrl,
+        hubBranch,
+        hubDir,
+        lastSync: new Date().toISOString(),
+      })
+    );
     Logger.green(`Created config.json in ${Path.CONFIG_FILE}`, { prefix: '✓' });
 
     Logger.blank();

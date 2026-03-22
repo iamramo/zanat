@@ -1,6 +1,7 @@
 import type { ZanatConfig } from '../types/config.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
+import { Format } from './format.js';
 
 export const Config = {
   async get(): Promise<ZanatConfig> {
@@ -14,7 +15,7 @@ export const Config = {
 
   async update(config: ZanatConfig): Promise<void> {
     try {
-      await Fs.writeFile(Path.CONFIG_FILE, JSON.stringify(config, null, 2));
+      await Fs.writeFile(Path.CONFIG_FILE, Format.json(config));
     } catch {
       throw new Error('Could not update the config.');
     }

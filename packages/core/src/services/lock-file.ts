@@ -1,6 +1,7 @@
 import type { SkillLock, LockedSkill } from '../types/lock-file.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
+import { Format } from './format.js';
 
 export const LockFile = {
   async get(): Promise<SkillLock> {
@@ -14,7 +15,7 @@ export const LockFile = {
 
   async update(lock: SkillLock): Promise<void> {
     try {
-      await Fs.writeFile(Path.SKILL_LOCK_FILE, JSON.stringify(lock, null, 2));
+      await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(lock));
     } catch {
       throw new Error('Could not update the lock file.');
     }
