@@ -1,3 +1,5 @@
+import { LockFile } from '../index.js';
+
 const ELLIPSIS = '...';
 
 export const Display = {
@@ -5,7 +7,7 @@ export const Display = {
     return sha.slice(0, length);
   },
   getDisplayVersion(version: string) {
-    const isPinned = version !== 'latest';
+    const isPinned = LockFile.isPinned(version);
     return isPinned ? `${this.getShortSha(version)} (pinned)` : 'latest';
   },
   truncate(text: string, maxLength = 256): string {

@@ -53,7 +53,7 @@ export const LockFile = {
     return lock.skills;
   },
 
-  async isPinned(version: string): Promise<boolean> {
+  isPinned(version: string): boolean {
     return version !== 'latest';
   },
 } as const;
