@@ -18,6 +18,8 @@ npm install -g @iamramo/zanat-cli
 | `add`    | Add a skill to your local skills                            | `zanat add <skill>`    |
 | `rm`     | Remove a skill from your local skills                       | `zanat rm <skill>`     |
 | `list`   | List all added skills                                       | `zanat list`           |
+| `update` | Update skill(s) from hub                                    | `zanat update [skill]` |
+| `status` | Show hub and skills status                                  | `zanat status`         |
 
 ## Getting Started
 
@@ -47,15 +49,31 @@ npm install -g @iamramo/zanat-cli
    zanat add company.team.code-review
    ```
 
-4. **Remove a skill:**
+4. **List added skills:**
 
-   ```bash
-   zanat rm yurchi.code-review
-   ```
-
-5. **List added skills:**
    ```bash
    zanat list
+   ```
+
+5. **Update skills:**
+
+   ```bash
+   # Update a specific skill
+   zanat update yurchi.code-review
+
+   # Update all skills
+   zanat update
+   ```
+
+6. **Check status:**
+
+   ```bash
+   zanat status
+   ```
+
+7. **Remove a skill:**
+   ```bash
+   zanat rm yurchi.code-review
    ```
 
 ## Configuration

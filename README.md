@@ -41,6 +41,15 @@ zanat add yurchi.mobile.react-native
 
 # List your installed skills
 zanat list
+
+# Update skills to latest version
+zanat update
+
+# Check status
+zanat status
+
+# Remove a skill
+zanat rm yurchi.mobile.react-native
 ```
 
 ## Namespace Structure
