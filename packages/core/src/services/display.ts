@@ -2,7 +2,19 @@ import { LockFile } from '../index.js';
 
 const ELLIPSIS = '...';
 
+const ASCII_BANNER = `
+███████╗ █████╗ ███╗   ██╗ █████╗ ████████╗
+╚══███╔╝██╔══██╗████╗  ██║██╔══██╗╚══██╔══╝
+  ███╔╝ ███████║██╔██╗ ██║███████║   ██║
+ ███╔╝  ██╔══██║██║╚██╗██║██╔══██║   ██║
+███████╗██║  ██║██║ ╚████║██║  ██║   ██║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝
+`;
+
 export const Display = {
+  getAsciiBanner(): string {
+    return ASCII_BANNER;
+  },
   getShortSha(sha: string, length = 7) {
     return sha.slice(0, length);
   },

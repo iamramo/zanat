@@ -1,4 +1,5 @@
-import { Command } from '@iamramo/zanat-core';
+import { Command as CommanderCommand, Help } from 'commander';
+import { Display } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
@@ -9,9 +10,16 @@ import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
 
-const program = Command.create();
-program.name('zanat').description('A skill hub for AI agents').version(packageJson.version);
+const program = new CommanderCommand();
+program.name('zanat').description('Your personal skill library from any Git repository').version(packageJson.version);
 program.helpCommand(false);
+
+program.configureHelp({
+  formatHelp: (cmd) => {
+    const originalHelp = new Help().formatHelp(cmd, program.createHelp());
+    return Display.getAsciiBanner() + '\n' + originalHelp;
+  },
+});
 
 program
   .command('init')
