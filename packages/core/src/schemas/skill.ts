@@ -1,15 +1,19 @@
 import { z } from 'zod';
 
-export const SkillFrontmatterSchema = z.object({
-  id: z.string().min(1, 'id is required in frontmatter'),
-  name: z.string().min(1, 'name is required in frontmatter'),
-  description: z.string().min(1, 'description is required in frontmatter'),
-  author: z.string().min(1, 'author is required in frontmatter'),
-  version: z.string().min(1, 'version is required in frontmatter'),
-  tags: z.array(z.string()).optional(),
-});
+export const SkillOpenStandardSchema = z
+  .object({
+    name: z.string().min(1, 'name is required'),
+    description: z.string().min(1, 'description is required'),
+    license: z.string().optional(),
+    compatibility: z.string().optional(),
+    'disable-model-invocation': z.boolean().optional(),
+    'user-invocable': z.boolean().optional(),
+    'argument-hint': z.string().optional(),
+    metadata: z.record(z.unknown()).optional(),
+  })
+  .passthrough();
 
-export const SkillSchema = SkillFrontmatterSchema.extend({
+export const SkillSchema = SkillOpenStandardSchema.extend({
   content: z.string(),
   namespace: z.array(z.string()),
   skill: z.string(),
@@ -17,5 +21,5 @@ export const SkillSchema = SkillFrontmatterSchema.extend({
   path: z.string(),
 });
 
-export type ISkillFrontmatter = z.infer<typeof SkillFrontmatterSchema>;
+export type ISkillFrontmatter = z.infer<typeof SkillOpenStandardSchema>;
 export type ISkill = z.infer<typeof SkillSchema>;
