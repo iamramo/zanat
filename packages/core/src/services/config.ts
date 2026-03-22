@@ -1,9 +1,23 @@
-import type { IConfig } from '../types/config.js';
 import { Path } from '../path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
+import { type IConfig } from '../schemas/config.js';
+import { Zod } from '../index.js';
 
 export const Config = {
+  async validate(): Promise<void> {
+    // Check if exists
+    const config = await this.get().catch(() => undefined);
+    if (!config) {
+      throw new Error('Config not found. Run `zanat init` first.');
+    }
+
+    // Contains all required values
+    const result = Zod.ConfigSchema.safeParse(config);
+    if (!result.success) {
+      throw new Error('Invalid config.');
+    }
+  },
   async get(): Promise<IConfig> {
     try {
       const content = await Fs.readFile(Path.CONFIG_FILE);

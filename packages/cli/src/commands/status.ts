@@ -1,9 +1,8 @@
 import { Fs, Git, LockFile, Display, Config, Log } from '@iamramo/zanat-core';
-import { ensureHubExists } from '../utils/validation.js';
 
 export const statusCommand = async (): Promise<void> => {
   try {
-    await ensureHubExists();
+    await Config.validate();
 
     const skills = await LockFile.findAll();
     const skillNames = Object.keys(skills);

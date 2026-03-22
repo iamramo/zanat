@@ -1,9 +1,8 @@
-import { Log, Prompt, LockFile, Skill, Path } from '@iamramo/zanat-core';
-import { ensureHubExists } from '../utils/validation.js';
+import { Log, Prompt, LockFile, Skill, Path, Config } from '@iamramo/zanat-core';
 
 export const addCommand = async (skillArg: string): Promise<void> => {
   try {
-    await ensureHubExists();
+    await Config.validate();
 
     const { namespace, skillName } = Path.toSkillParts(skillArg);
     const fullSkillName = Path.getFullSkillName(namespace, skillName);

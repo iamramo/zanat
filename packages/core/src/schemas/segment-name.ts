@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { STARTS_WITH_LOWERCASE, ALLOWED_CHARS_ONLY, MIN_LENGTH, MAX_LENGTH } from './common.js';
+import { STARTS_WITH_LOWERCASE, ALLOWED_CHARS_ONLY } from './common.js';
+
+const MIN_LENGTH = 3;
+const MAX_LENGTH = 64;
 
 export const SegmentNameSchema = z
   .string()

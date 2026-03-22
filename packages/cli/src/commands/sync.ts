@@ -1,9 +1,8 @@
 import { Git, Config, Log } from '@iamramo/zanat-core';
-import { ensureHubExists } from '../utils/validation.js';
 
 export const syncCommand = async (): Promise<void> => {
   try {
-    await ensureHubExists();
+    await Config.validate();
 
     Log.blue('Syncing with hub...');
 

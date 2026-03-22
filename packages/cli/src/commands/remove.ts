@@ -1,10 +1,9 @@
-import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
+import { Skill, Fs, Path, Log, Config } from '@iamramo/zanat-core';
 import path from 'node:path';
-import { ensureHubExists } from '../utils/validation.js';
 
 export const removeCommand = async (skillArg: string): Promise<void> => {
   try {
-    await ensureHubExists();
+    await Config.validate();
 
     const { namespace, skillName } = Path.toSkillParts(skillArg);
     const fullSkillName = Path.getFullSkillName(namespace, skillName);

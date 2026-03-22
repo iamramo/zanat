@@ -1,9 +1,8 @@
-import { Skill, Log, Display } from '@iamramo/zanat-core';
-import { ensureHubExists } from '../utils/validation.js';
+import { Skill, Log, Display, Config } from '@iamramo/zanat-core';
 
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
-    await ensureHubExists();
+    await Config.validate();
 
     query ? Log.blue(`Searching for: "${query}"...`) : Log.blue('Available skills:');
     Log.blank();
