@@ -1,4 +1,4 @@
-import { Skill, Path, Log } from '@iamramo/zanat-core';
+import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
 import path from 'node:path';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
@@ -12,8 +12,8 @@ export const removeCommand = async (skillArg: string): Promise<void> => {
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
-    const skill = await Skill.find(fullSkillName);
-    if (!skill) {
+    const exists = await Fs.exists(skillPath);
+    if (!exists) {
       Log.red('Skill not found.', { prefix: '✗' });
       return;
     }

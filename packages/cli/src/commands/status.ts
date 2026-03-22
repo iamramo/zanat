@@ -37,8 +37,9 @@ export const statusCommand = async (): Promise<void> => {
           spacing: 2,
         });
       });
+    } else {
+      Log.gray('No skills added.', { spacing: 2 });
     }
-    // TODO: Add if no skills found
 
     Log.blank();
   } catch {
