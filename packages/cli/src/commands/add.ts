@@ -3,7 +3,7 @@ import { Log, Prompt, LockFile, Skill, Path, Config, Zod } from '@iamramo/zanat-
 export const addCommand = async (fullSkillName: string): Promise<void> => {
   try {
     await Config.validate();
-    Zod.FullSkillNameSchema.parse(fullSkillName);
+    Zod.skill.FullNameSchema.parse(fullSkillName);
 
     const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 

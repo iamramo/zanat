@@ -16,7 +16,7 @@ export const Config = {
     }
 
     // Contains all required values
-    const result = Zod.ConfigSchema.safeParse(config);
+    const result = Zod.config.ConfigSchema.safeParse(config);
     if (!result.success) {
       throw new Error('Invalid config.');
     }
@@ -25,7 +25,7 @@ export const Config = {
     try {
       const content = await Fs.readFile(Path.CONFIG_FILE);
       const parsed = JSON.parse(content);
-      return Zod.ConfigSchema.parse(parsed);
+      return Zod.config.ConfigSchema.parse(parsed);
     } catch {
       throw new Error('Could not get the config.');
     }
@@ -33,7 +33,7 @@ export const Config = {
 
   async update(config: IConfig): Promise<void> {
     try {
-      const validated = Zod.ConfigSchema.parse(config);
+      const validated = Zod.config.ConfigSchema.parse(config);
       await Fs.writeFile(Path.CONFIG_FILE, Format.json(validated));
     } catch {
       throw new Error('Could not update the config.');

@@ -1,13 +1,27 @@
-import { ConfigSchema } from '../schemas/config.js';
-import { FullSkillNameSchema, SegmentSchema, SkillOpenStandardSchema, SkillSchema } from '../schemas/skill.js';
-import { LockFileSchema, SkillLockSchema } from '../schemas/lock-file.js';
+import { Schema as ConfigSchema } from '../schemas/config.js';
+import { FullNameSchema, SegmentSchema, OpenStandardSchema, FullSchema } from '../schemas/skill.js';
+import { FileSchema as LockFileSchema, SkillSchema as SkillLockSchema } from '../schemas/lock-file.js';
+import { UrlSchema, BranchSchema, TagSchema, CommitShaSchema, RefSchema } from '../schemas/git.js';
 
 export const Zod = {
-  ConfigSchema,
-  FullSkillNameSchema,
-  SegmentSchema,
-  SkillOpenStandardSchema,
-  SkillSchema,
-  LockFileSchema,
-  SkillLockSchema,
+  config: {
+    ConfigSchema,
+  },
+  lockFile: {
+    FileSchema: LockFileSchema,
+    SkillSchema: SkillLockSchema,
+  },
+  skill: {
+    FullNameSchema,
+    SegmentSchema,
+    OpenStandardSchema,
+    FullSchema,
+  },
+  git: {
+    UrlSchema,
+    BranchSchema,
+    TagSchema,
+    CommitShaSchema,
+    RefSchema,
+  },
 } as const;

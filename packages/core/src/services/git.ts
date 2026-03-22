@@ -1,7 +1,11 @@
 import { simpleGit } from 'simple-git';
+import { Zod } from './zod.js';
 
 export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
+    Zod.git.UrlSchema.parse(url);
+    Zod.git.BranchSchema.parse(branch);
+    
     const git = simpleGit();
 
     try {
@@ -22,6 +26,7 @@ export const Git = {
   },
 
   async checkout(dir: string, ref: string): Promise<void> {
+    Zod.git.RefSchema.parse(ref);
     const git = simpleGit(dir);
 
     try {
@@ -32,6 +37,7 @@ export const Git = {
   },
 
   async resolveCommit(dir: string, ref: string): Promise<string> {
+    Zod.git.RefSchema.parse(ref);
     const git = simpleGit(dir);
 
     try {
@@ -63,6 +69,7 @@ export const Git = {
   },
 
   async behind(dir: string, branch: string): Promise<number> {
+    Zod.git.BranchSchema.parse(branch);
     await this.fetch(dir);
     const remoteRef = `origin/${branch}`;
     const result = await this.raw(dir, ['rev-list', `${branch}..${remoteRef}`, '--count']);

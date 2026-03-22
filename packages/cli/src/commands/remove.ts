@@ -4,7 +4,7 @@ import path from 'node:path';
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
   try {
     await Config.validate();
-    Zod.FullSkillNameSchema.parse(fullSkillName);
+    Zod.skill.FullNameSchema.parse(fullSkillName);
 
     const { namespace, skillName } = Path.toSkillParts(fullSkillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);

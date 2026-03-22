@@ -6,7 +6,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
 
     // Update one skill
     if (fullSkillName) {
-      Zod.FullSkillNameSchema.parse(fullSkillName);
+      Zod.skill.FullNameSchema.parse(fullSkillName);
 
       const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 

@@ -14,7 +14,7 @@ export const LockFile = {
     try {
       const content = await Fs.readFile(Path.SKILL_LOCK_FILE);
       const parsed = JSON.parse(content);
-      return Zod.LockFileSchema.parse(parsed);
+      return Zod.lockFile.FileSchema.parse(parsed);
     } catch {
       throw new Error('Could not read the lock file.');
     }
@@ -30,7 +30,7 @@ export const LockFile = {
 
   async update(lock: ILockFile): Promise<void> {
     try {
-      const validated = Zod.LockFileSchema.parse(lock);
+      const validated = Zod.lockFile.FileSchema.parse(lock);
       await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(validated));
     } catch {
       throw new Error('Could not update the lock file.');
@@ -38,7 +38,7 @@ export const LockFile = {
   },
 
   async add(fullSkillName: string, skill: ISkillLock): Promise<void> {
-    const validatedSkill = Zod.SkillLockSchema.parse(skill);
+    const validatedSkill = Zod.lockFile.SkillSchema.parse(skill);
     const lock = await this.get();
     const updatedLock = {
       ...lock,

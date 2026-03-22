@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { GIT_URL_REGEX } from './common.js';
 
-export const ConfigSchema = z.object({
+export const Schema = z.object({
   hubUrl: z
     .string()
     .min(1, 'hubUrl is required')
@@ -11,4 +11,4 @@ export const ConfigSchema = z.object({
   lastSync: z.string().datetime('lastSync must be a valid ISO 8601 timestamp'),
 });
 
-export type IConfig = z.infer<typeof ConfigSchema>;
+export type IConfig = z.infer<typeof Schema>;

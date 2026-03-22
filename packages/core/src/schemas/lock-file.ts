@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const SkillLockSchema = z.object({
+export const SkillSchema = z.object({
   namespace: z.array(z.string()),
   skillName: z.string(),
   hubPath: z.string(),
@@ -9,10 +9,10 @@ export const SkillLockSchema = z.object({
   version: z.string(),
 });
 
-export const LockFileSchema = z.object({
+export const FileSchema = z.object({
   version: z.literal(1),
-  skills: z.record(SkillLockSchema),
+  skills: z.record(SkillSchema),
 });
 
-export type ISkillLock = z.infer<typeof SkillLockSchema>;
-export type ILockFile = z.infer<typeof LockFileSchema>;
+export type ISkillLock = z.infer<typeof SkillSchema>;
+export type ILockFile = z.infer<typeof FileSchema>;

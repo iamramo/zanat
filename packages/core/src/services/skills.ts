@@ -24,17 +24,17 @@ export const Skill = {
       if (!skillName) {
         throw new Error('Could not extract skill name from path.');
       }
-      Zod.SegmentSchema.parse(skillName);
+      Zod.skill.SegmentSchema.parse(skillName);
 
       const namespace = pathParts;
       if (namespace.length === 0) {
         throw new Error('Could not extract namespace from path.');
       }
-      namespace.forEach((part) => Zod.SegmentSchema.parse(part));
+      namespace.forEach((part) => Zod.skill.SegmentSchema.parse(part));
 
       const fullName = namespace.join('.') + '.' + skillName;
 
-      const frontmatter = Zod.SkillOpenStandardSchema.parse(parsed.data);
+      const frontmatter = Zod.skill.OpenStandardSchema.parse(parsed.data);
 
       return {
         ...frontmatter,
