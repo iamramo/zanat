@@ -61,11 +61,6 @@ export const initCommand = async (): Promise<void> => {
     await LockFile.ensure();
     Log.green(`Created ${Path.SKILL_LOCK_FILE}`, { prefix: '✓' });
 
-    Log.blank();
-    Log.blue('Cloning hub repository...');
-    await Git.clone(hubUrl, hubBranch, hubDir);
-    Log.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });
-
     await Fs.writeFile(
       Path.CONFIG_FILE,
       Format.json({
@@ -75,7 +70,12 @@ export const initCommand = async (): Promise<void> => {
         lastSync: new Date().toISOString(),
       })
     );
-    Log.green(`Created config.json in ${Path.CONFIG_FILE}`, { prefix: '✓' });
+    Log.green(`Created ${Path.CONFIG_FILE}`, { prefix: '✓' });
+
+    Log.blank();
+    Log.blue('Cloning hub repository...');
+    await Git.clone(hubUrl, hubBranch, hubDir);
+    Log.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });
 
     Log.blank();
     Log.green('Zanat initialized successfully!', { prefix: '✓' });
