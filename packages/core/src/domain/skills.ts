@@ -1,5 +1,5 @@
 import type { LockedSkill } from '../types/lock-file.js';
-import { Path } from '../paths.js';
+import { Path } from '../path.js';
 import { Config } from '../services/config.js';
 import { Fs } from '../services/fs.js';
 import { LockFile } from '../services/lock-file.js';
@@ -36,7 +36,7 @@ export const updateSkill = async (
   skillName: string,
   commitSha?: string
 ): Promise<void> => {
-  const fullSkillName = [...namespace, skillName].join('.');
+  const fullSkillName = Path.getFullSkillName(namespace, skillName);
   const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
   const exists = await Fs.exists(skillPath);

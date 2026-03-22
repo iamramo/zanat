@@ -1,4 +1,5 @@
 import { homedir } from 'node:os';
+import path from 'node:path';
 
 const home = homedir();
 
@@ -10,4 +11,10 @@ export const Path = {
   AGENTS_SKILLS_DIR: `${home}/.agents/skills`,
   SKILL_LOCK_FILE: `${home}/.agents/.zanat-lock.json`,
   SKILL_FILENAME: 'SKILL.md',
-} as const;
+  getFullSkillName(namespace: string[], skillName: string): string {
+    return [...namespace, skillName].join('.');
+  },
+  getSkillFilePath(namespace: string[], skillName: string): string {
+    return path.join(...namespace, skillName, this.SKILL_FILENAME);
+  },
+};

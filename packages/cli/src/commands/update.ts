@@ -7,6 +7,7 @@ import {
   confirm,
   LockFile,
   Display,
+  Path,
 } from '@iamramo/zanat-core';
 import { validateSkillArg, ensureHubExists } from '../utils/validation.js';
 
@@ -44,7 +45,7 @@ export const updateCommand = async (
     if (skillArg) {
       // Update specific skill
       const { namespace, skillName } = validateSkillArg(skillArg);
-      const fullSkillName = [...namespace, skillName].join('.');
+      const fullSkillName = Path.getFullSkillName(namespace, skillName);
 
       // Check if skill is pinned and warn if updating without --commit
       if (!options.commit) {

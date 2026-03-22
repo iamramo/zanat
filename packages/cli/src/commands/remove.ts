@@ -8,7 +8,7 @@ export const removeCommand = async (skillArg: string): Promise<void> => {
   try {
     await ensureHubExists();
     const { namespace, skillName } = validateSkillArg(skillArg);
-    const fullSkillName = [...namespace, skillName].join('.');
+    const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
 
     await Skills.remove(skillPath);

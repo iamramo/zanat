@@ -3,7 +3,7 @@ export { input, confirm } from '@inquirer/prompts';
 import { Command } from 'commander';
 export const createProgram = (): Command => new Command();
 
-export { Path } from './paths.js';
+export { Path } from './path.js';
 
 export { Config } from './services/config.js';
 export { Fs } from './services/fs.js';
@@ -24,6 +24,5 @@ export { CommitShaSchema, type CommitSha } from './schemas/commit-sha.js';
 export {
   validateSegment,
   parseSkillArg,
-  formatFullSkillName,
   type ParsedNamespace,
 } from './domain/namespace.js';

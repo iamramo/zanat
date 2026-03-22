@@ -1,5 +1,5 @@
 import type { ZanatConfig } from '../types/config.js';
-import { Path } from '../paths.js';
+import { Path } from '../path.js';
 import { Fs } from './fs.js';
 
 export const Config = {

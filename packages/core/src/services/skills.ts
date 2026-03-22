@@ -1,6 +1,6 @@
 import type { Skill } from '../types/skills.js';
 import type { LockedSkill } from '../types/lock-file.js';
-import { Path } from '../paths.js';
+import { Path } from '../path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
@@ -86,7 +86,7 @@ export const Skills = {
     targetDir: string,
     version: string = 'latest'
   ): Promise<void> {
-    const fullSkillName = [...namespace, skillName].join('.');
+    const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const targetFile = path.join(targetDir, Path.SKILL_FILENAME);
 
     await Fs.ensureDir(targetDir);
@@ -97,7 +97,7 @@ export const Skills = {
     const lockedSkill: LockedSkill = {
       namespace,
       skillName,
-      hubPath: path.join(...namespace, skillName, Path.SKILL_FILENAME),
+      hubPath: Path.getSkillFilePath(namespace, skillName),
       addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       version,

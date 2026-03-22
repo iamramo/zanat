@@ -26,7 +26,7 @@ export const addCommand = async (skillArg: string, options: AddOptions): Promise
       CommitShaSchema.parse(options.commit);
     }
 
-    const fullSkillName = [...namespace, skillName].join('.');
+    const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const exists = !!(await LockFile.find(fullSkillName));
     if (exists) {
       if (options.commit) {

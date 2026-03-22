@@ -52,7 +52,3 @@ export const parseSkillArg = (skillArg: string): ParsedNamespace | { error: stri
 
   return { namespace, skillName };
 };
-
-export const formatFullSkillName = (namespace: string[], skillName: string): string => {
-  return [...namespace, skillName].join('.');
-};
