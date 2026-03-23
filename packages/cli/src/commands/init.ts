@@ -72,7 +72,7 @@ export const initCommand = async (): Promise<void> => {
         hubUrl,
         hubBranch,
         hubDir,
-        lastSync: new Date().toISOString(),
+        lastPull: new Date().toISOString(),
       })
     );
     Log.green(`Created ${Path.CONFIG_FILE}`, { prefix: '✓' });

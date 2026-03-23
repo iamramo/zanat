@@ -13,7 +13,7 @@ export const statusCommand = async (): Promise<void> => {
     Log.green(`Initialized: ${Log.bold('yes')}`, { prefix: '•', spacing: 2 });
     Log.green(`Repository: ${Log.bold(config.hubUrl)}`, { prefix: '•', spacing: 2 });
     Log.green(`Branch: ${Log.bold(config.hubBranch)}`, { prefix: '•', spacing: 2 });
-    Log.green(`Last sync: ${Log.bold(Display.timeAgo(config?.lastSync))}`, {
+    Log.green(`Last pull: ${Log.bold(Display.timeAgo(config?.lastPull))}`, {
       prefix: '•',
       spacing: 2,
     });

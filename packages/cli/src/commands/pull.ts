@@ -9,7 +9,7 @@ export const pullCommand = async (): Promise<void> => {
     const config = await Config.get();
     await Git.pull(config.hubDir);
 
-    config.lastSync = new Date().toISOString();
+    config.lastPull = new Date().toISOString();
     await Config.update(config);
 
     Log.green('Hub updated successfully', { prefix: '✓' });

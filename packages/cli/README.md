@@ -13,7 +13,7 @@ npm install -g @iamramo/zanat-cli
 | Command  | Description                                                 | Usage                  |
 | -------- | ----------------------------------------------------------- | ---------------------- |
 | `init`   | Initialize zanat configuration and clone the hub repository | `zanat init`           |
-| `sync`   | Pull the latest changes from the hub repository             | `zanat sync`           |
+| `pull`   | Pull the latest changes from the hub repository             | `zanat pull`           |
 | `search` | Search for available skills in the hub                      | `zanat search [query]` |
 | `add`    | Add a skill to your local skills                            | `zanat add <skill>`    |
 | `rm`     | Remove a skill from your local skills                       | `zanat rm <skill>`     |

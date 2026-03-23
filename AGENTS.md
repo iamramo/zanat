@@ -79,12 +79,12 @@ Instructions for the agent go here...
 - Skills stored in a Git repository
 - Versions tracked via Git commits
 - Users can specify exact versions by commit SHA or use `latest`
-- Incremental indexing (only changed files on sync)
+- Incremental indexing (only changed files on pull)
 
 **SQLite Cache (Future):**
 
 - For fast search and indexing
-- Rebuilt on sync
+- Rebuilt on pull
 - Content remains in Git
 
 ### MCP Server (Future)
@@ -99,7 +99,7 @@ Planned but not part of MVP:
 
 ```bash
 zanat init                    # Create ~/.zanat/, clone hub repo
-zanat sync                    # Pull latest hub changes
+zanat pull                    # Pull latest hub changes
 zanat add <skill>             # Add skill
 zanat list                    # List added skills
 zanat search [query]          # Search available skills
@@ -120,7 +120,7 @@ zanat search [query]          # Search available skills
 **Included:**
 
 - Git-based skill storage
-- CLI for init, sync, install, list, search
+- CLI for init, pull, install, list, search
 - Local skill add to `~/.agents/skills/`
 - Basic full-text search (grep-based)
 

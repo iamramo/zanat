@@ -2,7 +2,7 @@ import { Command as CommanderCommand, Help } from 'commander';
 import { Display } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
-import { syncCommand } from './commands/sync.js';
+import { pullCommand } from './commands/pull.js';
 import { addCommand } from './commands/add.js';
 import { removeCommand } from './commands/remove.js';
 import { updateCommand } from './commands/update.js';
@@ -26,7 +26,7 @@ program
   .description('Initialize zanat configuration and clone the hub')
   .action(initCommand);
 
-program.command('sync').description('Sync with the hub repository').action(syncCommand);
+program.command('pull').description('Pull latest changes from hub repository').action(pullCommand);
 
 program
   .command('add <skill>')
