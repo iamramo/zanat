@@ -24,8 +24,9 @@ export const searchCommand = async (query?: string): Promise<void> => {
     Log.gray(`Found ${results.length} skill(s)`);
     Log.blank();
     Log.gray('Add a skill with: zanat add <skill>');
-  } catch {
+  } catch (error) {
     Log.red('Failed to search', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

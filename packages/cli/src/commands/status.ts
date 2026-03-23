@@ -43,8 +43,9 @@ export const statusCommand = async (): Promise<void> => {
     }
 
     Log.blank();
-  } catch {
+  } catch (error) {
     Log.red('Failed to get status', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

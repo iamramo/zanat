@@ -13,8 +13,9 @@ export const pullCommand = async (): Promise<void> => {
     await Config.update(config);
 
     Log.green('Hub updated successfully', { prefix: '✓' });
-  } catch {
+  } catch (error) {
     Log.red('Failed to pull', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

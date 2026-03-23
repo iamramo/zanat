@@ -1,6 +1,7 @@
 import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
+import { Log } from './log.js';
 import { type IConfig } from '../schemas/config.js';
 import { Zod } from '../index.js';
 
@@ -26,7 +27,8 @@ export const Config = {
       const content = await Fs.readFile(Path.CONFIG_FILE);
       const parsed = JSON.parse(content);
       return Zod.config.ConfigSchema.parse(parsed);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Could not get the config.');
     }
   },
@@ -35,7 +37,8 @@ export const Config = {
     try {
       const validated = Zod.config.ConfigSchema.parse(config);
       await Fs.writeFile(Path.CONFIG_FILE, Format.json(validated));
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Could not update the config.');
     }
   },

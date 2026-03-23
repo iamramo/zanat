@@ -4,6 +4,7 @@ import { Path } from './path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
+import { Log } from './log.js';
 import { Zod } from '../index.js';
 import matter from 'gray-matter';
 import path from 'node:path';
@@ -44,7 +45,8 @@ export const Skill = {
         fullName,
         path: filePath,
       };
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to parse skill.');
     }
   },

@@ -25,8 +25,9 @@ export const listCommand = async (): Promise<void> => {
 
     Log.blank();
     Log.gray(`Total: ${skillNames.length} skill${skillNames.length === 1 ? '' : 's'}`);
-  } catch {
+  } catch (error) {
     Log.red('Failed to list skills', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

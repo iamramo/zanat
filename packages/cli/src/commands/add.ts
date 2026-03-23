@@ -31,8 +31,9 @@ export const addCommand = async (fullSkillName: string): Promise<void> => {
 
     await Skill.add(namespace, skillName, skillFile, targetPath);
     Log.green(`Added ${fullSkillName}`);
-  } catch {
+  } catch (error) {
     Log.red('Failed to add', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

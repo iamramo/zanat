@@ -18,8 +18,9 @@ export const removeCommand = async (fullSkillName: string): Promise<void> => {
     await Skill.remove(skillPath);
 
     Log.green(`Removed ${fullSkillName}`, { prefix: '✓' });
-  } catch {
+  } catch (error) {
     Log.red('Failed to remove', { prefix: '✗' });
+    Log.debug(error);
     process.exit(1);
   }
 };

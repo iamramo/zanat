@@ -1,5 +1,6 @@
 import { simpleGit } from 'simple-git';
 import { Zod } from './zod.js';
+import { Log } from './log.js';
 
 export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
@@ -10,7 +11,8 @@ export const Git = {
 
     try {
       await git.clone(url, dir, ['--branch', branch, '--single-branch']);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to clone repository.');
     }
   },
@@ -20,7 +22,8 @@ export const Git = {
 
     try {
       await git.pull();
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to pull repository.');
     }
   },
@@ -31,7 +34,8 @@ export const Git = {
 
     try {
       await git.checkout(ref);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to checkout.');
     }
   },
@@ -43,7 +47,8 @@ export const Git = {
     try {
       const result = await git.revparse([ref]);
       return result.trim();
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to resolve commit.');
     }
   },
@@ -53,7 +58,8 @@ export const Git = {
 
     try {
       await git.fetch(['--quiet']);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to fetch.');
     }
   },
@@ -63,7 +69,8 @@ export const Git = {
 
     try {
       return await git.raw(args);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Failed to execute git command.');
     }
   },

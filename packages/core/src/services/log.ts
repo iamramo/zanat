@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { Format } from './format.js';
 
 type Prefix = '✓' | '•' | '✗';
 
@@ -52,5 +53,11 @@ export const Log = {
 
   bold(message: string): string {
     return chalk.bold(message);
+  },
+
+  debug(error: unknown): void {
+    if (process.env.ZANAT_DEBUG === 'true') {
+      console.error(chalk.gray(Format.json({ error })));
+    }
   },
 } as const;

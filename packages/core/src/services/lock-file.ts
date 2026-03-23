@@ -2,6 +2,7 @@ import type { ILockFile, ISkillLock } from '../schemas/lock-file.js';
 import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
+import { Log } from './log.js';
 import { Zod } from '../index.js';
 
 const DEFAULT_LOCK_FILE: ILockFile = {
@@ -15,7 +16,8 @@ export const LockFile = {
       const content = await Fs.readFile(Path.SKILL_LOCK_FILE);
       const parsed = JSON.parse(content);
       return Zod.lockFile.FileSchema.parse(parsed);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Could not read the lock file.');
     }
   },
@@ -23,7 +25,8 @@ export const LockFile = {
   async ensure(): Promise<void> {
     try {
       await Fs.readFile(Path.SKILL_LOCK_FILE);
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       await this.update(DEFAULT_LOCK_FILE);
     }
   },
@@ -32,7 +35,8 @@ export const LockFile = {
     try {
       const validated = Zod.lockFile.FileSchema.parse(lock);
       await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(validated));
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       throw new Error('Could not update the lock file.');
     }
   },
