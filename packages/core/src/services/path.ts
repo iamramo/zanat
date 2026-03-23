@@ -6,12 +6,12 @@ import { Zod } from './zod.js';
 const home = homedir();
 
 export const Path = {
-  ZANAT_DIR: `${home}/.zanat`,
-  CONFIG_FILE: `${home}/.zanat/config.json`,
-  HUB_DIR: `${home}/.zanat/hub`,
-  AGENTS_DIR: `${home}/.agents`,
-  AGENTS_SKILLS_DIR: `${home}/.agents/skills`,
-  SKILL_LOCK_FILE: `${home}/.agents/.zanat-lock.json`,
+  ZANAT_DIR: path.join(home, '.zanat'),
+  CONFIG_FILE: path.join(home, '.zanat', 'config.json'),
+  HUB_DIR: path.join(home, '.zanat', 'hub'),
+  AGENTS_DIR: path.join(home, '.agents'),
+  AGENTS_SKILLS_DIR: path.join(home, '.agents', 'skills'),
+  SKILL_LOCK_FILE: path.join(home, '.agents', '.zanat-lock.json'),
   SKILL_FILENAME: 'SKILL.md',
 
   getFullSkillName(namespace: string[], skillName: string): string {

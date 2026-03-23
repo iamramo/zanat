@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod } from '@iamramo/zanat-core';
 
 export const initCommand = async (): Promise<void> => {
@@ -50,7 +51,7 @@ export const initCommand = async (): Promise<void> => {
 
     const hubDir = await Prompt.input({
       message: 'Hub directory path:',
-      default: `${Path.ZANAT_DIR}/hub`,
+      default: path.join(Path.ZANAT_DIR, 'hub'),
       validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubDir),
     });
 
