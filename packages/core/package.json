@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-core",
-  "version": "0.14.12",
+  "version": "0.14.13",
   "description": "Core library for zanat - skill hub for AI agents",
   "type": "module",
   "main": "dist/index.js",
