@@ -58,34 +58,46 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
     case 'init':
       return;
 
-    case 'add':
+    case 'add': {
       await Config.validate();
       await Config.ensureOnTrackedBranch();
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      const parts = args[0]!.split('.');
+      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
       PinOptionSchema.parse(opts.pin);
       return;
+    }
 
     case 'pull':
       await Config.validate();
       await Config.ensureOnTrackedBranch();
       return;
 
-    case 'rm':
+    case 'rm': {
       await Config.validate();
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      const parts = args[0]!.split('.');
+      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
       return;
+    }
 
-    case 'show':
+    case 'show': {
       await Config.validate();
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      const parts = args[0]!.split('.');
+      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
       return;
+    }
 
-    case 'update':
+    case 'update': {
       await Config.validate();
       if (args[0]) {
         Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+        const parts = args[0].split('.');
+        parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
       }
       return;
+    }
 
     case 'list':
       await Config.validate();
