@@ -16,7 +16,10 @@ const program = Command.create();
 program
   .name('zanat')
   .description('Your personal skill library from any Git repository.')
-  .version(packageJson.version);
+  .version(packageJson.version, '-V, --version', 'Output the version number')
+  .helpOption('-h, --help', 'Display help for command')
+  .option('-d, --debug', 'Enable debug output for troubleshooting')
+  .passThroughOptions();
 program.helpCommand(false);
 
 program.configureHelp({
@@ -30,10 +33,15 @@ program.configureHelp({
   },
 });
 
-program.hook('preAction', async (_thisCommand, actionCommand) => {
+program.hook('preAction', async (thisCommand, actionCommand) => {
   const cmd = actionCommand.name();
   const args = actionCommand.args;
   const opts = actionCommand.opts();
+  const parentOpts = thisCommand.opts();
+
+  if (opts.debug || parentOpts.debug) {
+    process.env.ZANAT_DEBUG = 'true';
+  }
 
   switch (cmd) {
     case 'init':

@@ -1,9 +1,13 @@
 import { Command as CommanderCommand, Help, type HookEvent } from 'commander';
+import { ZodError } from 'zod';
 import { Log } from './log.js';
+import { Format } from './format.js';
 
 class ZanatCommand extends CommanderCommand {
   createCommand(name?: string): ZanatCommand {
-    return new ZanatCommand(name);
+    const cmd = new ZanatCommand(name);
+    cmd.option('-d, --debug', 'Enable debug output');
+    return cmd;
   }
 
   hook(
@@ -13,8 +17,16 @@ class ZanatCommand extends CommanderCommand {
     return super.hook(event, async (thisCommand, actionCommand) => {
       try {
         await listener(thisCommand, actionCommand);
-      } catch (error: any) {
-        Log.red(error.message || String(error), { prefix: '✗' });
+      } catch (error: unknown) {
+        let message: string;
+        if (error instanceof ZodError) {
+          message = error.issues[0]?.message ?? 'Validation failed';
+        } else if (error instanceof Error) {
+          message = error.message;
+        } else {
+          message = Format.json(error);
+        }
+        Log.red(message, { prefix: '✗' });
         Log.debug(error);
         process.exit(1);
       }
@@ -26,7 +38,7 @@ class ZanatCommand extends CommanderCommand {
       try {
         await fn(...args);
       } catch (error) {
-        Log.red(`Failed to run command "${this.name()}". Try setting ZANAT_DEBUG=true.`, {
+        Log.red(`Failed to run command "${this.name()}". Try running with --debug.`, {
           prefix: '✗',
         });
         Log.debug(error);

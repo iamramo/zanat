@@ -58,7 +58,7 @@ Use any Git repository as your skill hub. Company wiki, private repo, or open so
 - 🏷️ **Namespace support** - Organize with `company.team.skill-name` structure
 - 🔄 **Version management** - Track which skills are installed and their versions
 - 🔌 **Standard directories** - Installs to `~/.agents/skills/` for agent compatibility
-- 🐛 **Debug mode** - Use `ZANAT_DEBUG=true` for detailed error information
+- 🐛 **Debug mode** - Use `--debug` flag for detailed error information
 
 ## Quick Start
 

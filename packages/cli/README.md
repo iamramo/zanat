@@ -152,7 +152,9 @@ Configuration is stored in `~/.zanat/config.json`:
 If you encounter errors, enable debug mode to see detailed error information:
 
 ```bash
-ZANAT_DEBUG=true zanat status
+zanat --debug status
+# or
+zanat status --debug
 ```
 
 This outputs the full error details in JSON format, helpful for debugging issues.
