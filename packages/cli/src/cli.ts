@@ -8,6 +8,7 @@ import { updateCommand } from './commands/update.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
+import { showCommand } from './commands/show.js';
 
 const program = Command.create();
 program.name('zanat').description('Your personal skill library from any Git repository').version(packageJson.version);
@@ -195,6 +196,34 @@ Note:
 `
   )
   .action(searchCommand);
+
+program
+  .command('show <skill>')
+  .description('Show skill content')
+  .option(
+    '-r, --ref <ref>',
+    'Show content at a specific ref (branch, tag, or commit). Requires a value (e.g., --ref=main, --ref=v1.0.0, --ref=abc123).'
+  )
+  .addHelpText(
+    'after',
+    `
+Examples:
+  $ zanat show vercel.react-patterns
+    Display the full content of the skill from current hub branch
+
+  $ zanat show vercel.react-patterns --ref=develop
+    Display content from the 'develop' branch
+
+  $ zanat show vercel.react-patterns --ref=v1.2.0
+    Display content from tag v1.2.0
+
+Note:
+  Shows the raw SKILL.md content of the skill.
+  By default, shows content from the current hub branch filesystem.
+  Use --ref to view content from a different branch, tag, or commit.
+`
+  )
+  .action(showCommand);
 
 program
   .command('status')
