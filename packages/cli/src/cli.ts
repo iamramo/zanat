@@ -27,7 +27,7 @@ program.configureHelp({
     const originalHelp = new Command.help().formatHelp(cmd, program.createHelp());
     // Only show banner for main help, not command-specific help
     if (cmd.name() === 'zanat' && !cmd.parent) {
-      return Display.getAsciiBanner() + '\n' + Log.bold(originalHelp);
+      return Log.chalk.white(Display.getAsciiBanner()) + '\n' + Log.bold(originalHelp);
     }
     return Log.bold(originalHelp);
   },
