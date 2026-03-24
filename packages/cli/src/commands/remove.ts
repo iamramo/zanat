@@ -1,13 +1,14 @@
 import { Skill, Fs, Path, Log, Config, Zod } from '@iamramo/zanat-core';
-import path from 'node:path';
 
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
   try {
-    // Step 1: Validate and check skill exists
+    // Step 1: Validate and parse inputs
     await Config.validate();
     Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+    Path.toSkillParts(fullSkillName);
 
-    const skillPath = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
+    // Step 2: Check skill exists
+    const skillPath = Path.getSkillTargetDir(fullSkillName);
     const exists = await Fs.exists(skillPath);
 
     if (!exists) {
