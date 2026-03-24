@@ -85,7 +85,23 @@ export const initCommand = async (): Promise<void> => {
   const hubDir = await Prompt.input({
     message: 'Hub directory path:',
     default: path.join(Path.ZANAT_DIR, 'hub'),
-    validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubDir),
+    validate: async (value: string) => {
+      // Validate format
+      const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubDir)(value);
+      if (formatResult !== true) {
+        return formatResult;
+      }
+
+      // Validate write permissions
+      const parentDir = path.dirname(value);
+      await Fs.ensureDir(parentDir);
+      const hasWriteAccess = await Fs.access(parentDir, 'W_OK');
+      if (!hasWriteAccess) {
+        return `Cannot write to '${value}'. Check your permissions.`;
+      }
+
+      return true;
+    },
   });
 
   if (shouldReinitialize) {

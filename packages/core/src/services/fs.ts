@@ -1,6 +1,15 @@
 import fs from 'fs-extra';
-import { glob } from 'node:fs/promises';
+import { access, constants, glob } from 'node:fs/promises';
 import { Log } from './log.js';
+
+type AccessMode = 'F_OK' | 'R_OK' | 'W_OK' | 'X_OK';
+
+const modeMap: Record<AccessMode, number> = {
+  F_OK: constants.F_OK,
+  R_OK: constants.R_OK,
+  W_OK: constants.W_OK,
+  X_OK: constants.X_OK,
+};
 
 export const Fs = {
   async exists(dir: string): Promise<boolean> {
@@ -57,6 +66,15 @@ export const Fs = {
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to glob files.');
+    }
+  },
+
+  async access(dir: string, mode: AccessMode): Promise<boolean> {
+    try {
+      await access(dir, modeMap[mode]);
+      return true;
+    } catch {
+      return false;
     }
   },
 } as const;
