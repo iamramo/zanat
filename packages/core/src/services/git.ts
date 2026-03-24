@@ -11,7 +11,7 @@ export const Git = {
     const git = simpleGit();
 
     try {
-      await git.clone(url, dir, ['--branch', branch, '--single-branch']);
+      await git.clone(url, dir, ['--branch', branch]);
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to clone repository.');
@@ -135,6 +135,19 @@ export const Git = {
     } catch (error) {
       Log.debug(error);
       throw new Error(`Failed to show file ${filePath} at ${ref}.`);
+    }
+  },
+
+  async remoteBranchExists(branch: string): Promise<boolean> {
+    Zod.git.BranchSchema.parse(branch);
+    const config = await Config.get();
+
+    try {
+      // Use ls-remote to check actual remote, works with single-branch clones
+      const result = await this.lsRemote(config.hubUrl, branch);
+      return result.length > 0;
+    } catch {
+      return false;
     }
   },
 } as const;
