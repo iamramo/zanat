@@ -1,5 +1,4 @@
-import { Command as CommanderCommand, Help } from 'commander';
-import { Display } from '@iamramo/zanat-core';
+import { Display, Command } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
@@ -10,13 +9,13 @@ import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
 
-const program = new CommanderCommand();
+const program = Command.create();
 program.name('zanat').description('Your personal skill library from any Git repository').version(packageJson.version);
 program.helpCommand(false);
 
 program.configureHelp({
   formatHelp: (cmd) => {
-    const originalHelp = new Help().formatHelp(cmd, program.createHelp());
+    const originalHelp = new Command.help().formatHelp(cmd, program.createHelp());
     // Only show banner for main help, not command-specific help
     if (cmd.name() === 'zanat' && !cmd.parent) {
       return Display.getAsciiBanner() + '\n' + originalHelp;
