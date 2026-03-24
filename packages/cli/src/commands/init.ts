@@ -12,8 +12,9 @@ export const initCommand = async (): Promise<void> => {
     Log.blank();
 
     const config = await Config.get();
-    Log.blue(`Repository: ${config.hubUrl}`);
-    Log.blue(`Branch: ${config.hubBranch}`);
+    Log.status(`Repository:`, config.hubUrl, 'green', { prefix: '•', spacing: 2 });
+    Log.status(`Branch:`, config.hubBranch, 'green', { prefix: '•', spacing: 2 });
+    Log.status(`Directory:`, config.hubDir, 'green', { prefix: '•', spacing: 2 });
     Log.blank();
 
     const shouldReinitialize = await Prompt.confirm({
