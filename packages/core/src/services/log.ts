@@ -6,10 +6,11 @@ type Prefix = '✓' | '•' | '✗' | '⚠' | '✨';
 type Option = {
   prefix?: Prefix;
   spacing?: number;
-  newline?: boolean;
 };
 
 export const Log = {
+  chalk,
+
   getPrefix(prefix?: Prefix) {
     return prefix ? `${prefix} ` : '';
   },

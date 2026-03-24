@@ -27,10 +27,21 @@ program.configureHelp({
     const originalHelp = new Command.help().formatHelp(cmd, program.createHelp());
     // Only show banner for main help, not command-specific help
     if (cmd.name() === 'zanat' && !cmd.parent) {
-      return Display.getAsciiBanner() + '\n' + originalHelp;
+      return Display.getAsciiBanner() + '\n' + Log.bold(originalHelp);
     }
-    return originalHelp;
+    return Log.bold(originalHelp);
   },
+  styleDescriptionText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleCommandDescription: (str) => Log.chalk.white(str),
+  styleArgumentDescription: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleOptionTerm: (str) => Log.chalk.white(str),
+  styleTitle: (str) => Log.chalk.blue(str),
+  styleOptionText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleArgumentText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleArgumentTerm: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleSubcommandTerm: (str) => Log.chalk.white(str),
+  styleSubcommandDescription: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
+  styleUsage: (str) => Log.chalk.white(str),
 });
 
 program.hook('preAction', async (thisCommand, actionCommand) => {
@@ -95,7 +106,7 @@ program
   .description('Initialize zanat configuration and clone the hub')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat init
     Interactive setup for first-time use
@@ -112,7 +123,7 @@ Interactive Prompts:
 Note:
   Reinitializing removes the hub directory but keeps added skills safe.
   You'll need to re-add skills to re-pin them to the new hub branch.
-`
+`)
   )
   .action(initCommand);
 
@@ -121,7 +132,7 @@ program
   .description('Pull latest changes from hub repository')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat pull
     Pull hub branch and fetch all skill refs
@@ -137,7 +148,7 @@ Behavior:
 Note:
   This command fetches refs for all skills to ensure 'zanat update' works correctly,
   even for skills pinned to branches other than the hub branch.
-`
+`)
   )
   .action(pullCommand);
 
@@ -150,7 +161,7 @@ program
   )
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat add vercel.react-patterns
     Add a skill and track the hub branch (auto-updates)
@@ -175,7 +186,7 @@ Notes:
   • With --pin, the skill is locked to that ref and never auto-updates
   • Use --pin when you need stability or want to follow a specific branch/tag
   • Re-add a skill without --pin to switch it back to tracking the hub branch
-`
+`)
   )
   .action(addCommand);
 
@@ -184,7 +195,7 @@ program
   .description('Remove a skill')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat rm vercel.react-patterns
     Remove a skill from local storage
@@ -192,7 +203,7 @@ Examples:
 Note:
   Removes the skill files from ~/.agents/skills/ and removes the lock file entry.
   The skill can be re-added at any time with 'zanat add'.
-`
+`)
   )
   .action(removeCommand);
 
@@ -201,7 +212,7 @@ program
   .description('Update skill(s) from hub')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat update
     Update all skills to their latest versions (interactive)
@@ -215,7 +226,7 @@ Behavior:
   • Only updates skills with 'ok' status
   • Preserves commits for orphaned skills
   • Re-pins skills when you explicitly re-add them
-`
+`)
   )
   .action(updateCommand);
 
@@ -224,7 +235,7 @@ program
   .description('List added skills')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat list
     List all added skills with their versions
@@ -238,7 +249,7 @@ Output Format:
 Note:
   Shows the short commit SHA and the requested ref in parentheses.
   Use 'zanat status' for more detailed information.
-`
+`)
   )
   .action(listCommand);
 
@@ -247,7 +258,7 @@ program
   .description('Search for skills in the hub')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat search
     List all available skills
@@ -258,7 +269,7 @@ Examples:
 Note:
   Search matches against skill names and descriptions.
   Results show skill names with truncated descriptions.
-`
+`)
   )
   .action(searchCommand);
 
@@ -267,7 +278,7 @@ program
   .description('Show skill content')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat show vercel.react-patterns
     Display the full content of the skill from current hub branch
@@ -275,7 +286,7 @@ Examples:
 Note:
   Shows the raw SKILL.md content of the skill.
   By default, shows content from the current hub branch filesystem.
-`
+`)
   )
   .action(showCommand);
 
@@ -284,7 +295,7 @@ program
   .description('Show hub and skills status')
   .addHelpText(
     'after',
-    `
+    Log.chalk.italic.dim(`
 Examples:
   $ zanat status
     Show hub configuration and all skill statuses
@@ -300,7 +311,7 @@ Status Indicators:
   • "abc1234 (v1.2.0)"      - Pinned to tag v1.2.0
   • "abc1234 (orphaned)"    - Ref deleted but commit preserved
   • "abc1234 (broken)"      - Neither ref nor commit exist
-`
+`)
   )
   .action(statusCommand);
 
