@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Format } from './format.js';
 
-type Prefix = '✓' | '•' | '✗';
+type Prefix = '✓' | '•' | '✗' | '⚠';
 
 type Option = {
   prefix?: Prefix;

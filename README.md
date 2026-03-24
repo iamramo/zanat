@@ -22,6 +22,7 @@
 - [Why Zanat?](#why-zanat)
 - [Features](#features)
 - [Quick Start](#quick-start)
+- [Version Tracking](#version-tracking)
 - [How It Works](#how-it-works)
 - [Prerequisites](#prerequisites)
 - [Namespace Structure](#namespace-structure)
@@ -74,10 +75,13 @@ zanat init
 # Search for available skills
 zanat search react
 
-# Add a skill to your local environment
+# Add a skill to your local environment (tracks hub branch)
 zanat add vercel.frontend.react-patterns
 
-# List your installed skills
+# Pin a skill to a specific version (never auto-updates)
+zanat add vercel.frontend.react-patterns --pin=v1.2.0
+
+# List your installed skills with versions
 zanat list
 
 # Update skills to latest version
@@ -88,6 +92,56 @@ zanat status
 
 # Remove a skill
 zanat rm vercel.frontend.react-patterns
+```
+
+## Version Tracking
+
+Zanat uses a dual-reference tracking system that distinguishes between what you asked for and what was actually resolved:
+
+- **requestedRef**: The branch, tag, or commit you specified (e.g., `main`, `v1.2.0`, `abc1234`)
+- **resolvedCommit**: The actual commit SHA that was resolved from the requested ref
+
+### Tracking vs Pinning
+
+**Tracking (default)**: Skills track the hub branch for automatic updates
+```bash
+zanat add vercel.frontend.react-patterns
+# Tracks main branch, updates with 'zanat update'
+```
+
+**Pinning**: Lock a skill to a specific version that never auto-updates
+```bash
+# Pin to a branch (follows branch updates but not hub branch)
+zanat add vercel.frontend.react-patterns --pin=develop
+
+# Pin to a tag (never updates)
+zanat add vercel.frontend.react-patterns --pin=v1.2.0
+
+# Pin to a specific commit (never updates)
+zanat add vercel.frontend.react-patterns --pin=abc1234
+```
+
+### Reference Status
+
+Skills can have three reference states:
+
+- **✓ ok**: The requested ref exists and resolves to a commit
+- **⚠ orphaned**: The ref (branch/tag) no longer exists, but the commit is preserved
+- **✗ broken**: Neither the ref nor the commit exist (skill files remain but can't update)
+
+Check status with:
+```bash
+zanat list          # Shows ref status in version column
+zanat status        # Detailed status for all skills
+zanat update        # Warns about orphaned/broken skills before updating
+```
+
+### Fixing Orphaned Skills
+
+If a skill becomes orphaned (the branch was deleted), re-pin it to the hub branch:
+```bash
+zanat add vercel.frontend.react-patterns
+# Re-adds without --pin, which tracks the hub branch
 ```
 
 ## How It Works

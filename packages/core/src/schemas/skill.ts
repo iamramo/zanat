@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { FULL_SKILL_NAME_REGEX, SEGMENT_REGEX } from './common.js';
 
-export const FullNameSchema = z
+const FullNameSchema = z
   .string()
   .min(1, 'Skill name is required')
   .regex(
@@ -34,7 +34,7 @@ export const FullSchema = OpenStandardSchema.extend({
   content: z.string(),
   namespace: z.array(z.string()),
   skill: z.string(),
-  fullName: z.string(),
+  fullName: FullNameSchema,
   path: z.string(),
 });
 

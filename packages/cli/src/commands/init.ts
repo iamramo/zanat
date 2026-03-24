@@ -6,17 +6,15 @@ export const initCommand = async (): Promise<void> => {
   Log.blank();
 
   try {
+    // Step 1: Check for existing configuration and handle reinitialization
     const hasConfig = await Config.exists();
-
     if (hasConfig) {
       Log.blue('Zanat is already initialized.');
       Log.blank();
 
       const config = await Config.get();
-
       Log.blue(`Repository: ${config.hubUrl}`);
       Log.blue(`Branch: ${config.hubBranch}`);
-
       Log.blank();
 
       const shouldReinitialize = await Prompt.confirm({
@@ -37,6 +35,7 @@ export const initCommand = async (): Promise<void> => {
       Log.blank();
     }
 
+    // Step 2: Collect configuration from user
     const hubUrl = await Prompt.input({
       message: 'Hub repository URL:',
       required: true,
@@ -46,7 +45,22 @@ export const initCommand = async (): Promise<void> => {
     const hubBranch = await Prompt.input({
       message: 'Hub branch:',
       default: 'main',
-      validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubBranch),
+      validate: async (value: string) => {
+        // Validate format
+        const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubBranch)(value);
+        if (formatResult !== true) {
+          return formatResult;
+        }
+
+        // Validate branch existence on remote
+        try {
+          await Git.lsRemote(hubUrl, value);
+        } catch {
+          return `Branch '${value}' does not exist in the repository`;
+        }
+
+        return true;
+      },
     });
 
     const hubDir = await Prompt.input({
@@ -55,6 +69,7 @@ export const initCommand = async (): Promise<void> => {
       validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubDir),
     });
 
+    // Step 3: Create directories and config files
     Log.blank();
     Log.blue('Setting up directories...');
 
@@ -77,8 +92,9 @@ export const initCommand = async (): Promise<void> => {
       })
     );
     Log.green(`Created ${Path.CONFIG_FILE}`, { prefix: '✓' });
-
     Log.blank();
+
+    // Step 4: Clone repository
     Log.blue('Cloning hub repository...');
     await Git.clone(hubUrl, hubBranch, hubDir);
     Log.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });

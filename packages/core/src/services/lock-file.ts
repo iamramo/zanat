@@ -1,8 +1,11 @@
-import type { ILockFile, ISkillLock } from '../schemas/lock-file.js';
+import type { ILockFile, ISkillLock, IRefStatus } from '../schemas/lock-file.js';
+import { GIT_COMMIT_SHA_REGEX } from '../schemas/common.js';
 import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 import { Log } from './log.js';
+import { Git } from './git.js';
+import { Config } from './config.js';
 import { Zod } from '../index.js';
 
 const DEFAULT_LOCK_FILE: ILockFile = {
@@ -74,7 +77,53 @@ export const LockFile = {
     return lock.skills;
   },
 
-  isPinned(version: string): boolean {
-    return version !== 'latest';
+  isPinned(skill: ISkillLock, currentHubBranch: string): boolean {
+    return skill.requestedRef !== currentHubBranch;
+  },
+
+  async getRefStatus(skill: ISkillLock): Promise<IRefStatus> {
+    const { requestedRef, resolvedCommit } = skill;
+
+    try {
+      await Git.resolveCommit(requestedRef);
+      return 'ok';
+    } catch {
+      try {
+        await Git.raw(['cat-file', '-t', resolvedCommit]);
+        return 'orphaned';
+      } catch {
+        return 'broken';
+      }
+    }
+  },
+
+  async findUniqueRefs(): Promise<string[]> {
+    const config = await Config.get();
+    const skills = await this.findAll();
+    const refs = new Set<string>([config.hubBranch]);
+    const skillList = Object.values(skills);
+
+    for (const skill of skillList) {
+      if (!skill) continue;
+      // Skip commit SHAs - can't fetch specific commits
+      if (GIT_COMMIT_SHA_REGEX.test(skill.requestedRef)) continue;
+      refs.add(skill.requestedRef);
+    }
+
+    return Array.from(refs);
+  },
+
+  async findSkillsByRef(ref: string): Promise<string[]> {
+    const skills = await this.findAll();
+    const result: string[] = [];
+    const skillList = Object.entries(skills);
+
+    for (const [name, skill] of skillList) {
+      if (skill?.requestedRef === ref) {
+        result.push(name);
+      }
+    }
+
+    return result;
   },
 } as const;

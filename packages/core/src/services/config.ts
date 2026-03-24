@@ -2,6 +2,8 @@ import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 import { Log } from './log.js';
+import { Git } from './git.js';
+import { Prompt } from './prompt.js';
 import { type IConfig } from '../schemas/config.js';
 import { Zod } from '../index.js';
 
@@ -40,6 +42,42 @@ export const Config = {
     } catch (error) {
       Log.debug(error);
       throw new Error('Could not update the config.');
+    }
+  },
+
+  async ensureCorrectBranch(): Promise<void> {
+    const config = await this.get();
+    const currentBranch = await Git.getCurrentBranch();
+
+    if (currentBranch === config.hubBranch) {
+      return;
+    }
+
+    // Branch mismatch detected
+    Log.yellow(`Hub is on '${currentBranch}' but config tracks '${config.hubBranch}'`, {
+      prefix: '⚠',
+    });
+    Log.blank();
+
+    const shouldSwitch = await Prompt.confirm({
+      message: `Switch to '${config.hubBranch}' and proceed?`,
+      default: true,
+    });
+
+    if (!shouldSwitch) {
+      Log.blue('Cancelled.');
+      process.exit(0);
+    }
+
+    // Try to switch
+    try {
+      await Git.checkout(config.hubBranch);
+      Log.green(`Switched to '${config.hubBranch}'`, { prefix: '✓' });
+      Log.blank();
+    } catch {
+      Log.red(`Failed to switch to '${config.hubBranch}'`, { prefix: '✗' });
+      Log.gray(`Please fix manually: cd ${config.hubDir} && git checkout ${config.hubBranch}`);
+      process.exit(1);
     }
   },
 } as const;

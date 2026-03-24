@@ -2,8 +2,8 @@ import { LockFile, Display, Log, Config } from '@iamramo/zanat-core';
 
 export const listCommand = async (): Promise<void> => {
   try {
+    // Step 1: Load and check skills
     await Config.validate();
-
     const skills = await LockFile.findAll();
     const skillNames = Object.keys(skills);
 
@@ -13,15 +13,16 @@ export const listCommand = async (): Promise<void> => {
       return;
     }
 
+    // Step 2: Display skills with versions
     Log.blue('Added skills:');
     Log.blank();
 
-    skillNames.forEach((skillName: string) => {
-      const skill = skills[skillName];
-      Log.green(`${skillName} ${Display.getDisplayVersion(skill?.version ?? 'latest')}`, {
+    for (const skillName of skillNames) {
+      const displayVersion = await Display.getDisplayVersion(skillName);
+      Log.green(`${skillName} ${displayVersion}`, {
         prefix: '•',
       });
-    });
+    }
 
     Log.blank();
     Log.gray(`Total: ${skillNames.length} skill${skillNames.length === 1 ? '' : 's'}`);

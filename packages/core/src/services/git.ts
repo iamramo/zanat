@@ -1,6 +1,7 @@
 import { simpleGit } from 'simple-git';
 import { Zod } from './zod.js';
 import { Log } from './log.js';
+import { Config } from './config.js';
 
 export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
@@ -17,8 +18,9 @@ export const Git = {
     }
   },
 
-  async pull(dir: string): Promise<void> {
-    const git = simpleGit(dir);
+  async pull(): Promise<void> {
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
       await git.pull();
@@ -28,9 +30,10 @@ export const Git = {
     }
   },
 
-  async checkout(dir: string, ref: string): Promise<void> {
+  async checkout(ref: string): Promise<void> {
     Zod.git.RefSchema.parse(ref);
-    const git = simpleGit(dir);
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
       await git.checkout(ref);
@@ -40,9 +43,10 @@ export const Git = {
     }
   },
 
-  async resolveCommit(dir: string, ref: string): Promise<string> {
+  async resolveCommit(ref: string): Promise<string> {
     Zod.git.RefSchema.parse(ref);
-    const git = simpleGit(dir);
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
       const result = await git.revparse([ref]);
@@ -53,19 +57,27 @@ export const Git = {
     }
   },
 
-  async fetch(dir: string): Promise<void> {
-    const git = simpleGit(dir);
+  async fetch(refs?: string[]): Promise<void> {
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
-      await git.fetch(['--quiet']);
+      if (refs && refs.length > 0) {
+        // Fetch specific refs
+        await git.fetch(['origin', ...refs]);
+      } else {
+        // Regular fetch all
+        await git.fetch(['--quiet']);
+      }
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to fetch.');
     }
   },
 
-  async raw(dir: string, args: string[]): Promise<string> {
-    const git = simpleGit(dir);
+  async raw(args: string[]): Promise<string> {
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
       return await git.raw(args);
@@ -75,11 +87,54 @@ export const Git = {
     }
   },
 
-  async behind(dir: string, branch: string): Promise<number> {
+  async behind(branch: string): Promise<number> {
     Zod.git.BranchSchema.parse(branch);
-    await this.fetch(dir);
+    await this.fetch([branch]);
     const remoteRef = `origin/${branch}`;
-    const result = await this.raw(dir, ['rev-list', `${branch}..${remoteRef}`, '--count']);
+    const result = await this.raw(['rev-list', `${branch}..${remoteRef}`, '--count']);
     return parseInt(result.trim(), 10) || 0;
+  },
+
+  async lsRemote(url: string, ref: string): Promise<string> {
+    Zod.git.UrlSchema.parse(url);
+    Zod.git.RefSchema.parse(ref);
+    const git = simpleGit();
+
+    try {
+      const result = (await git.listRemote(['--refs', '--heads', '--tags', url, ref])).trim();
+      if (!result) {
+        throw new Error('Ref not found');
+      }
+      return result;
+    } catch (error) {
+      Log.debug(error);
+      throw new Error('Failed to list remote refs.');
+    }
+  },
+
+  async getCurrentBranch(): Promise<string> {
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
+    try {
+      const result = await git.revparse(['--abbrev-ref', 'HEAD']);
+      return result.trim();
+    } catch (error) {
+      Log.debug(error);
+      throw new Error('Failed to get current branch.');
+    }
+  },
+
+  async show(ref: string, filePath: string): Promise<string> {
+    Zod.git.RefSchema.parse(ref);
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
+
+    try {
+      const result = await git.show(`${ref}:${filePath}`);
+      return result;
+    } catch (error) {
+      Log.debug(error);
+      throw new Error(`Failed to show file ${filePath} at ${ref}.`);
+    }
   },
 } as const;

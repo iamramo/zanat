@@ -1,14 +1,38 @@
-import { Log, Prompt, LockFile, Skill, Path, Config, Zod } from '@iamramo/zanat-core';
+import {
+  Log,
+  Prompt,
+  LockFile,
+  Skill,
+  Path,
+  Config,
+  Git,
+  Display,
+  Fs,
+  Zod,
+} from '@iamramo/zanat-core';
+import { z } from 'zod';
 
-export const addCommand = async (fullSkillName: string): Promise<void> => {
+const PinOptionSchema = z.union([
+  z.string().min(1, '--pin requires a ref value (branch, tag, or commit)'),
+  z.undefined(),
+]);
+
+interface AddOptions {
+  pin?: string;
+}
+
+export const addCommand = async (fullSkillName: string, options: AddOptions): Promise<void> => {
   try {
+    // Step 1: Validate and parse inputs
     await Config.validate();
-    Zod.skill.FullNameSchema.parse(fullSkillName);
+    await Config.ensureCorrectBranch();
+    Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
 
+    const pinOption = PinOptionSchema.parse(options.pin);
     const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
+    // Step 2: Handle existing skill or prepare to add new one
     const exists = await LockFile.find(fullSkillName);
-
     if (exists) {
       const shouldUpdate = await Prompt.confirm({
         message: `Skill ${fullSkillName} is already added. Update from hub?`,
@@ -25,11 +49,50 @@ export const addCommand = async (fullSkillName: string): Promise<void> => {
       return;
     }
 
+    // Step 3: Determine requested ref and resolve commit
+    const config = await Config.get();
+
+    let requestedRef: string;
+    let resolvedCommit: string;
+
+    if (pinOption !== undefined) {
+      requestedRef = pinOption;
+
+      try {
+        resolvedCommit = await Git.resolveCommit(requestedRef);
+        Log.blue(`Pinning to '${requestedRef}' (${Display.getShortSha(resolvedCommit)})`);
+      } catch (error) {
+        Log.red(`Invalid ref: '${requestedRef}' does not exist in the hub repository.`, {
+          prefix: '✗',
+        });
+        Log.debug(error);
+        process.exit(1);
+      }
+    } else {
+      requestedRef = config.hubBranch;
+      resolvedCommit = await Git.resolveCommit(config.hubBranch);
+      Log.blue(`Tracking ${config.hubBranch} branch`);
+    }
+
+    // Step 4: Check if skill exists in hub (only check filesystem when not using --pin)
     const sourcePath = await Path.getSkillHubDir(namespace, skillName);
-    const targetPath = Path.getSkillTargetDir(fullSkillName);
     const skillFile = Path.getSkillFile(sourcePath);
 
-    await Skill.add(namespace, skillName, skillFile, targetPath);
+    if (pinOption === undefined) {
+      const skillExistsInHub = await Fs.exists(skillFile);
+      if (!skillExistsInHub) {
+        Log.red('Skill not found in hub.', { prefix: '✗' });
+        Log.gray(
+          `If the skill exists on a different branch, use: zanat add ${fullSkillName} --pin=<branch>`
+        );
+        process.exit(1);
+      }
+    }
+
+    // Step 5: Add skill to local storage
+    const targetPath = Path.getSkillTargetDir(fullSkillName);
+
+    await Skill.add(namespace, skillName, skillFile, targetPath, requestedRef, resolvedCommit);
     Log.green(`Added ${fullSkillName}`);
   } catch (error) {
     Log.red('Failed to add', { prefix: '✗' });

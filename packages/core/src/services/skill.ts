@@ -5,6 +5,7 @@ import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
 import { Log } from './log.js';
+import { Git } from './git.js';
 import { Zod } from '../index.js';
 import matter from 'gray-matter';
 import path from 'node:path';
@@ -82,23 +83,35 @@ export const Skill = {
     skillName: string,
     sourceFile: string,
     targetDir: string,
-    version: string = 'latest'
+    requestedRef: string,
+    resolvedCommit: string
   ): Promise<void> {
     const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const targetFile = path.join(targetDir, Path.SKILL_FILENAME);
+    const hubFilePath = Path.getSkillFilePath(namespace, skillName);
 
     await Fs.ensureDir(targetDir);
-    await Fs.copy(sourceFile, targetFile);
+
+    const config = await Config.get();
+    if (requestedRef !== config.hubBranch) {
+      // Pinned ref: fetch content from git
+      const skillContent = await Git.show(requestedRef, hubFilePath);
+      await Fs.writeFile(targetFile, skillContent);
+    } else {
+      // Tracking hub branch: copy from filesystem
+      await Fs.copy(sourceFile, targetFile);
+    }
 
     const existingSkill = await LockFile.find(fullSkillName);
 
     const lockedSkill: ISkillLock = {
       namespace,
       skillName,
-      hubPath: Path.getSkillFilePath(namespace, skillName),
+      hubPath: hubFilePath,
       addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      version,
+      requestedRef,
+      resolvedCommit,
     };
 
     await LockFile.add(fullSkillName, lockedSkill);
@@ -118,15 +131,41 @@ export const Skill = {
       throw new Error(`Skill not tracked in lock file: ${fullSkillName}`);
     }
 
+    const config = await Config.get();
+    const requestedRef = existingSkill.requestedRef;
     const sourcePath = await Path.getSkillHubDir(namespace, skillName);
     const skillFile = Path.getSkillFile(sourcePath);
+    const hubFilePath = Path.getSkillFilePath(namespace, skillName);
 
-    const hubExists = await Fs.exists(skillFile);
-    if (!hubExists) {
-      throw new Error(`Skill not found in hub: ${fullSkillName}`);
+    // Verify skill exists in hub (filesystem for tracking, git for pinned)
+    if (requestedRef === config.hubBranch) {
+      const hubExists = await Fs.exists(skillFile);
+      if (!hubExists) {
+        throw new Error(`Skill not found in hub filesystem: ${fullSkillName}`);
+      }
+    } else {
+      try {
+        await Git.show(requestedRef, hubFilePath);
+      } catch {
+        throw new Error(`Skill not found at ref '${requestedRef}': ${fullSkillName}`);
+      }
     }
 
-    await this.add(namespace, skillName, skillFile, skillPath, 'latest');
+    let resolvedCommit: string;
+
+    const refStatus = await LockFile.getRefStatus(existingSkill);
+
+    if (refStatus === 'orphaned') {
+      resolvedCommit = existingSkill.resolvedCommit;
+    } else {
+      try {
+        resolvedCommit = await Git.resolveCommit(requestedRef);
+      } catch {
+        resolvedCommit = existingSkill.resolvedCommit;
+      }
+    }
+
+    await this.add(namespace, skillName, skillFile, skillPath, requestedRef, resolvedCommit);
   },
 
   async updateAll(): Promise<void> {

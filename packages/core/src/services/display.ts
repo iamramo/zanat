@@ -1,4 +1,5 @@
-import { LockFile } from '../index.js';
+import { LockFile } from './lock-file.js';
+import { Config } from './config.js';
 
 const ELLIPSIS = '...';
 
@@ -18,9 +19,29 @@ export const Display = {
   getShortSha(sha: string, length = 7) {
     return sha.slice(0, length);
   },
-  getDisplayVersion(version: string) {
-    const isPinned = LockFile.isPinned(version);
-    return isPinned ? `${this.getShortSha(version)} (pinned)` : 'latest';
+  async getDisplayVersion(fullSkillName: string): Promise<string> {
+    const skill = await LockFile.find(fullSkillName);
+    if (!skill) {
+      return 'unknown';
+    }
+
+    const config = await Config.get();
+    const { requestedRef, resolvedCommit } = skill;
+    const shortCommit = this.getShortSha(resolvedCommit);
+    const refStatus = await LockFile.getRefStatus(skill);
+
+    switch (refStatus) {
+      case 'orphaned':
+        return `${shortCommit} (orphaned from ${requestedRef})`;
+      case 'broken':
+        return `${shortCommit} (broken)`;
+      case 'ok':
+        return `${shortCommit} (${requestedRef})`;
+      default:
+        return ((_): never => {
+          throw new Error(`Unexpected refStatus: ${_}`);
+        })(refStatus);
+    }
   },
   truncate(text: string, maxLength = 256): string {
     if (text.length <= maxLength) return text;

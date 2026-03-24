@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GIT_COMMIT_SHA_REGEX } from './common.js';
 
 export const SkillSchema = z.object({
   namespace: z.array(z.string()),
@@ -6,7 +7,8 @@ export const SkillSchema = z.object({
   hubPath: z.string(),
   addedAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  version: z.string(),
+  requestedRef: z.string().min(1),
+  resolvedCommit: z.string().regex(GIT_COMMIT_SHA_REGEX),
 });
 
 export const FileSchema = z.object({
@@ -16,3 +18,6 @@ export const FileSchema = z.object({
 
 export type ISkillLock = z.infer<typeof SkillSchema>;
 export type ILockFile = z.infer<typeof FileSchema>;
+
+export const RefStatusSchema = z.enum(['ok', 'orphaned', 'broken']);
+export type IRefStatus = z.infer<typeof RefStatusSchema>;
