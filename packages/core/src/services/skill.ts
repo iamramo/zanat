@@ -107,7 +107,6 @@ export const Skill = {
     const lockedSkill: ISkillLock = {
       namespace,
       skillName,
-      hubPath: hubFilePath,
       addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       requestedRef,
