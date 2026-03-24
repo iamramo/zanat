@@ -1,9 +1,15 @@
 import path from 'node:path';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod } from '@iamramo/zanat-core';
+
+const execAsync = promisify(exec);
 
 export const initCommand = async (): Promise<void> => {
   Log.blue('Initializing Zanat...');
   Log.blank();
+
+  let shouldReinitialize = false;
 
   // Step 1: Check for existing configuration and handle reinitialization
   const hasConfig = await Config.exists();
@@ -17,7 +23,7 @@ export const initCommand = async (): Promise<void> => {
     Log.status(`Directory:`, config.hubDir, 'green', { prefix: '•', spacing: 2 });
     Log.blank();
 
-    const shouldReinitialize = await Prompt.confirm({
+    shouldReinitialize = await Prompt.confirm({
       message: 'Reinitialize? Your hub directory will be replaced but added skills stay safe.',
       default: false,
     });
@@ -29,17 +35,29 @@ export const initCommand = async (): Promise<void> => {
     }
 
     Log.blank();
-    Log.blue('Removing existing hub...');
-    await Fs.remove(config.hubDir);
-    Log.green('Removed existing hub', { prefix: '✓' });
-    Log.blank();
   }
 
   // Step 2: Collect configuration from user
   const hubUrl = await Prompt.input({
     message: 'Hub repository URL:',
     required: true,
-    validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubUrl),
+    validate: async (value: string) => {
+      // Validate format
+      const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubUrl)(value);
+      if (formatResult !== true) {
+        return formatResult;
+      }
+
+      // Validate repository access using native git
+      try {
+        await execAsync(`git ls-remote ${value} HEAD`, { timeout: 10000 });
+      } catch (error) {
+        Log.debug(error);
+        return `Cannot access repository '${value}'. Check the URL and your permissions.`;
+      }
+
+      return true;
+    },
   });
 
   const hubBranch = await Prompt.input({
@@ -69,6 +87,14 @@ export const initCommand = async (): Promise<void> => {
     default: path.join(Path.ZANAT_DIR, 'hub'),
     validate: Prompt.validate(Zod.config.ConfigSchema.shape.hubDir),
   });
+
+  if (shouldReinitialize) {
+    const config = await Config.get();
+    Log.blank();
+    Log.blue('Removing existing hub...');
+    await Fs.remove(config.hubDir);
+    Log.green('Removed existing hub', { prefix: '✓' });
+  }
 
   // Step 3: Create directories and config files
   Log.blank();
