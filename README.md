@@ -22,13 +22,10 @@
 - [Why Zanat?](#why-zanat)
 - [Features](#features)
 - [Quick Start](#quick-start)
-- [Version Tracking](#version-tracking)
 - [How It Works](#how-it-works)
 - [Prerequisites](#prerequisites)
 - [Namespace Structure](#namespace-structure)
 - [Creating Skills](#creating-skills)
-- [Configuration](#configuration)
-- [Troubleshooting](#troubleshooting)
 - [Project Structure](#project-structure)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -75,11 +72,8 @@ zanat init
 # Search for available skills
 zanat search react
 
-# Add a skill to your local environment (tracks hub branch)
+# Add a skill to your local environment
 zanat add vercel.frontend.react-patterns
-
-# Pin a skill to a specific version (never auto-updates)
-zanat add vercel.frontend.react-patterns --pin=v1.2.0
 
 # List your installed skills with versions
 zanat list
@@ -89,60 +83,9 @@ zanat update
 
 # Check status
 zanat status
-
-# Remove a skill
-zanat rm vercel.frontend.react-patterns
 ```
 
-## Version Tracking
-
-Zanat uses a dual-reference tracking system that distinguishes between what you asked for and what was actually resolved:
-
-- **requestedRef**: The branch, tag, or commit you specified (e.g., `main`, `v1.2.0`, `abc1234`)
-- **resolvedCommit**: The actual commit SHA that was resolved from the requested ref
-
-### Tracking vs Pinning
-
-**Tracking (default)**: Skills track the hub branch for automatic updates
-```bash
-zanat add vercel.frontend.react-patterns
-# Tracks main branch, updates with 'zanat update'
-```
-
-**Pinning**: Lock a skill to a specific version that never auto-updates
-```bash
-# Pin to a branch (follows branch updates but not hub branch)
-zanat add vercel.frontend.react-patterns --pin=develop
-
-# Pin to a tag (never updates)
-zanat add vercel.frontend.react-patterns --pin=v1.2.0
-
-# Pin to a specific commit (never updates)
-zanat add vercel.frontend.react-patterns --pin=abc1234
-```
-
-### Reference Status
-
-Skills can have three reference states:
-
-- **✓ ok**: The requested ref exists and resolves to a commit
-- **⚠ orphaned**: The ref (branch/tag) no longer exists, but the commit is preserved
-- **✗ broken**: Neither the ref nor the commit exist (skill files remain but can't update)
-
-Check status with:
-```bash
-zanat list          # Shows ref status in version column
-zanat status        # Detailed status for all skills
-zanat update        # Warns about orphaned/broken skills before updating
-```
-
-### Fixing Orphaned Skills
-
-If a skill becomes orphaned (the branch was deleted), re-pin it to the hub branch:
-```bash
-zanat add vercel.frontend.react-patterns
-# Re-adds without --pin, which tracks the hub branch
-```
+For detailed command documentation, version tracking details, and troubleshooting, see the [CLI README](./packages/cli/README.md).
 
 ## How It Works
 
@@ -205,6 +148,7 @@ Provide specific, actionable feedback. Suggest improvements with code examples w
 **Required fields:** `name`, `description`
 
 **Optional fields:**
+
 - `license` - SPDX license identifier
 - `compatibility` - Compatible agent versions
 - `disable-model-invocation` - Set to true to disable tool use
@@ -213,49 +157,12 @@ Provide specific, actionable feedback. Suggest improvements with code examples w
 - `metadata` - Custom key-value pairs
 
 **Naming Requirements:**
+
 - Skill names must be lowercase with hyphens (e.g., `code-review`, `react-hooks`)
 - Names must match the folder name
 - Namespaced format: `skill-name`, `namespace.skill-name`, or `organization.team.skill-name`
 
 See the [zanat-hub](https://github.com/iamramo/zanat-hub) repository for examples.
-
-## Configuration
-
-Configuration is stored in `~/.zanat/config.json`:
-
-```json
-{
-  "hubUrl": "git@github.com:iamramo/zanat-hub.git",
-  "hubBranch": "main",
-  "hubDir": "/Users/you/.zanat/hub",
-  "lastPull": "2026-03-23T12:00:00.000Z"
-}
-```
-
-## Troubleshooting
-
-### Enable Debug Mode
-
-If you encounter errors, enable debug mode to see detailed error information:
-
-```bash
-ZANAT_DEBUG=true zanat status
-```
-
-This outputs the full error details in JSON format, helpful for debugging issues.
-
-### Common Issues
-
-**"Failed to initialize"**
-- Ensure Git is installed and accessible in your PATH
-- Check that you have permission to clone the hub repository
-
-**"Failed to pull"**
-- Verify your hub repository URL is correct in `~/.zanat/config.json`
-- Check network connectivity to the Git host
-
-**"Could not read the lock file"**
-- Run `zanat init` to create the initial configuration
 
 ## Project Structure
 

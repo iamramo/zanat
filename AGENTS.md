@@ -15,13 +15,16 @@ This file provides context about the Zanat project for future AI agents.
 
 ### Naming Convention
 
-Skills are added with the format: `<source>.<skill-name>`
+Skills are added with the format: `<namespace>.<skill-name>`
+
+Namespace can be nested (e.g., `company-c.platform.devops`).
 
 Examples:
 
 - `zanat.yurchi.code-review` - Skills authored by Yurchi
 - `zanat.vercel.pr-review` - Vercel skills added via Zanat
 - `zanat.anthropic.web-accessibility` - Anthropic skills via Zanat
+- `company-c.platform.devops` - Nested namespace skill
 
 This prevents conflicts with other skill managers (like npx skills).
 
@@ -78,7 +81,8 @@ Instructions for the agent go here...
 
 - Skills stored in a Git repository
 - Versions tracked via Git commits
-- Users can specify exact versions by commit SHA or use `latest`
+- Dual-reference system: `requestedRef` (branch/tag/commit) + `resolvedCommit` (actual SHA)
+- Skills track hub branch by default; use `--pin=<ref>` to lock to specific version
 - Incremental indexing (only changed files on pull)
 
 **SQLite Cache (Future):**
@@ -100,10 +104,23 @@ Planned but not part of MVP:
 ```bash
 zanat init                    # Create ~/.zanat/, clone hub repo
 zanat pull                    # Pull latest hub changes
-zanat add <skill>             # Add skill
+zanat add <skill>             # Add skill (tracks hub branch)
+zanat add <skill> --pin=<ref> # Add skill pinned to specific ref (branch/tag/commit)
+zanat rm <skill>              # Remove a skill
+zanat update [skill]          # Update skill(s) from hub
 zanat list                    # List added skills
+zanat status                  # Show hub and skills status
 zanat search [query]          # Search available skills
 ```
+
+### Version Tracking
+
+Zanat uses a dual-reference tracking system:
+- **requestedRef**: The branch, tag, or commit requested by the user
+- **resolvedCommit**: The actual commit SHA resolved from the requested ref
+
+**Tracking (default):** Skills track the hub branch and auto-update with `zanat pull`
+**Pinning:** Use `--pin=<ref>` to lock a skill to a specific version that never auto-updates
 
 ### Tech Stack
 
@@ -120,9 +137,10 @@ zanat search [query]          # Search available skills
 **Included:**
 
 - Git-based skill storage
-- CLI for init, pull, install, list, search
+- CLI for init, pull, add, rm, update, list, status, search
 - Local skill add to `~/.agents/skills/`
 - Basic full-text search (grep-based)
+- Dual-reference version tracking (track hub branch or pin to specific ref)
 
 **Not Included (Future):**
 
@@ -130,7 +148,6 @@ zanat search [query]          # Search available skills
 - HTTP API
 - Web UI
 - Multiple hub sources
-- Version resolution (only latest for MVP)
 - Database/search index (SQLite)
 - PR workflow automation
 

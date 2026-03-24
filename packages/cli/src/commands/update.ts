@@ -95,7 +95,6 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
     }
 
     // Step 4: Prompt user and update all updatable skills
-    Log.blank();
     const shouldUpdate = await Prompt.confirm({
       message: `Update ${updatableSkills.length} skill(s)?`,
       default: true,
@@ -113,6 +112,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
       await Skill.update(namespace, skillName);
     }
 
+    Log.blank();
     Log.green('Updated all skills', { prefix: '✓' });
   } catch (error) {
     Log.red('Failed to update', { prefix: '✗' });
