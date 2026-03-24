@@ -81,7 +81,7 @@ Note:
 
 program
   .command('add <skill>')
-  .description('Add a skill (format: namespace.skill-name or namespace.sub.skill-name)')
+  .description('Add a skill')
   .option(
     '-p, --pin <ref>',
     'Pin to a specific ref (branch, tag, or commit SHA). Requires a value (e.g., --pin=main, --pin=v1.0.0, --pin=abc123).'
@@ -119,7 +119,7 @@ Notes:
 
 program
   .command('rm <skill>')
-  .description('Remove a skill (format: namespace.skill-name or namespace.sub.skill-name)')
+  .description('Remove a skill')
   .addHelpText(
     'after',
     `
@@ -136,7 +136,7 @@ Note:
 
 program
   .command('update [skill]')
-  .description('Update skill(s) from hub (updates all if no skill specified)')
+  .description('Update skill(s) from hub')
   .addHelpText(
     'after',
     `
