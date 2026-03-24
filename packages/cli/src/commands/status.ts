@@ -22,12 +22,12 @@ export const statusCommand = async (): Promise<void> => {
     // Check if remote branch exists before trying to get behind count
     const remoteExists = await Git.remoteBranchExists(config.hubBranch);
     if (!remoteExists) {
-      Log.yellow(`Remote branch 'origin/${config.hubBranch}' not found.`, { prefix: '⚠', spacing: 2 });
+      Log.yellow(`Remote branch 'origin/${config.hubBranch}' not found.`, {
+        prefix: '⚠',
+        spacing: 2,
+      });
       return;
     }
-
-    // Fetch to ensure origin/branch reference exists (needed for single-branch clones)
-    await Git.fetch([config.hubBranch]);
 
     const behind = await Git.behind(config.hubBranch);
     if (behind === 0) {
