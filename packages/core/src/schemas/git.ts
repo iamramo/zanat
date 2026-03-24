@@ -29,13 +29,6 @@ export const TagSchema = z
 
 export const CommitShaSchema = z
   .string()
-  .regex(
-    GIT_COMMIT_SHA_REGEX,
-    'Commit SHA must be 7-40 hexadecimal characters'
-  );
+  .regex(GIT_COMMIT_SHA_REGEX, 'Commit SHA must be 7-40 hexadecimal characters');
 
-export const RefSchema = z.union([
-  BranchSchema,
-  TagSchema,
-  CommitShaSchema,
-]);
+export const RefSchema = z.union([BranchSchema, TagSchema, CommitShaSchema]);

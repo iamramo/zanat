@@ -12,7 +12,10 @@ class ZanatCommand extends CommanderCommand {
 
   hook(
     event: HookEvent,
-    listener: (thisCommand: CommanderCommand, actionCommand: CommanderCommand) => void | Promise<void>
+    listener: (
+      thisCommand: CommanderCommand,
+      actionCommand: CommanderCommand
+    ) => void | Promise<void>
   ) {
     return super.hook(event, async (thisCommand, actionCommand) => {
       try {

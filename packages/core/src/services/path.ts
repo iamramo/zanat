@@ -38,10 +38,10 @@ export const Path = {
   toSkillParts(fullSkillName: string): { namespace: string[]; skillName: string } {
     const parts = fullSkillName.split('.');
     const skillName = parts.pop()!;
-    
+
     Zod.skill.SegmentSchema.parse(skillName);
     parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
-    
+
     return { namespace: parts, skillName };
   },
 };

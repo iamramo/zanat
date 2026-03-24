@@ -7,7 +7,9 @@ export const Prompt = {
   validate: (schema: z.ZodTypeAny, customErrorMessage?: string) => {
     return (value: string): true | string => {
       const result = schema.safeParse(value);
-      return result.success ? true : (customErrorMessage ?? result.error.errors[0]?.message ?? 'Invalid value');
+      return result.success
+        ? true
+        : (customErrorMessage ?? result.error.errors[0]?.message ?? 'Invalid value');
     };
   },
 };

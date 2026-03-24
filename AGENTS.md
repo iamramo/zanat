@@ -116,6 +116,7 @@ zanat search [query]          # Search available skills
 ### Version Tracking
 
 Zanat uses a dual-reference tracking system:
+
 - **requestedRef**: The branch, tag, or commit requested by the user
 - **resolvedCommit**: The actual commit SHA resolved from the requested ref
 

@@ -7,7 +7,7 @@ export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
     Zod.git.UrlSchema.parse(url);
     Zod.git.BranchSchema.parse(branch);
-    
+
     const git = simpleGit();
 
     try {
