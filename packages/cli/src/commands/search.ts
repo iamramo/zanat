@@ -2,13 +2,16 @@ import { Skill, Log, Display, Config } from '@iamramo/zanat-core';
 
 export const searchCommand = async (query?: string): Promise<void> => {
   try {
-    // Step 1: Search for skills
+    // Step 1: Validate and normalize input
+    const normalizedQuery = query?.trim();
+
+    // Step 2: Search for skills
     await Config.validate();
 
-    query ? Log.blue(`Searching for: "${query}"...`) : Log.blue('Available skills:');
+    normalizedQuery ? Log.blue(`Searching for: "${normalizedQuery}"...`) : Log.blue('Available skills:');
     Log.blank();
 
-    const results = query ? await Skill.search(query) : await Skill.findAll();
+    const results = normalizedQuery ? await Skill.search(normalizedQuery) : await Skill.findAll();
 
     // Step 2: Display results
     if (results.length === 0) {

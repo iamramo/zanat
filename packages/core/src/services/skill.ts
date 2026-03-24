@@ -68,7 +68,34 @@ export const Skill = {
 
   async search(query: string): Promise<ISkill[]> {
     const skills = await this.findAll();
-    return skills.filter((skill) => skill.fullName.toLowerCase().includes(query.toLowerCase()));
+    const normalizedQuery = query.toLowerCase().trim();
+
+    return skills.filter((skill) => {
+      // Check fields in order of likelihood to match (performance optimization)
+      // Stop checking once we find a match
+
+      // 1. Check fullName (most specific, likely to match)
+      if (skill.fullName.toLowerCase().includes(normalizedQuery)) {
+        return true;
+      }
+
+      // 2. Check description (short, common search target)
+      if (skill.description.toLowerCase().includes(normalizedQuery)) {
+        return true;
+      }
+
+      // 3. Check content (longest, check last)
+      if (skill.content.toLowerCase().includes(normalizedQuery)) {
+        return true;
+      }
+
+      // 4. Check name field from frontmatter
+      if (skill.name.toLowerCase().includes(normalizedQuery)) {
+        return true;
+      }
+
+      return false;
+    });
   },
 
   async remove(skillPath: string): Promise<void> {
@@ -145,7 +172,8 @@ export const Skill = {
     } else {
       try {
         await Git.show(requestedRef, hubFilePath);
-      } catch {
+      } catch (error) {
+        Log.debug(error);
         throw new Error(`Skill not found at ref '${requestedRef}': ${fullSkillName}`);
       }
     }
@@ -159,7 +187,8 @@ export const Skill = {
     } else {
       try {
         resolvedCommit = await Git.resolveCommit(requestedRef);
-      } catch {
+      } catch (error) {
+        Log.debug(error);
         resolvedCommit = existingSkill.resolvedCommit;
       }
     }

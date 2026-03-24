@@ -87,11 +87,14 @@ export const LockFile = {
     try {
       await Git.resolveCommit(requestedRef);
       return 'ok';
-    } catch {
+    } catch (error) {
+      Log.debug(error);
+
       try {
         await Git.raw(['cat-file', '-t', resolvedCommit]);
         return 'orphaned';
-      } catch {
+      } catch (error) {
+        Log.debug(error);
         return 'broken';
       }
     }

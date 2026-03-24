@@ -22,7 +22,9 @@ export const pullCommand = async (): Promise<void> => {
       try {
         await Git.fetch([ref]);
         fetchedRefs.push(ref);
-      } catch {
+      } catch (error) {
+        Log.debug(error);
+
         // Find skills using this ref for user guidance
         const affectedSkills = await LockFile.findSkillsByRef(ref);
         failedRefs.push({ ref, skills: affectedSkills });

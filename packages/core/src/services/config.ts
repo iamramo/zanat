@@ -74,7 +74,8 @@ export const Config = {
       await Git.checkout(config.hubBranch);
       Log.green(`Switched to '${config.hubBranch}'`, { prefix: '✓' });
       Log.blank();
-    } catch {
+    } catch (error) {
+      Log.debug(error);
       Log.red(`Failed to switch to '${config.hubBranch}'`, { prefix: '✗' });
       Log.gray(`Please fix manually: cd ${config.hubDir} && git checkout ${config.hubBranch}`);
       process.exit(1);

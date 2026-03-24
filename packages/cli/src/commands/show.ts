@@ -1,4 +1,4 @@
-import { Skill, Log, Config, Zod, Path, Git } from '@iamramo/zanat-core';
+import { Skill, Log, Config, Zod } from '@iamramo/zanat-core';
 
 interface ShowOptions {
   ref?: string;
