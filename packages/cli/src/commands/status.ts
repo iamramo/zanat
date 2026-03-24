@@ -9,12 +9,12 @@ export const statusCommand = async (): Promise<void> => {
     const config = await Config.get();
 
     // Step 2: Display hub status
-    Log.blue('Hub Status:');
+    Log.blue(Log.bold('Hub Status:'));
     Log.blank();
-    Log.green(`Initialized: ${Log.bold('yes')}`, { prefix: '•', spacing: 2 });
-    Log.green(`Repository: ${Log.bold(config.hubUrl)}`, { prefix: '•', spacing: 2 });
-    Log.green(`Branch: ${Log.bold(config.hubBranch)}`, { prefix: '•', spacing: 2 });
-    Log.green(`Last pull: ${Log.bold(Display.timeAgo(config?.lastPull))}`, {
+    Log.status('Initialized:', 'yes', 'green', { prefix: '•', spacing: 2 });
+    Log.status('Repository:', config.hubUrl, 'green', { prefix: '•', spacing: 2 });
+    Log.status('Branch:', config.hubBranch, 'green', { prefix: '•', spacing: 2 });
+    Log.status('Last pull:', Display.timeAgo(config?.lastPull), 'green', {
       prefix: '•',
       spacing: 2,
     });
@@ -31,21 +31,21 @@ export const statusCommand = async (): Promise<void> => {
 
     const behind = await Git.behind(config.hubBranch);
     if (behind === 0) {
-      Log.green(`Behind: ${Log.bold('up-to-date')}`, { prefix: '•', spacing: 2 });
+      Log.status('Behind:', Log.bold('up-to-date'), 'green', { prefix: '•', spacing: 2 });
     } else {
-      Log.yellow(`Behind: ${behind} commit(s)`, { prefix: '•', spacing: 2 });
+      Log.status('Behind:', `${behind} commit(s)`, 'yellow', { prefix: '•', spacing: 2 });
     }
 
     // Step 3: Display skills status
     Log.blank();
-    Log.blue('Skills:');
+    Log.blue(Log.bold('Skills:'));
     Log.blank();
 
     if (skillNames.length > 0) {
       for (const skillName of skillNames) {
         const displayVersion = await Display.getDisplayVersion(skillName);
 
-        Log.green(`${skillName} ${displayVersion}`, {
+        Log.status(`${skillName}`, displayVersion, 'blue', {
           prefix: '•',
           spacing: 2,
         });

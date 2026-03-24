@@ -19,7 +19,7 @@ export const listCommand = async (): Promise<void> => {
 
     for (const skillName of skillNames) {
       const displayVersion = await Display.getDisplayVersion(skillName);
-      Log.green(`${skillName} ${displayVersion}`, {
+      Log.status(`${skillName}`, displayVersion, 'blue', {
         prefix: '•',
       });
     }

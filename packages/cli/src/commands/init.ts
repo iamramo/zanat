@@ -101,7 +101,7 @@ export const initCommand = async (): Promise<void> => {
     Log.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });
 
     Log.blank();
-    Log.green('Zanat initialized successfully!', { prefix: '✓' });
+    Log.white(Log.bold('Zanat initialized successfully!'), { prefix: '✨' });
   } catch (error) {
     Log.red('Failed to initialize', { prefix: '✗' });
     Log.debug(error);

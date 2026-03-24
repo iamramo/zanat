@@ -56,9 +56,6 @@ export const pullCommand = async (): Promise<void> => {
     // Step 4: Always update timestamp
     config.lastPull = new Date().toISOString();
     await Config.update(config);
-
-    Log.blank();
-    Log.green('Pull complete', { prefix: '✓' });
   } catch (error) {
     Log.red('Failed to pull', { prefix: '✗' });
     Log.debug(error);

@@ -112,7 +112,6 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
       await Skill.update(namespace, skillName);
     }
 
-    Log.blank();
     Log.green('Updated all skills', { prefix: '✓' });
   } catch (error) {
     Log.red('Failed to update', { prefix: '✗' });

@@ -8,7 +8,9 @@ export const searchCommand = async (query?: string): Promise<void> => {
     // Step 2: Search for skills
     await Config.validate();
 
-    normalizedQuery ? Log.blue(`Searching for: "${normalizedQuery}"...`) : Log.blue('Available skills:');
+    normalizedQuery
+      ? Log.blue(`Searching for: "${normalizedQuery}"...`)
+      : Log.blue('Available skills:');
     Log.blank();
 
     const results = normalizedQuery ? await Skill.search(normalizedQuery) : await Skill.findAll();
@@ -19,7 +21,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
       return;
     } else {
       results.forEach((skill) => {
-        Log.green(skill.fullName, { prefix: '•' });
+        Log.white(skill.fullName, { prefix: '•' });
         const truncatedDesc = Display.truncate(skill.description);
         Log.gray(truncatedDesc, { spacing: 2 });
         Log.blank();
