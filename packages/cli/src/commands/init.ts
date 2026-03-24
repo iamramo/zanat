@@ -5,8 +5,7 @@ export const initCommand = async (): Promise<void> => {
   Log.blue('Initializing Zanat...');
   Log.blank();
 
-  try {
-    // Step 1: Check for existing configuration and handle reinitialization
+  // Step 1: Check for existing configuration and handle reinitialization
     const hasConfig = await Config.exists();
     if (hasConfig) {
       Log.blue('Zanat is already initialized.');
@@ -102,9 +101,4 @@ export const initCommand = async (): Promise<void> => {
 
     Log.blank();
     Log.white(Log.bold('Zanat initialized successfully!'), { prefix: '✨' });
-  } catch (error) {
-    Log.red('Failed to initialize', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

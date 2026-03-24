@@ -8,27 +8,16 @@ import {
   Git,
   Display,
   Fs,
-  Zod,
 } from '@iamramo/zanat-core';
-import { z } from 'zod';
-
-const PinOptionSchema = z.union([
-  z.string().min(1, '--pin requires a ref value (branch, tag, or commit)'),
-  z.undefined(),
-]);
+import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
-  pin?: string;
+  pin?: PinOption;
 }
 
 export const addCommand = async (fullSkillName: string, options: AddOptions): Promise<void> => {
-  try {
-    // Step 1: Validate and parse inputs
-    await Config.validate();
-    await Config.ensureCorrectBranch();
-    Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
-
-    const pinOption = PinOptionSchema.parse(options.pin);
+  // Step 1: Parse inputs (validated in preAction hook)
+  const pinOption = options.pin;
     const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
     // Step 2: Handle existing skill or prepare to add new one
@@ -94,9 +83,4 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
 
     await Skill.add(namespace, skillName, skillFile, targetPath, requestedRef, resolvedCommit);
     Log.green(`Added ${fullSkillName}`);
-  } catch (error) {
-    Log.red('Failed to add', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

@@ -1,15 +1,10 @@
-import { Log, Prompt, LockFile, Path, Skill, Config, Zod } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, Path, Skill, Config } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
-  try {
-    // Step 1: Validate configuration
-    await Config.validate();
-
-    // Update one skill
-    if (fullSkillName) {
-      // Step 2a: Parse skill name and check ref status
-      Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
-      const { namespace, skillName } = Path.toSkillParts(fullSkillName);
+  // Update one skill
+  if (fullSkillName) {
+    // Step 2a: Parse skill name and check ref status (validated in preAction hook)
+    const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
       const skill = await LockFile.find(fullSkillName);
 
@@ -113,9 +108,4 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
     }
 
     Log.green('Updated all skills', { prefix: '✓' });
-  } catch (error) {
-    Log.red('Failed to update', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

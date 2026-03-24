@@ -1,4 +1,4 @@
-import { Display, Command } from '@iamramo/zanat-core';
+import { Display, Command, Config, Zod, Log } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
@@ -9,11 +9,13 @@ import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
 import { showCommand } from './commands/show.js';
+import { PinOptionSchema } from './schemas/pin.js';
 
 const program = Command.create();
+
 program
   .name('zanat')
-  .description('Your personal skill library from any Git repository')
+  .description('Your personal skill library from any Git repository.')
   .version(packageJson.version);
 program.helpCommand(false);
 
@@ -26,6 +28,58 @@ program.configureHelp({
     }
     return originalHelp;
   },
+});
+
+program.hook('preAction', async (_thisCommand, actionCommand) => {
+  const cmd = actionCommand.name();
+  const args = actionCommand.args;
+  const opts = actionCommand.opts();
+
+  switch (cmd) {
+    case 'init':
+      return;
+
+    case 'add':
+      await Config.validate();
+      await Config.ensureOnTrackedBranch();
+      Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      PinOptionSchema.parse(opts.pin);
+      return;
+
+    case 'pull':
+      await Config.validate();
+      await Config.ensureOnTrackedBranch();
+      return;
+
+    case 'rm':
+      await Config.validate();
+      Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      return;
+
+    case 'show':
+      await Config.validate();
+      Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      return;
+
+    case 'update':
+      await Config.validate();
+      if (args[0]) {
+        Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+      }
+      return;
+
+    case 'list':
+      await Config.validate();
+      return;
+
+    case 'search':
+      await Config.validate();
+      return;
+
+    case 'status':
+      await Config.validate();
+      return;
+  }
 });
 
 program

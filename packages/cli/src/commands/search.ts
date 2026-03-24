@@ -1,13 +1,10 @@
-import { Skill, Log, Display, Config } from '@iamramo/zanat-core';
+import { Skill, Log, Display } from '@iamramo/zanat-core';
 
 export const searchCommand = async (query?: string): Promise<void> => {
-  try {
-    // Step 1: Validate and normalize input
-    const normalizedQuery = query?.trim();
+  // Step 1: Validate and normalize input
+  const normalizedQuery = query?.trim();
 
     // Step 2: Search for skills
-    await Config.validate();
-
     normalizedQuery
       ? Log.blue(`Searching for: "${normalizedQuery}"...`)
       : Log.blue('Available skills:');
@@ -31,9 +28,4 @@ export const searchCommand = async (query?: string): Promise<void> => {
     Log.gray(`Found ${results.length} skill(s)`);
     Log.blank();
     Log.gray('Add a skill with: zanat add <skill>');
-  } catch (error) {
-    Log.red('Failed to search', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

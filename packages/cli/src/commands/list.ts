@@ -1,10 +1,8 @@
-import { LockFile, Display, Log, Config } from '@iamramo/zanat-core';
+import { LockFile, Display, Log } from '@iamramo/zanat-core';
 
 export const listCommand = async (): Promise<void> => {
-  try {
-    // Step 1: Load and check skills
-    await Config.validate();
-    const skills = await LockFile.findAll();
+  // Step 1: Load and check skills
+  const skills = await LockFile.findAll();
     const skillNames = Object.keys(skills);
 
     if (skillNames.length === 0) {
@@ -26,9 +24,4 @@ export const listCommand = async (): Promise<void> => {
 
     Log.blank();
     Log.gray(`Total: ${skillNames.length} skill(s)`);
-  } catch (error) {
-    Log.red('Failed to list skills', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

@@ -1,11 +1,8 @@
-import { Skill, Fs, Path, Log, Config, Zod } from '@iamramo/zanat-core';
+import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
 
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
-  try {
-    // Step 1: Validate and parse inputs
-    await Config.validate();
-    Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
-    Path.toSkillParts(fullSkillName);
+  // Step 1: Parse skill name (validated in preAction hook)
+  Path.toSkillParts(fullSkillName);
 
     // Step 2: Check skill exists
     const skillPath = Path.getSkillTargetDir(fullSkillName);
@@ -19,9 +16,4 @@ export const removeCommand = async (fullSkillName: string): Promise<void> => {
     // Step 2: Remove skill from storage
     await Skill.remove(skillPath);
     Log.green(`Removed ${fullSkillName}`, { prefix: '✓' });
-  } catch (error) {
-    Log.red('Failed to remove', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };

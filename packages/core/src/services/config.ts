@@ -45,7 +45,7 @@ export const Config = {
     }
   },
 
-  async ensureCorrectBranch(): Promise<void> {
+  async ensureOnTrackedBranch(): Promise<void> {
     const config = await this.get();
     const currentBranch = await Git.getCurrentBranch();
 
@@ -77,7 +77,7 @@ export const Config = {
     } catch (error) {
       Log.debug(error);
       Log.red(`Failed to switch to '${config.hubBranch}'`, { prefix: '✗' });
-      Log.gray(`Please fix manually: cd ${config.hubDir} && git checkout ${config.hubBranch}`);
+      Log.gray(`Please fix manually in "${config.hubDir}"`);
       process.exit(1);
     }
   },

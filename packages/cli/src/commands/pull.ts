@@ -1,10 +1,7 @@
 import { Git, Config, LockFile, Log } from '@iamramo/zanat-core';
 
 export const pullCommand = async (): Promise<void> => {
-  try {
-    await Config.validate();
-    await Config.ensureCorrectBranch();
-    const config = await Config.get();
+  const config = await Config.get();
 
     // Step 1: Pull hubBranch
     Log.blue('Pulling latest changes...');
@@ -56,9 +53,4 @@ export const pullCommand = async (): Promise<void> => {
     // Step 4: Always update timestamp
     config.lastPull = new Date().toISOString();
     await Config.update(config);
-  } catch (error) {
-    Log.red('Failed to pull', { prefix: '✗' });
-    Log.debug(error);
-    process.exit(1);
-  }
 };
