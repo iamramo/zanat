@@ -71,8 +71,8 @@ export const initCommand = async (): Promise<void> => {
       }
 
       // Validate branch existence on remote
-      const exists = await Git.remoteBranchExists(value);
-      if (!exists) {
+      const remoteBranchExists = await Git.remoteBranchExists(value);
+      if (!remoteBranchExists) {
         return `Branch '${value}' does not exist in the repository`;
       }
 
@@ -82,7 +82,7 @@ export const initCommand = async (): Promise<void> => {
 
   const hubDir = await Prompt.input({
     message: 'Hub directory path:',
-    default: path.join(Path.ZANAT_DIR, 'hub'),
+    default: Path.HUB_DIR,
     validate: async (value: string) => {
       // Validate format
       const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubDir)(value);

@@ -10,8 +10,8 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   const pinOption = options.pin;
 
   // Step 2: Handle existing skill or prepare to add new one
-  const exists = await LockFile.find(fullSkillName);
-  if (exists) {
+  const skillLockExists = !!(await LockFile.find(fullSkillName));
+  if (skillLockExists) {
     const shouldUpdate = await Prompt.confirm({
       message: `Skill ${fullSkillName} is already added. Update from hub?`,
       default: true,

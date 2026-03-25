@@ -11,30 +11,16 @@ import matter from 'gray-matter';
 import path from 'node:path';
 
 export const Skill = {
-  async parse(filePath: string): Promise<ISkill> {
+  async parse(fullSkillName: string): Promise<ISkill> {
     try {
+      const { namespace, skillName } = Path.toSkillParts(fullSkillName);
+      const filePath = await Path.getHubSkillPath(fullSkillName, true);
+      
       const content = await Fs.readFile(filePath);
       const parsed = matter(content);
 
-      const config = await Config.get();
-      const relativePath = path.relative(config.hubDir, filePath);
-      const pathParts = relativePath.split(path.sep);
-
-      pathParts.pop();
-
-      const skillName = pathParts.pop();
-      if (!skillName) {
-        throw new Error('Could not extract skill name from path.');
-      }
-      Zod.skill.SegmentSchema.parse(skillName);
-
-      const namespace = pathParts;
-      if (namespace.length === 0) {
-        throw new Error('Could not extract namespace from path.');
-      }
       namespace.forEach((part) => Zod.skill.SegmentSchema.parse(part));
-
-      const fullName = namespace.join('.') + '.' + skillName;
+      Zod.skill.SegmentSchema.parse(skillName);
 
       const frontmatter = Zod.skill.OpenStandardSchema.parse(parsed.data);
 
@@ -43,7 +29,7 @@ export const Skill = {
         content: parsed.content,
         namespace,
         skill: skillName,
-        fullName,
+        fullName: fullSkillName,
         path: filePath,
       };
     } catch (error) {
@@ -52,15 +38,21 @@ export const Skill = {
     }
   },
 
-  async find(fullName: string): Promise<ISkill | undefined> {
-    const skillPath = await Path.getHubSkillPath(fullName, true);
-    return this.parse(skillPath).catch(() => undefined);
+  async find(fullSkillName: string): Promise<ISkill | undefined> {
+    return this.parse(fullSkillName).catch(() => undefined);
   },
 
   async findAll(): Promise<ISkill[]> {
     const config = await Config.get();
     const files = await Fs.glob('**/SKILL.md', config.hubDir);
-    return Promise.all(files.map((f) => this.parse(path.join(config.hubDir, f))));
+    return Promise.all(
+      files.map((f) => {
+        // Convert path like 'company-a/backend/nodejs/SKILL.md' to 'company-a.backend.nodejs'
+        const relativeDir = path.dirname(f);
+        const fullSkillName = relativeDir.split(path.sep).join('.');
+        return this.parse(fullSkillName);
+      })
+    );
   },
 
   async search(query: string): Promise<ISkill[]> {
@@ -136,8 +128,8 @@ export const Skill = {
   async update(fullSkillName: string): Promise<void> {
     const skillPath = Path.getAgentsSkillPath(fullSkillName);
 
-    const exists = await Fs.exists(skillPath);
-    if (!exists) {
+    const skillExists = await Fs.exists(skillPath);
+    if (!skillExists) {
       throw new Error(`Skill not added: ${fullSkillName}`);
     }
 

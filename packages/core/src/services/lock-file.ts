@@ -81,8 +81,8 @@ export const LockFile = {
     return skill.requestedRef !== currentHubBranch;
   },
 
-  async getRefStatus(skill: ISkillLock): Promise<IRefStatus> {
-    const { requestedRef, resolvedCommit } = skill;
+  async getRefStatus(skillLock: ISkillLock): Promise<IRefStatus> {
+    const { requestedRef, resolvedCommit } = skillLock;
 
     try {
       await Git.resolveCommit(requestedRef);
