@@ -1,11 +1,8 @@
 import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
 
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
-  // Step 1: Parse skill name (validated in preAction hook)
-  Path.toSkillParts(fullSkillName);
-
-  // Step 2: Check skill exists
-  const skillPath = Path.getSkillTargetDir(fullSkillName);
+  // Step 1: Check skill exists
+  const skillPath = Path.getAgentsSkillPath(fullSkillName);
   const exists = await Fs.exists(skillPath);
 
   if (!exists) {

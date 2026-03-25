@@ -6,9 +6,8 @@ interface AddOptions {
 }
 
 export const addCommand = async (fullSkillName: string, options: AddOptions): Promise<void> => {
-  // Step 1: Parse inputs (validated in preAction hook)
+  // Step 1: Parse inputs (validated in preAction hook, true)
   const pinOption = options.pin;
-  const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
   // Step 2: Handle existing skill or prepare to add new one
   const exists = await LockFile.find(fullSkillName);
@@ -23,7 +22,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
       return;
     }
 
-    await Skill.update(namespace, skillName);
+    await Skill.update(fullSkillName);
     Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
     return;
   }
@@ -53,9 +52,8 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     Log.blue(`Tracking ${config.hubBranch} branch`);
   }
 
-  // Step 4: Check if skill exists in hub (only check filesystem when not using --pin)
-  const sourcePath = await Path.getSkillHubDir(namespace, skillName);
-  const skillFile = Path.getSkillFile(sourcePath);
+  // Step 4: Check if skill exists in hub (only check filesystem when not using --pin, true)
+  const skillFile = await Path.getHubSkillPath(fullSkillName);
 
   if (pinOption === undefined) {
     const skillExistsInHub = await Fs.exists(skillFile);
@@ -69,8 +67,8 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   }
 
   // Step 5: Add skill to local storage
-  const targetPath = Path.getSkillTargetDir(fullSkillName);
+  const targetPath = Path.getAgentsSkillPath(fullSkillName);
 
-  await Skill.add(namespace, skillName, skillFile, targetPath, requestedRef, resolvedCommit);
+  await Skill.add(fullSkillName, skillFile, targetPath, requestedRef, resolvedCommit);
   Log.green(`Added ${fullSkillName}`);
 };

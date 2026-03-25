@@ -53,10 +53,7 @@ export const Skill = {
   },
 
   async find(fullName: string): Promise<ISkill | undefined> {
-    const config = await Config.get();
-    const { namespace, skillName } = Path.toSkillParts(fullName);
-
-    const skillPath = path.join(config.hubDir, ...namespace, skillName, Path.SKILL_FILENAME);
+    const skillPath = await Path.getHubSkillPath(fullName, true);
     return this.parse(skillPath).catch(() => undefined);
   },
 
@@ -71,20 +68,20 @@ export const Skill = {
     const normalizedQuery = query.toLowerCase().trim();
 
     return skills.filter((skill) => {
-      // Check fields in order of likelihood to match (performance optimization)
+      // Check fields in order of likelihood to match (performance optimization, true)
       // Stop checking once we find a match
 
-      // 1. Check fullName (most specific, likely to match)
+      // 1. Check fullName (most specific, likely to match, true)
       if (skill.fullName.toLowerCase().includes(normalizedQuery)) {
         return true;
       }
 
-      // 2. Check description (short, common search target)
+      // 2. Check description (short, common search target, true)
       if (skill.description.toLowerCase().includes(normalizedQuery)) {
         return true;
       }
 
-      // 3. Check content (longest, check last)
+      // 3. Check content (longest, check last, true)
       if (skill.content.toLowerCase().includes(normalizedQuery)) {
         return true;
       }
@@ -106,16 +103,14 @@ export const Skill = {
   },
 
   async add(
-    namespace: string[],
-    skillName: string,
+    fullSkillName: string,
     sourceFile: string,
     targetDir: string,
     requestedRef: string,
     resolvedCommit: string
   ): Promise<void> {
-    const fullSkillName = Path.getFullSkillName(namespace, skillName);
     const targetFile = path.join(targetDir, Path.SKILL_FILENAME);
-    const hubFilePath = Path.getSkillFilePath(namespace, skillName);
+    const hubFilePath = await Path.getHubSkillPath(fullSkillName, true);
 
     await Fs.ensureDir(targetDir);
 
@@ -130,6 +125,7 @@ export const Skill = {
     }
 
     const existingSkill = await LockFile.find(fullSkillName);
+    const { namespace, skillName } = Path.toSkillParts(fullSkillName);
 
     const lockedSkill: ISkillLock = {
       namespace,
@@ -143,9 +139,8 @@ export const Skill = {
     await LockFile.add(fullSkillName, lockedSkill);
   },
 
-  async update(namespace: string[], skillName: string): Promise<void> {
-    const fullSkillName = Path.getFullSkillName(namespace, skillName);
-    const skillPath = Path.getSkillTargetDir(fullSkillName);
+  async update(fullSkillName: string): Promise<void> {
+    const skillPath = Path.getAgentsSkillPath(fullSkillName);
 
     const exists = await Fs.exists(skillPath);
     if (!exists) {
@@ -159,13 +154,11 @@ export const Skill = {
 
     const config = await Config.get();
     const requestedRef = existingSkill.requestedRef;
-    const sourcePath = await Path.getSkillHubDir(namespace, skillName);
-    const skillFile = Path.getSkillFile(sourcePath);
-    const hubFilePath = Path.getSkillFilePath(namespace, skillName);
+    const hubFilePath = await Path.getHubSkillPath(fullSkillName, true);
 
-    // Verify skill exists in hub (filesystem for tracking, git for pinned)
+    // Verify skill exists in hub (filesystem for tracking, git for pinned, true)
     if (requestedRef === config.hubBranch) {
-      const hubExists = await Fs.exists(skillFile);
+      const hubExists = await Fs.exists(hubFilePath);
       if (!hubExists) {
         throw new Error(`Skill not found in hub filesystem: ${fullSkillName}`);
       }
@@ -193,7 +186,7 @@ export const Skill = {
       }
     }
 
-    await this.add(namespace, skillName, skillFile, skillPath, requestedRef, resolvedCommit);
+    await this.add(fullSkillName, hubFilePath, skillPath, requestedRef, resolvedCommit);
   },
 
   async updateAll(): Promise<void> {
@@ -202,7 +195,7 @@ export const Skill = {
     for (const fullSkillName of Object.keys(skills)) {
       const skill = skills[fullSkillName];
       if (!skill) continue;
-      await this.update(skill.namespace, skill.skillName);
+      await this.update(fullSkillName);
     }
   },
 };

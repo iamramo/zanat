@@ -19,6 +19,14 @@ export const BranchSchema = z
     'Branch name must start with alphanumeric and contain only letters, numbers, dots, hyphens, and underscores'
   );
 
+export const RemoteBranchSchema = z
+  .string()
+  .min(1, 'Remote branch name is required')
+  .regex(
+    GIT_BRANCH_NAME_REGEX,
+    'Remote branch name must start with alphanumeric and contain only letters, numbers, dots, hyphens, and underscores'
+  );
+
 export const TagSchema = z
   .string()
   .min(1, 'Tag is required')
@@ -31,4 +39,4 @@ export const CommitShaSchema = z
   .string()
   .regex(GIT_COMMIT_SHA_REGEX, 'Commit SHA must be 7-40 hexadecimal characters');
 
-export const RefSchema = z.union([BranchSchema, TagSchema, CommitShaSchema]);
+export const RefSchema = z.union([RemoteBranchSchema, BranchSchema, TagSchema, CommitShaSchema]);

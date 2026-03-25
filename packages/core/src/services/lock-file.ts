@@ -91,10 +91,9 @@ export const LockFile = {
       Log.debug(error);
 
       try {
-        await Git.raw(['cat-file', '-t', resolvedCommit]);
+        await Git.resolveCommit(resolvedCommit);
         return 'orphaned';
-      } catch (error) {
-        Log.debug(error);
+      } catch {
         return 'broken';
       }
     }

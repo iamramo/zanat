@@ -1,11 +1,8 @@
 import { Log, Prompt, LockFile, Path, Skill, Config } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
-  // Update one skill
+  // Step 1: Update one skill
   if (fullSkillName) {
-    // Step 2a: Parse skill name and check ref status (validated in preAction hook)
-    const { namespace, skillName } = Path.toSkillParts(fullSkillName);
-
     const skill = await LockFile.find(fullSkillName);
 
     if (!skill) {
@@ -37,14 +34,12 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
       process.exit(1);
     }
 
-    // Step 3a: Update the single skill
-    await Skill.update(namespace, skillName);
+    await Skill.update(fullSkillName);
     Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
     return;
   }
 
-  // Update all skills
-  // Step 2b: Load all skills and categorize by status
+  // Step 2: Update all skills
   const skills = await LockFile.findAll();
   const skillEntries = Object.entries(skills);
 
@@ -70,7 +65,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
     }
   }
 
-  // Step 3b: Show summary of skill statuses
+  // Step 3: Show summary of skill statuses
   if (orphanedSkills.length > 0) {
     Log.blank();
     Log.yellow(`Orphaned skills (will preserve current commits):`, { prefix: '⚠' });
@@ -103,8 +98,8 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   Log.blank();
   Log.blue(`Updating ${updatableSkills.length} skill(s)...`);
 
-  for (const { namespace, skillName } of updatableSkills) {
-    await Skill.update(namespace, skillName);
+  for (const { name } of updatableSkills) {
+    await Skill.update(name);
   }
 
   Log.green('Updated all skills', { prefix: '✓' });

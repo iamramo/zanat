@@ -28,7 +28,7 @@ export const statusCommand = async (): Promise<void> => {
     return;
   }
 
-  const behind = await Git.behind(config.hubBranch, config.hubBranch);
+  const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
   if (behind === 0) {
     Log.status('Behind:', Log.bold('up-to-date'), 'green', { prefix: '•', spacing: 2 });
   } else {
@@ -51,7 +51,10 @@ export const statusCommand = async (): Promise<void> => {
 
       if (refType === 'branch') {
         try {
-          const behindCount = await Git.behind(skill.resolvedCommit, skill.requestedRef);
+          const behindCount = await Git.behind(
+            skill.resolvedCommit,
+            `origin/${skill.requestedRef}`
+          );
           if (behindCount === 0) {
             behindStatus = Log.chalk.green('[up-to-date]');
           } else {

@@ -71,10 +71,8 @@ export const initCommand = async (): Promise<void> => {
       }
 
       // Validate branch existence on remote
-      try {
-        await Git.lsRemote(hubUrl, value);
-      } catch (error) {
-        Log.debug(error);
+      const exists = await Git.remoteBranchExists(value);
+      if (!exists) {
         return `Branch '${value}' does not exist in the repository`;
       }
 

@@ -2,10 +2,7 @@ import { simpleGit } from 'simple-git';
 import { Zod } from './zod.js';
 import { Log } from './log.js';
 import { Config } from './config.js';
-import {
-  GIT_COMMIT_SHA_REGEX,
-  GIT_TAG_REGEX,
-} from '../schemas/common.js';
+import { GIT_COMMIT_SHA_REGEX } from '../schemas/common.js';
 
 export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
@@ -30,7 +27,7 @@ export const Git = {
       await git.pull();
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to pull repository.');
+      throw new Error('Failed to git pull.');
     }
   },
 
@@ -61,45 +58,34 @@ export const Git = {
     }
   },
 
-  async fetch(refs?: string[]): Promise<void> {
+  async fetch(refs: string[]): Promise<void> {
     const config = await Config.get();
     const git = simpleGit(config.hubDir);
 
+    if (refs.length === 0) throw new Error('Missing refs');
+
     try {
-      if (refs && refs.length > 0) {
-        // Fetch specific refs
-        await git.fetch(['origin', ...refs]);
-      } else {
-        // Regular fetch all
-        await git.fetch(['--quiet']);
-      }
+      await git.fetch(['origin', ...refs]);
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to fetch.');
     }
   },
 
-  async raw(args: string[]): Promise<string> {
+  async behind(from: string, to: string): Promise<number> {
     const config = await Config.get();
     const git = simpleGit(config.hubDir);
 
     try {
-      return await git.raw(args);
+      const result = await git.raw(['rev-list', `${from}..${to}`, '--count']);
+      return parseInt(result.trim(), 10) || 0;
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to execute git command.');
+      throw new Error('Failed to count between commits.');
     }
   },
 
-  async behind(from: string, to: string): Promise<number> {
-    await this.fetch([to]);
-    const remoteRef = `origin/${to}`;
-    const result = await this.raw(['rev-list', `${from}..${remoteRef}`, '--count']);
-    return parseInt(result.trim(), 10) || 0;
-  },
-
   async getRefType(ref: string): Promise<'sha' | 'tag' | 'branch'> {
-    // Check if it's a commit SHA first
     if (GIT_COMMIT_SHA_REGEX.test(ref)) {
       return 'sha';
     }
@@ -108,29 +94,25 @@ export const Git = {
     const git = simpleGit(config.hubDir);
 
     try {
-      // Check if it's a tag by trying to resolve refs/tags/<ref>
       await git.revparse(['--verify', `refs/tags/${ref}`]);
       return 'tag';
     } catch {
-      // Not a tag, assume it's a branch (local or remote)
       return 'branch';
     }
   },
 
-  async lsRemote(url: string, ref: string): Promise<string> {
-    Zod.git.UrlSchema.parse(url);
-    Zod.git.RefSchema.parse(ref);
-    const git = simpleGit();
+  async remoteBranchExists(branch: string): Promise<boolean> {
+    Zod.git.BranchSchema.parse(branch);
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
 
     try {
-      const result = (await git.listRemote(['--refs', '--heads', '--tags', url, ref])).trim();
-      if (!result) {
-        throw new Error('Ref not found');
-      }
-      return result;
-    } catch (error) {
-      Log.debug(error);
-      throw new Error('Failed to list remote refs.');
+      const result = (
+        await git.listRemote(['--refs', '--heads', '--tags', config.hubUrl, branch])
+      ).trim();
+      return result.length > 0;
+    } catch {
+      return false;
     }
   },
 
@@ -157,19 +139,6 @@ export const Git = {
     } catch (error) {
       Log.debug(error);
       throw new Error(`Failed to show file ${filePath} at ${ref}.`);
-    }
-  },
-
-  async remoteBranchExists(branch: string): Promise<boolean> {
-    Zod.git.BranchSchema.parse(branch);
-    const config = await Config.get();
-
-    try {
-      // Use ls-remote to check actual remote, works with single-branch clones
-      const result = await this.lsRemote(config.hubUrl, branch);
-      return result.length > 0;
-    } catch {
-      return false;
     }
   },
 } as const;
