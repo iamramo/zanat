@@ -2,6 +2,10 @@ import { simpleGit } from 'simple-git';
 import { Zod } from './zod.js';
 import { Log } from './log.js';
 import { Config } from './config.js';
+import {
+  GIT_COMMIT_SHA_REGEX,
+  GIT_TAG_REGEX,
+} from '../schemas/common.js';
 
 export const Git = {
   async clone(url: string, branch: string, dir: string): Promise<void> {
@@ -87,12 +91,30 @@ export const Git = {
     }
   },
 
-  async behind(branch: string): Promise<number> {
-    Zod.git.BranchSchema.parse(branch);
-    await this.fetch([branch]);
-    const remoteRef = `origin/${branch}`;
-    const result = await this.raw(['rev-list', `${branch}..${remoteRef}`, '--count']);
+  async behind(from: string, to: string): Promise<number> {
+    await this.fetch([to]);
+    const remoteRef = `origin/${to}`;
+    const result = await this.raw(['rev-list', `${from}..${remoteRef}`, '--count']);
     return parseInt(result.trim(), 10) || 0;
+  },
+
+  async getRefType(ref: string): Promise<'sha' | 'tag' | 'branch'> {
+    // Check if it's a commit SHA first
+    if (GIT_COMMIT_SHA_REGEX.test(ref)) {
+      return 'sha';
+    }
+
+    const config = await Config.get();
+    const git = simpleGit(config.hubDir);
+
+    try {
+      // Check if it's a tag by trying to resolve refs/tags/<ref>
+      await git.revparse(['--verify', `refs/tags/${ref}`]);
+      return 'tag';
+    } catch {
+      // Not a tag, assume it's a branch (local or remote)
+      return 'branch';
+    }
   },
 
   async lsRemote(url: string, ref: string): Promise<string> {

@@ -28,7 +28,7 @@ export const statusCommand = async (): Promise<void> => {
     return;
   }
 
-  const behind = await Git.behind(config.hubBranch);
+  const behind = await Git.behind(config.hubBranch, config.hubBranch);
   if (behind === 0) {
     Log.status('Behind:', Log.bold('up-to-date'), 'green', { prefix: '•', spacing: 2 });
   } else {
@@ -42,9 +42,30 @@ export const statusCommand = async (): Promise<void> => {
 
   if (skillNames.length > 0) {
     for (const skillName of skillNames) {
-      const displayVersion = await Display.getDisplayVersion(skillName);
+      const skill = await LockFile.find(skillName);
+      if (!skill) continue;
 
-      Log.status(`${skillName}`, displayVersion, 'blue', {
+      const displayVersion = await Display.getDisplayVersion(skillName);
+      const refType = await Git.getRefType(skill.requestedRef);
+      let behindStatus = '';
+
+      if (refType === 'branch') {
+        try {
+          const behindCount = await Git.behind(skill.resolvedCommit, skill.requestedRef);
+          if (behindCount === 0) {
+            behindStatus = Log.chalk.green('[up-to-date]');
+          } else {
+            behindStatus = Log.chalk.yellow(`[behind by ${behindCount} commit(s)]`);
+          }
+        } catch (error) {
+          Log.debug(error);
+          behindStatus = Log.chalk.red('[broken]');
+        }
+      } else {
+        behindStatus = Log.chalk.blue('[static]');
+      }
+
+      Log.status(`${skillName}`, `${displayVersion} ${behindStatus}`, 'blue', {
         prefix: '•',
         spacing: 2,
       });
