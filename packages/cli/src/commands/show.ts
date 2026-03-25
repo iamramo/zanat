@@ -1,10 +1,6 @@
-import { Skill, Log, Config } from '@iamramo/zanat-core';
+import { Skill, Log } from '@iamramo/zanat-core';
 
-interface ShowOptions {
-  ref?: string;
-}
-
-export const showCommand = async (fullSkillName: string, options: ShowOptions): Promise<void> => {
+export const showCommand = async (fullSkillName: string): Promise<void> => {
   // Step 1: Get skill from filesystem (current branch)
   const skill = await Skill.find(fullSkillName);
 

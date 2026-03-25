@@ -1,5 +1,4 @@
 import { LockFile } from './lock-file.js';
-import { Config } from './config.js';
 
 const ELLIPSIS = '...';
 
@@ -25,7 +24,6 @@ export const Display = {
       return 'unknown';
     }
 
-    const config = await Config.get();
     const { requestedRef, resolvedCommit } = skill;
     const shortCommit = this.getShortSha(resolvedCommit);
     const refStatus = await LockFile.getRefStatus(skill);

@@ -102,22 +102,16 @@ export const Skill = {
     await LockFile.remove(fullSkillName);
   },
 
-  async add(
-    fullSkillName: string,
-    sourceFile: string,
-    targetDir: string,
-    requestedRef: string,
-    resolvedCommit: string
-  ): Promise<void> {
-    const targetFile = path.join(targetDir, Path.SKILL_FILENAME);
-    const hubFilePath = await Path.getHubSkillPath(fullSkillName, true);
+  async add(fullSkillName: string, requestedRef: string, resolvedCommit: string): Promise<void> {
+    const targetFile = Path.getAgentsSkillPath(fullSkillName, true);
+    const sourceFile = await Path.getHubSkillPath(fullSkillName, true);
 
-    await Fs.ensureDir(targetDir);
+    await Fs.ensureDir(Path.getAgentsSkillPath(fullSkillName));
 
     const config = await Config.get();
     if (requestedRef !== config.hubBranch) {
       // Pinned ref: fetch content from git
-      const skillContent = await Git.show(requestedRef, hubFilePath);
+      const skillContent = await Git.show(requestedRef, sourceFile);
       await Fs.writeFile(targetFile, skillContent);
     } else {
       // Tracking hub branch: copy from filesystem
@@ -186,7 +180,7 @@ export const Skill = {
       }
     }
 
-    await this.add(fullSkillName, hubFilePath, skillPath, requestedRef, resolvedCommit);
+    await this.add(fullSkillName, requestedRef, resolvedCommit);
   },
 
   async updateAll(): Promise<void> {

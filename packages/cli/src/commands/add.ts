@@ -67,8 +67,6 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   }
 
   // Step 5: Add skill to local storage
-  const targetPath = Path.getAgentsSkillPath(fullSkillName);
-
-  await Skill.add(fullSkillName, skillFile, targetPath, requestedRef, resolvedCommit);
+  await Skill.add(fullSkillName, requestedRef, resolvedCommit);
   Log.green(`Added ${fullSkillName}`);
 };

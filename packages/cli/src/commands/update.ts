@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, Path, Skill, Config } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, Skill } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
   // Step 1: Update one skill
