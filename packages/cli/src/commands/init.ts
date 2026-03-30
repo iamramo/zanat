@@ -25,9 +25,9 @@ export const initCommand = async (): Promise<void> => {
     Log.blank();
 
     const config = await Config.get();
-    Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
-    Log.msg(Chalk.bold(`Branch: `) + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
-    Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.hubUrl), { prefix: '•', prefixColor: 'white', spacing: 2 });
+    Log.msg(Chalk.bold(`Branch: `) + Chalk.green(config.hubBranch), { prefix: '•', prefixColor: 'white', spacing: 2 });
+    Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', prefixColor: 'white', spacing: 2 });
     Log.blank();
 
     shouldReinitialize = await Prompt.confirm({

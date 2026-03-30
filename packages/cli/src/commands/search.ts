@@ -18,7 +18,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
     return;
   } else {
     results.forEach((skill) => {
-      Log.msg(Chalk.white(skill.fullName), { prefix: '•', spacing: 2 });
+      Log.msg(Chalk.white(skill.fullName), { prefix: '•', prefixColor: 'white', spacing: 2 });
       const truncatedDesc = Display.truncate(skill.description);
       Log.msg(Chalk.gray(truncatedDesc), { spacing: 4 });
       Log.blank();

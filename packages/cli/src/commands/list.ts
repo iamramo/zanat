@@ -19,6 +19,7 @@ export const listCommand = async (): Promise<void> => {
     const displayVersion = await Display.getDisplayVersion(skillName);
     Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(displayVersion), {
       prefix: '•',
+      prefixColor: 'white',
       spacing: 2,
     });
   }

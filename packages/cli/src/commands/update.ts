@@ -33,7 +33,7 @@ export const updateCommand = async (fullSkillName?: string): Promise<void> => {
 
   if (pinnedSkills.length > 0) {
     Log.blank();
-    Log.msg(Chalk.blue('Pinned skills (skipping):'), { prefix: '•' });
+    Log.msg(Chalk.blue('Pinned skills (skipping):'), { prefix: '•', prefixColor: 'blue' });
     pinnedSkills.forEach((s) => Log.msg(Chalk.gray(s), { spacing: 2 }));
   }
 
