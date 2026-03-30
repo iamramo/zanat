@@ -12,12 +12,9 @@ export const H_Skill = {
     try {
       const { namespace, skillName } = Path.toSkillParts(fullSkillName);
       const filePath = await Path.getHubSkillPath(fullSkillName, true);
-      
+
       const content = await Fs.readFile(filePath);
       const parsed = matter(content);
-
-      namespace.forEach((part) => Zod.skill.SegmentSchema.parse(part));
-      Zod.skill.SegmentSchema.parse(skillName);
 
       const frontmatter = Zod.skill.OpenStandardSchema.parse(parsed.data);
 

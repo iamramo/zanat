@@ -1,5 +1,5 @@
 import { Schema as ConfigSchema } from '../schemas/config.js';
-import { SegmentSchema, OpenStandardSchema, FullSchema } from '../schemas/skill.js';
+import { OpenStandardSchema, FullSchema } from '../schemas/skill.js';
 import {
   FileSchema as LockFileSchema,
   SkillSchema as SkillLockSchema,
@@ -15,7 +15,6 @@ export const Zod = {
     SkillSchema: SkillLockSchema,
   },
   skill: {
-    SegmentSchema,
     OpenStandardSchema,
     FullSchema,
   },

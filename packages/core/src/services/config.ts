@@ -16,13 +16,30 @@ export const Config = {
     // Check if exists
     const config = await this.get().catch(() => undefined);
     if (!config) {
-      throw new Error('Config not found. Run `zanat init` first.');
+      throw new Error(`Config not found at ${Path.CONFIG_FILE}. Run 'zanat init' first.`);
     }
 
     // Contains all required values
     const result = Zod.config.ConfigSchema.safeParse(config);
     if (!result.success) {
-      throw new Error('Invalid config.');
+      const errorMessage = result.error.errors[0]?.message ?? 'Invalid configuration values';
+      throw new Error(
+        `Invalid config at ${Path.CONFIG_FILE}: ${errorMessage}. Run 'zanat init' to reconfigure.`
+      );
+    }
+
+    const refType = await Git.getRefType(config.hubBranch);
+    if (refType !== 'branch') {
+      throw new Error(
+        `'${config.hubBranch}' is not a branch. The hubBranch must reference a valid branch.`
+      );
+    }
+
+    const branchExists = await Git.remoteBranchExists(config.hubBranch);
+    if (!branchExists) {
+      throw new Error(
+        `Branch '${config.hubBranch}' does not exist in the remote repository '${config.hubUrl}'.`
+      );
     }
   },
   async get(): Promise<IConfig> {
@@ -46,7 +63,7 @@ export const Config = {
     }
   },
 
-  async ensureOnTrackedBranch(): Promise<void> {
+  async ensureOnHubBranch(): Promise<void> {
     const config = await this.get();
     const currentBranch = await Git.getCurrentBranch();
 

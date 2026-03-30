@@ -1,8 +1,6 @@
 export const GIT_URL_REGEX = /^(https?:\/\/|git@)[^\s]+$/;
 
-export const FULL_SKILL_NAME_REGEX = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
-
-export const SEGMENT_REGEX = /^[a-z][a-z0-9-]*$/;
+export const FULL_SKILL_NAME_REGEX = /^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+$/;
 
 export const GIT_BRANCH_NAME_REGEX = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/;
 

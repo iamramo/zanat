@@ -1,23 +1,21 @@
 import { Log, Prompt, LockFile, A_Skill, Chalk } from '@iamramo/zanat-core';
 
-export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
+export const updateCommand = async (fullSkillName?: string): Promise<void> => {
   // Step 1: Update one skill
   if (fullSkillName) {
-    const skill = await LockFile.find(fullSkillName);
+    const lockFileSkill = (await LockFile.find(fullSkillName))!;
 
-    if (!skill) {
-      Log.msg(Chalk.red(`Error: ${fullSkillName} was not found`), { prefix: '✗' });
-      process.exit(1);
-    }
-
-    const refStatus = await LockFile.getRefStatus(skill);
+    const refStatus = await LockFile.getRefStatus(lockFileSkill);
 
     if (refStatus === 'orphaned') {
-      Log.msg(Chalk.yellow(
-        `Warning: ${fullSkillName} is orphaned - Branch '${skill.requestedRef}' no longer exists, but commit is preserved`
-      ), {
-        prefix: '⚠',
-      });
+      Log.msg(
+        Chalk.yellow(
+          `Warning: ${fullSkillName} is orphaned - Branch '${lockFileSkill.requestedRef}' no longer exists, but commit is preserved`
+        ),
+        {
+          prefix: '⚠',
+        }
+      );
       const shouldContinue = await Prompt.confirm({
         message: 'Update anyway? (will preserve current commit)',
         default: true,
@@ -41,11 +39,6 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   // Step 2: Update all skills
   const skills = await LockFile.findAll();
   const skillEntries = Object.entries(skills);
-
-  if (skillEntries.length === 0) {
-    Log.msg(Chalk.blue('No skills to update'));
-    return;
-  }
 
   const orphanedSkills: string[] = [];
   const brokenSkills: string[] = [];
@@ -93,9 +86,6 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
     Log.msg(Chalk.blue('Update cancelled'));
     return;
   }
-
-  Log.blank();
-  Log.msg(Chalk.blue(`Updating ${updatableSkills.length} skill(s)...`));
 
   for (const { name } of updatableSkills) {
     await A_Skill.update(name);

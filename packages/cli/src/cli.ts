@@ -1,4 +1,15 @@
-import { Display, Command, Config, Zod, Chalk } from '@iamramo/zanat-core';
+import {
+  Display,
+  Command,
+  Config,
+  Zod,
+  Chalk,
+  H_Skill,
+  Git,
+  LockFile,
+  Prompt,
+  Log,
+} from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
@@ -62,46 +73,113 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
 
   switch (cmd) {
     case 'init':
+      // No validation
       return;
 
     case 'add': {
+      // Validate config
       await Config.validate();
-      await Config.ensureOnTrackedBranch();
-      Zod.skill.FullSchema.shape.fullName.parse(args[0]);
-      const parts = args[0]!.split('.');
-      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
+
+      // Ensure on hubBranch
+      await Config.ensureOnHubBranch();
+
+      // Ensure fullSkillName is in correct format
+      const fullSkillName = args[0]!;
+      Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+
+      // Ensure if needs to be updated instead
+      const skillLockExists = !!(await LockFile.find(fullSkillName));
+      if (skillLockExists) {
+        const shouldUpdate = await Prompt.confirm({
+          message: `Skill ${fullSkillName} is already added. Update from hub?`,
+          default: true,
+        });
+
+        if (!shouldUpdate) process.exit(0);
+
+        await updateCommand(fullSkillName);
+        process.exit(0);
+      }
+
+      // Ensure skill exists in hub
+      const hubSkill = await H_Skill.find(fullSkillName);
+      if (!hubSkill) throw new Error(`Skill '${fullSkillName}' not found in hub`);
+
+      // Ensure up-to-date branch
+      const pin = opts.pin;
       PinOptionSchema.parse(opts.pin);
+
+      let branchToFetch: string | undefined;
+      const hubBranch = (await Config.get()).hubBranch;
+
+      if (pin) {
+        const isBranch = (await Git.getRefType(pin)) === 'branch';
+        if (isBranch) branchToFetch = pin;
+      } else {
+        branchToFetch = hubBranch;
+      }
+
+      if (branchToFetch) {
+        branchToFetch === hubBranch ? await Git.pull() : await Git.fetch([branchToFetch]);
+      }
+
       return;
+    }
+
+    case 'update': {
+      // Validate config
+      await Config.validate();
+
+      // Ensure on hubBranch
+      await Config.ensureOnHubBranch();
+
+      const individualValidationLogic = async (name: string) => {
+        // Ensure fullSkillName is in correct format
+        Zod.skill.FullSchema.shape.fullName.parse(name);
+
+        // Ensure skill exists in hub
+        const hubSkill = await H_Skill.find(name);
+        if (!hubSkill) Log.msg(Chalk.yellow(`Skill '${name}' not found in hub`));
+
+        // Ensure up-to-date branch
+        const hubBranch = (await Config.get()).hubBranch;
+        const lockFileSkill = await LockFile.find(name);
+        if (!lockFileSkill) throw new Error(`Skill '${name}' not found in lock file`);
+
+        const branchToFetch = lockFileSkill.requestedRef;
+        const isBranch = (await Git.getRefType(branchToFetch)) === 'branch';
+
+        if (isBranch) {
+          branchToFetch === hubBranch ? await Git.pull() : await Git.fetch([branchToFetch]);
+        }
+      };
+
+      Log.msg(Chalk.blue(`Checking skill(s) for updates...`));
+      if (args[0]) {
+        await individualValidationLogic(args[0]);
+      } else {
+        const lockFileSkills = Object.keys(await LockFile.findAll());
+        if (lockFileSkills.length === 0) Log.msg(Chalk.blue('No skills to update'));
+        for (const lockFileSkill of lockFileSkills) {
+          await individualValidationLogic(lockFileSkill);
+        }
+      }
     }
 
     case 'pull':
       await Config.validate();
-      await Config.ensureOnTrackedBranch();
+      await Config.ensureOnHubBranch();
       return;
 
     case 'rm': {
       await Config.validate();
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
-      const parts = args[0]!.split('.');
-      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
       return;
     }
 
     case 'show': {
       await Config.validate();
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
-      const parts = args[0]!.split('.');
-      parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
-      return;
-    }
-
-    case 'update': {
-      await Config.validate();
-      if (args[0]) {
-        Zod.skill.FullSchema.shape.fullName.parse(args[0]);
-        const parts = args[0].split('.');
-        parts.forEach((part) => Zod.skill.SegmentSchema.parse(part));
-      }
       return;
     }
 

@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, A_Skill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
+import { Log, A_Skill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
 import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
@@ -9,25 +9,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   // Step 1: Parse inputs (validated in preAction hook, true)
   const pinOption = options.pin;
 
-  // Step 2: Handle existing skill or prepare to add new one
-  const skillLockExists = !!(await LockFile.find(fullSkillName));
-  if (skillLockExists) {
-    const shouldUpdate = await Prompt.confirm({
-      message: `Skill ${fullSkillName} is already added. Update from hub?`,
-      default: true,
-    });
-
-    if (!shouldUpdate) {
-      Log.msg(Chalk.blue('Cancelled'));
-      return;
-    }
-
-    await A_Skill.update(fullSkillName);
-    Log.msg(Chalk.green(`Updated ${fullSkillName}`), { prefix: '✓' });
-    return;
-  }
-
-  // Step 3: Determine requested ref and resolve commit
+  // Step 2: Determine requested ref and resolve commit
   const config = await Config.get();
 
   let requestedRef: string;
@@ -52,21 +34,23 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     Log.msg(Chalk.blue(`Tracking ${config.hubBranch} branch`));
   }
 
-  // Step 4: Check if skill exists in hub (only check filesystem when not using --pin, true)
+  // Step 3: Check if skill exists in hub (only check filesystem when not using --pin, true)
   const skillFile = await Path.getHubSkillPath(fullSkillName);
 
   if (pinOption === undefined) {
     const skillExistsInHub = await Fs.exists(skillFile);
     if (!skillExistsInHub) {
       Log.msg(Chalk.red('Skill not found in hub.'), { prefix: '✗' });
-      Log.msg(Chalk.gray(
-        `If the skill exists on a different branch, use: zanat add ${fullSkillName} --pin=<branch>`
-      ));
+      Log.msg(
+        Chalk.gray(
+          `If the skill exists on a different branch, use: zanat add ${fullSkillName} --pin=<branch>`
+        )
+      );
       process.exit(1);
     }
   }
 
-  // Step 5: Add skill to local storage
+  // Step 4: Add skill to local storage
   await A_Skill.add(fullSkillName, requestedRef, resolvedCommit);
   Log.msg(Chalk.green(`Added ${fullSkillName}`));
 };
