@@ -16,7 +16,7 @@ export const Git = {
       await git.clone(url, dir, ['--branch', branch]);
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to clone repository.');
+      throw new Error(`Failed to clone '${url}'.`);
     }
   },
 
@@ -28,7 +28,7 @@ export const Git = {
       await git.pull();
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to git pull.');
+      throw new Error('Failed to pull.');
     }
   },
 
@@ -41,7 +41,7 @@ export const Git = {
       await git.checkout(ref);
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to checkout.');
+      throw new Error(`Failed to checkout '${ref}'.`);
     }
   },
 
@@ -55,7 +55,7 @@ export const Git = {
       return result.trim();
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to resolve commit.');
+      throw new Error(`Failed to resolve commit for '${ref}'.`);
     }
   },
 
@@ -63,7 +63,7 @@ export const Git = {
     const config = await Config.get();
     const git = simpleGit(config.hubDir);
 
-    if (refs.length === 0) throw new Error('Missing refs');
+    if (refs.length === 0) throw new Error('Missing refs.');
 
     try {
       await git.fetch(['origin', ...refs]);
@@ -82,7 +82,7 @@ export const Git = {
       return parseInt(result.trim(), 10) || 0;
     } catch (error) {
       Log.debug(error);
-      throw new Error('Failed to count between commits.');
+      throw new Error(`Failed to count commits between '${from}' and '${to}'.`);
     }
   },
 
@@ -115,17 +115,27 @@ export const Git = {
       // not a remote branch
     }
 
-    throw new Error(`Unknown ref: '${ref}'`);
+    throw new Error(`Unknown ref: '${ref}'.`);
   },
 
-  async remoteBranchExists(branch: string): Promise<boolean> {
+  async remoteBranchExists(branch: string, url?: string): Promise<boolean> {
     Zod.git.BranchSchema.parse(branch);
-    const config = await Config.get();
-    const git = simpleGit(config.hubDir);
+
+    let git;
+    let remoteUrl;
+
+    if (url) {
+      git = simpleGit();
+      remoteUrl = url;
+    } else {
+      const config = await Config.get();
+      git = simpleGit(config.hubDir);
+      remoteUrl = config.hubUrl;
+    }
 
     try {
       const result = (
-        await git.listRemote(['--refs', '--heads', '--tags', config.hubUrl, branch])
+        await git.listRemote(['--refs', '--heads', '--tags', remoteUrl, branch])
       ).trim();
       return result.length > 0;
     } catch {
@@ -159,7 +169,19 @@ export const Git = {
       return result;
     } catch (error) {
       Log.debug(error);
-      throw new Error(`Failed to show file ${filePath} at ${ref}.`);
+      throw new Error(`Failed to show file '${filePath}' at '${ref}'.`);
+    }
+  },
+
+  async isReachable(url: string): Promise<boolean> {
+    Zod.git.UrlSchema.parse(url);
+    const git = simpleGit();
+
+    try {
+      await git.listRemote([url, 'HEAD']);
+      return true;
+    } catch {
+      return false;
     }
   },
 } as const;

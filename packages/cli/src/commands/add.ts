@@ -1,4 +1,4 @@
-import { Log, A_Skill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
+import { Log, AgentSkill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
 import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
@@ -22,7 +22,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
       resolvedCommit = await Git.resolveCommit(requestedRef);
       Log.msg(Chalk.blue(`Pinning to '${requestedRef}' (${Display.getShortSha(resolvedCommit)})`));
     } catch (error) {
-      Log.msg(Chalk.red(`Invalid ref: '${requestedRef}' does not exist in the hub repository.`), {
+      Log.msg(Chalk.red(`Invalid ref: '${requestedRef}' does not exist in hub.`), {
         prefix: '✗',
       });
       Log.debug(error);
@@ -39,10 +39,10 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   if (pinOption === undefined) {
     const skillExistsInHub = await Fs.exists(skillFile);
     if (!skillExistsInHub) {
-      Log.msg(Chalk.red('Skill not found in hub.'), { prefix: '✗' });
+      Log.msg(Chalk.red(`Skill '${fullSkillName}' not found in hub.`), { prefix: '✗' });
       Log.msg(
         Chalk.gray(
-          `If the skill exists on a different branch, use: zanat add ${fullSkillName} --pin=<branch>`
+          `If the skill exists at a specific version, use: zanat add ${fullSkillName} --pin=<tag or commit>`
         )
       );
       process.exit(1);
@@ -50,6 +50,6 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   }
 
   // Step 4: Add skill to local storage
-  await A_Skill.add(fullSkillName, requestedRef, resolvedCommit);
-  Log.msg(Chalk.green(`Added '${fullSkillName}'`), { prefix: '✓' });
+  await AgentSkill.add(fullSkillName, requestedRef, resolvedCommit);
+  Log.msg(Chalk.green(`Added '${fullSkillName}'`), { prefix: '✔' });
 };

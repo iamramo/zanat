@@ -6,13 +6,13 @@ import { Chalk } from './chalk.js';
 import { Git } from './git.js';
 import { Prompt } from './prompt.js';
 import { type IConfig } from '../schemas/config.js';
-import { Zod } from '../index.js';
+import { Zod } from './zod.js';
 
 export const Config = {
   async exists(): Promise<boolean> {
-    return !!(await Config.get().catch(() => undefined));
+    return Fs.exists(Path.CONFIG_FILE);
   },
-  async validate(): Promise<void> {
+  async validate({ remote = true }: { remote?: boolean } = {}): Promise<void> {
     // Check if exists
     const config = await this.get().catch(() => undefined);
     if (!config) {
@@ -28,6 +28,8 @@ export const Config = {
       );
     }
 
+    if (!remote) return;
+
     const refType = await Git.getRefType(config.hubBranch);
     if (refType !== 'branch') {
       throw new Error(
@@ -38,7 +40,7 @@ export const Config = {
     const branchExists = await Git.remoteBranchExists(config.hubBranch);
     if (!branchExists) {
       throw new Error(
-        `Branch '${config.hubBranch}' does not exist in the remote repository '${config.hubUrl}'.`
+        `Branch '${config.hubBranch}' does not exist in hub '${config.hubUrl}'.`
       );
     }
   },
@@ -49,7 +51,7 @@ export const Config = {
       return Zod.config.ConfigSchema.parse(parsed);
     } catch (error) {
       Log.debug(error);
-      throw new Error('Could not get the config.');
+      throw new Error('Failed to read the config.');
     }
   },
 
@@ -59,7 +61,7 @@ export const Config = {
       await Fs.writeFile(Path.CONFIG_FILE, Format.json(validated));
     } catch (error) {
       Log.debug(error);
-      throw new Error('Could not update the config.');
+      throw new Error('Failed to update the config.');
     }
   },
 
@@ -90,12 +92,12 @@ export const Config = {
     // Try to switch
     try {
       await Git.checkout(config.hubBranch);
-      Log.msg(Chalk.green(`Switched to '${config.hubBranch}'`), { prefix: '✓' });
+      Log.msg(Chalk.green(`Switched to '${config.hubBranch}'`), { prefix: '✔' });
       Log.blank();
     } catch (error) {
       Log.debug(error);
       Log.msg(Chalk.red(`Failed to switch to '${config.hubBranch}'`), { prefix: '✗' });
-      Log.msg(Chalk.gray(`Please fix manually in "${config.hubDir}"`));
+      Log.msg(Chalk.gray(`Please fix manually in '${config.hubDir}'.`));
       process.exit(1);
     }
   },

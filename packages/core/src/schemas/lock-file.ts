@@ -17,6 +17,3 @@ export const FileSchema = z.object({
 
 export type ISkillLock = z.infer<typeof SkillSchema>;
 export type ILockFile = z.infer<typeof FileSchema>;
-
-export const RefStatusSchema = z.enum(['ok', 'orphaned', 'broken']);
-export type IRefStatus = z.infer<typeof RefStatusSchema>;

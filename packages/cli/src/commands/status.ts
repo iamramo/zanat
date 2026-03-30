@@ -18,14 +18,19 @@ export const statusCommand = async (): Promise<void> => {
     spacing: 2,
   });
 
-  const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
-  if (behind === 0) {
-    Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), { prefix: '•', spacing: 2 });
-  } else {
-    Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), {
-      prefix: '•',
-      spacing: 2,
-    });
+  try {
+    const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
+    if (behind === 0) {
+      Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), { prefix: '•', spacing: 2 });
+    } else {
+      Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), {
+        prefix: '•',
+        spacing: 2,
+      });
+    }
+  } catch (error) {
+    Log.msg(Chalk.bold('Behind: ') + Chalk.gray('unknown'), { prefix: '•', spacing: 2 });
+    Log.debug(error);
   }
 
   // Step 3: Display skills status
@@ -35,33 +40,25 @@ export const statusCommand = async (): Promise<void> => {
 
   if (skillNames.length > 0) {
     for (const skillName of skillNames) {
-      const skill = await LockFile.find(skillName);
-      if (!skill) continue;
-
       const displayVersion = await Display.getDisplayVersion(skillName);
-      const refType = await Git.getRefType(skill.requestedRef);
-      let behindStatus = '';
+      const pinned = await LockFile.isPinned(skillName);
 
-      if (refType === 'branch') {
+      let behindStatus = '';
+      if (!pinned) {
         try {
           const behindCount = await Git.behind(
-            skill.resolvedCommit,
-            `origin/${skill.requestedRef}`
+            skills[skillName]!.resolvedCommit,
+            `origin/${config.hubBranch}`
           );
-          if (behindCount === 0) {
-            behindStatus = Chalk.green('[up-to-date]');
-          } else {
-            behindStatus = Chalk.yellow(`[behind by ${behindCount} commit(s)]`);
-          }
+          behindStatus = behindCount === 0
+            ? Chalk.green('[up-to-date]')
+            : Chalk.yellow(`[behind by ${behindCount} commit(s)]`);
         } catch (error) {
           Log.debug(error);
-          behindStatus = Chalk.red('[broken]');
         }
-      } else {
-        behindStatus = Chalk.blue('[static]');
       }
 
-      Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`), {
+      Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`.trim()), {
         prefix: '•',
         spacing: 2,
       });

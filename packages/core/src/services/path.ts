@@ -1,6 +1,7 @@
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { Config } from './config.js';
+import { FULL_SKILL_NAME_REGEX } from '../schemas/common.js';
 
 const home = homedir();
 
@@ -21,12 +22,14 @@ export const Path = {
   },
 
   getAgentsSkillPath(fullSkillName: string, includeFilename = false): string {
-    const { namespace, skillName } = this.toSkillParts(fullSkillName);
-    const dir = path.join(this.AGENTS_SKILLS_DIR, ...namespace, skillName);
+    const dir = path.join(this.AGENTS_SKILLS_DIR, fullSkillName);
     return includeFilename ? path.join(dir, this.SKILL_FILENAME) : dir;
   },
 
   toSkillParts(fullSkillName: string): { namespace: string[]; skillName: string } {
+    if (!FULL_SKILL_NAME_REGEX.test(fullSkillName)) {
+      throw new Error(`Invalid skill name: '${fullSkillName}'`);
+    }
     const parts = fullSkillName.split('.');
     const skillName = parts.pop()!;
     return { namespace: parts, skillName };

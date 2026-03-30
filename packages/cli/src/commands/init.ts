@@ -1,9 +1,16 @@
 import path from 'node:path';
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
-import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod, Chalk } from '@iamramo/zanat-core';
-
-const execAsync = promisify(exec);
+import {
+  Path,
+  Config,
+  Fs,
+  Git,
+  LockFile,
+  Log,
+  Format,
+  Prompt,
+  Zod,
+  Chalk,
+} from '@iamramo/zanat-core';
 
 export const initCommand = async (): Promise<void> => {
   Log.msg(Chalk.blue('Initializing Zanat...'));
@@ -48,9 +55,12 @@ export const initCommand = async (): Promise<void> => {
         return formatResult;
       }
 
-      // Validate repository access using native git
+      // Validate repository access
       try {
-        await execAsync(`git ls-remote ${value} HEAD`, { timeout: 10000 });
+        const reachable = await Git.isReachable(value);
+        if (!reachable) {
+          return `Cannot access repository '${value}'. Check the URL and your permissions.`;
+        }
       } catch (error) {
         Log.debug(error);
         return `Cannot access repository '${value}'. Check the URL and your permissions.`;
@@ -71,7 +81,7 @@ export const initCommand = async (): Promise<void> => {
       }
 
       // Validate branch existence on remote
-      const remoteBranchExists = await Git.remoteBranchExists(value);
+      const remoteBranchExists = await Git.remoteBranchExists(value, hubUrl);
       if (!remoteBranchExists) {
         return `Branch '${value}' does not exist in the repository`;
       }
@@ -102,43 +112,53 @@ export const initCommand = async (): Promise<void> => {
     },
   });
 
-  if (shouldReinitialize) {
-    const config = await Config.get();
+  const oldHubDir = shouldReinitialize ? (await Config.get()).hubDir : undefined;
+
+  // Step 3: Create directories, config files, and clone repository
+  try {
     Log.blank();
-    Log.msg(Chalk.blue('Removing existing hub...'));
-    await Fs.remove(config.hubDir);
-    Log.msg(Chalk.green('Removed existing hub'), { prefix: '✓' });
+    Log.msg(Chalk.blue('Setting up directories...'));
+
+    await Fs.ensureDir(Path.ZANAT_DIR);
+    Log.msg(Chalk.green(`Created ${Path.ZANAT_DIR}`), { prefix: '✔' });
+
+    await Fs.ensureDir(Path.AGENTS_DIR);
+    Log.msg(Chalk.green(`Created ${Path.AGENTS_DIR}`), { prefix: '✔' });
+
+    await LockFile.ensure();
+    Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✔' });
+
+    await Fs.writeFile(
+      Path.CONFIG_FILE,
+      Format.json({
+        hubUrl,
+        hubBranch,
+        hubDir,
+        lastPull: new Date().toISOString(),
+      })
+    );
+    Log.msg(Chalk.green(`Created ${Path.CONFIG_FILE}`), { prefix: '✔' });
+    Log.blank();
+
+    // Remove old hub directory right before clone so earlier failures don't lose data
+    if (oldHubDir) {
+      Log.msg(Chalk.blue('Removing existing hub...'));
+      await Fs.remove(oldHubDir);
+      Log.msg(Chalk.green('Removed existing hub'), { prefix: '✔' });
+      Log.blank();
+    }
+
+    Log.msg(Chalk.blue('Cloning hub repository...'));
+    await Git.clone(hubUrl, hubBranch, hubDir);
+    Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✔' });
+  } catch (error) {
+    // Clean up partial state on failure
+    Log.blank();
+    Log.msg(Chalk.red('Initialization failed. Cleaning up...'), { prefix: '✗' });
+    await Fs.remove(Path.ZANAT_DIR);
+    Log.debug(error);
+    throw error;
   }
-
-  // Step 3: Create directories and config files
-  Log.blank();
-  Log.msg(Chalk.blue('Setting up directories...'));
-
-  await Fs.ensureDir(Path.ZANAT_DIR);
-  Log.msg(Chalk.green(`Created ${Path.ZANAT_DIR}`), { prefix: '✓' });
-
-  await Fs.ensureDir(Path.AGENTS_DIR);
-  Log.msg(Chalk.green(`Created ${Path.AGENTS_DIR}`), { prefix: '✓' });
-
-  await LockFile.ensure();
-  Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✓' });
-
-  await Fs.writeFile(
-    Path.CONFIG_FILE,
-    Format.json({
-      hubUrl,
-      hubBranch,
-      hubDir,
-      lastPull: new Date().toISOString(),
-    })
-  );
-  Log.msg(Chalk.green(`Created ${Path.CONFIG_FILE}`), { prefix: '✓' });
-  Log.blank();
-
-  // Step 4: Clone repository
-  Log.msg(Chalk.blue('Cloning hub repository...'));
-  await Git.clone(hubUrl, hubBranch, hubDir);
-  Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✓' });
 
   Log.blank();
   Log.msg(Chalk.white(Chalk.bold('Zanat initialized successfully!')), { prefix: '✨' });

@@ -20,26 +20,17 @@ export const Display = {
   },
   async getDisplayVersion(fullSkillName: string): Promise<string> {
     const skill = await LockFile.find(fullSkillName);
-    if (!skill) {
-      return 'unknown';
-    }
+    if (!skill) return 'unknown';
 
-    const { requestedRef, resolvedCommit } = skill;
-    const shortCommit = this.getShortSha(resolvedCommit);
-    const refStatus = await LockFile.getRefStatus(skill);
+    const shortCommit = this.getShortSha(skill.resolvedCommit);
+    const pinned = await LockFile.isPinned(fullSkillName);
 
-    switch (refStatus) {
-      case 'orphaned':
-        return `${shortCommit} (orphaned from ${requestedRef})`;
-      case 'broken':
-        return `${shortCommit} (broken)`;
-      case 'ok':
-        return `${shortCommit} (${requestedRef})`;
-      default:
-        return ((_): never => {
-          throw new Error(`Unexpected refStatus: ${_}`);
-        })(refStatus);
+    if (pinned) {
+      // If requestedRef is a commit SHA, the short SHA already conveys the version
+      const isCommitSha = skill.requestedRef === skill.resolvedCommit;
+      return isCommitSha ? `${shortCommit} (pinned)` : `${shortCommit} (${skill.requestedRef}, pinned)`;
     }
+    return `${shortCommit} (${skill.requestedRef})`;
   },
   truncate(text: string, maxLength = 256): string {
     if (text.length <= maxLength) return text;

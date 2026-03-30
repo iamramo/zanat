@@ -7,7 +7,7 @@ export const listCommand = async (): Promise<void> => {
 
   if (skillNames.length === 0) {
     Log.msg(Chalk.gray('No skills added.'));
-    Log.msg(Chalk.gray('Run `zanat search` to find skills or `zanat add <skill>` to add one.'));
+    Log.msg(Chalk.gray(`Run 'zanat search' to find skills or 'zanat add <skill>' to add one.`));
     return;
   }
 

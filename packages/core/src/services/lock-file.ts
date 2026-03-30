@@ -1,12 +1,10 @@
-import type { ILockFile, ISkillLock, IRefStatus } from '../schemas/lock-file.js';
-import { GIT_COMMIT_SHA_REGEX } from '../schemas/common.js';
+import type { ILockFile, ISkillLock } from '../schemas/lock-file.js';
 import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 import { Log } from './log.js';
-import { Git } from './git.js';
 import { Config } from './config.js';
-import { Zod } from '../index.js';
+import { Zod } from './zod.js';
 
 const DEFAULT_LOCK_FILE: ILockFile = {
   version: 1,
@@ -21,16 +19,20 @@ export const LockFile = {
       return Zod.lockFile.FileSchema.parse(parsed);
     } catch (error) {
       Log.debug(error);
-      throw new Error('Could not read the lock file.');
+      throw new Error('Failed to read the lock file.');
     }
   },
 
   async ensure(): Promise<void> {
     try {
       await Fs.readFile(Path.SKILL_LOCK_FILE);
-    } catch (error) {
-      Log.debug(error);
-      await this.update(DEFAULT_LOCK_FILE);
+    } catch (error: unknown) {
+      // Only create default lock file if it doesn't exist; re-throw other errors (permissions, I/O, etc.)
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        await this.update(DEFAULT_LOCK_FILE);
+        return;
+      }
+      throw error;
     }
   },
 
@@ -40,7 +42,7 @@ export const LockFile = {
       await Fs.writeFile(Path.SKILL_LOCK_FILE, Format.json(validated));
     } catch (error) {
       Log.debug(error);
-      throw new Error('Could not update the lock file.');
+      throw new Error('Failed to update the lock file.');
     }
   },
 
@@ -77,55 +79,11 @@ export const LockFile = {
     return lock.skills;
   },
 
-  isPinned(skill: ISkillLock, currentHubBranch: string): boolean {
-    return skill.requestedRef !== currentHubBranch;
+  async isPinned(fullSkillName: string): Promise<boolean> {
+    const skill = await this.find(fullSkillName);
+    if (!skill) throw new Error(`Skill '${fullSkillName}' not found in lock file.`);
+    const { hubBranch } = await Config.get();
+    return skill.requestedRef !== hubBranch;
   },
 
-  async getRefStatus(skillLock: ISkillLock): Promise<IRefStatus> {
-    const { requestedRef, resolvedCommit } = skillLock;
-
-    try {
-      await Git.resolveCommit(requestedRef);
-      return 'ok';
-    } catch (error) {
-      Log.debug(error);
-
-      try {
-        await Git.resolveCommit(resolvedCommit);
-        return 'orphaned';
-      } catch {
-        return 'broken';
-      }
-    }
-  },
-
-  async findUniqueRefs(): Promise<string[]> {
-    const config = await Config.get();
-    const skills = await this.findAll();
-    const refs = new Set<string>([config.hubBranch]);
-    const skillList = Object.values(skills);
-
-    for (const skill of skillList) {
-      if (!skill) continue;
-      // Skip commit SHAs - can't fetch specific commits
-      if (GIT_COMMIT_SHA_REGEX.test(skill.requestedRef)) continue;
-      refs.add(skill.requestedRef);
-    }
-
-    return Array.from(refs);
-  },
-
-  async findSkillsByRef(ref: string): Promise<string[]> {
-    const skills = await this.findAll();
-    const result: string[] = [];
-    const skillList = Object.entries(skills);
-
-    for (const [name, skill] of skillList) {
-      if (skill?.requestedRef === ref) {
-        result.push(name);
-      }
-    }
-
-    return result;
-  },
 } as const;

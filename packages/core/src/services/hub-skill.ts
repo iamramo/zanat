@@ -3,11 +3,11 @@ import { Path } from './path.js';
 import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { Log } from './log.js';
-import { Zod } from '../index.js';
+import { Zod } from './zod.js';
 import matter from 'gray-matter';
 import path from 'node:path';
 
-export const H_Skill = {
+export const HubSkill = {
   async parse(fullSkillName: string): Promise<ISkill> {
     try {
       const { namespace, skillName } = Path.toSkillParts(fullSkillName);
@@ -39,7 +39,7 @@ export const H_Skill = {
   async findAll(): Promise<ISkill[]> {
     const config = await Config.get();
     const files = await Fs.glob('**/SKILL.md', config.hubDir);
-    return Promise.all(
+    const results = await Promise.allSettled(
       files.map((f) => {
         // Convert path like 'company-a/backend/nodejs/SKILL.md' to 'company-a.backend.nodejs'
         const relativeDir = path.dirname(f);
@@ -47,6 +47,15 @@ export const H_Skill = {
         return this.parse(fullSkillName);
       })
     );
+
+    return results.reduce<ISkill[]>((skills, result, index) => {
+      if (result.status === 'fulfilled') {
+        skills.push(result.value);
+      } else {
+        Log.debug(`Failed to parse skill from ${files[index]}: ${result.reason}`);
+      }
+      return skills;
+    }, []);
   },
 
   async search(query: string): Promise<ISkill[]> {

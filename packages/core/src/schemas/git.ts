@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   GIT_URL_REGEX,
   GIT_BRANCH_NAME_REGEX,
+  GIT_REMOTE_BRANCH_REGEX,
   GIT_TAG_REGEX,
   GIT_COMMIT_SHA_REGEX,
 } from './common.js';
@@ -23,8 +24,8 @@ export const RemoteBranchSchema = z
   .string()
   .min(1, 'Remote branch name is required')
   .regex(
-    GIT_BRANCH_NAME_REGEX,
-    'Remote branch name must start with alphanumeric and contain only letters, numbers, dots, hyphens, and underscores'
+    GIT_REMOTE_BRANCH_REGEX,
+    'Remote branch name must start with alphanumeric, optionally prefixed with origin/, and contain only letters, numbers, dots, hyphens, and underscores'
   );
 
 export const TagSchema = z

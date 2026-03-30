@@ -11,8 +11,8 @@ const FullNameSchema = z
 
 export const OpenStandardSchema = z
   .object({
-    name: z.string().min(1, 'name is required'),
-    description: z.string().min(1, 'description is required'),
+    name: z.string().min(1, 'Name is required'),
+    description: z.string().min(1, 'Description is required'),
     license: z.string().optional(),
     compatibility: z.string().optional(),
     'disable-model-invocation': z.boolean().optional(),
