@@ -6,7 +6,7 @@ const FullNameSchema = z
   .min(1, 'Skill name is required')
   .regex(
     FULL_SKILL_NAME_REGEX,
-    'Skill name must be in format: namespace.skill-name (lowercase, hyphens, dots only)'
+    'Skill name must be in format: namespace.skill-name (letters, numbers, hyphens, dots only)'
   );
 
 export const OpenStandardSchema = z
