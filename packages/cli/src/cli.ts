@@ -466,7 +466,7 @@ Status Indicators:
   .action(statusCommand);
 
 program
-  .command('mcp')
+  .command('mcp', { hidden: true })
   .description('Start the MCP server for AI agent integration')
   .addHelpText(
     'after',
@@ -480,12 +480,16 @@ Tools Provided:
   • list_skills    - List installed skills
   • get_skill      - Get full skill content
   • add_skill      - Install a skill from the hub
+  • update_skill   - Update one or all skills from the hub
   • remove_skill   - Remove an installed skill
+
+Configuration:
+  Add to your AI tool's MCP settings:
+    { "command": "zanat", "args": ["mcp"] }
 
 Note:
   The MCP server communicates via stdio (JSON-RPC).
-  Configure it in your AI tool's MCP settings with:
-    { "command": "zanat", "args": ["mcp"] }
+  This command is not intended to be run directly.
 `)
   )
   .action(mcpCommand);
