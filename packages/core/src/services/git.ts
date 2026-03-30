@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { simpleGit } from 'simple-git';
 import { Zod } from './zod.js';
 import { Log } from './log.js';
@@ -97,8 +98,24 @@ export const Git = {
       await git.revparse(['--verify', `refs/tags/${ref}`]);
       return 'tag';
     } catch {
-      return 'branch';
+      // not a tag
     }
+
+    try {
+      await git.revparse(['--verify', `refs/heads/${ref}`]);
+      return 'branch';
+    } catch {
+      // not a local branch
+    }
+
+    try {
+      await git.revparse(['--verify', `refs/remotes/origin/${ref}`]);
+      return 'branch';
+    } catch {
+      // not a remote branch
+    }
+
+    throw new Error(`Unknown ref: '${ref}'`);
   },
 
   async remoteBranchExists(branch: string): Promise<boolean> {
@@ -134,7 +151,11 @@ export const Git = {
     const git = simpleGit(config.hubDir);
 
     try {
-      const result = await git.show(`${ref}:${filePath}`);
+      const repoRoot = (await git.revparse(['--show-toplevel'])).trim();
+      const relativePath = path.isAbsolute(filePath)
+        ? path.relative(repoRoot, filePath)
+        : filePath;
+      const result = await git.show(`${ref}:${relativePath}`);
       return result;
     } catch (error) {
       Log.debug(error);
