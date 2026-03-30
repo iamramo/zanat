@@ -119,7 +119,8 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       // Ensure up-to-date branch
       if (pin) {
         const refType = await Git.getRefType(pin);
-        if (refType === 'branch') throw new Error(`Branch pinning is not supported. Use a tag or commit SHA.`);
+        if (refType === 'branch')
+          throw new Error(`Branch pinning is not supported. Use a tag or commit SHA.`);
       } else {
         await Git.pull();
       }

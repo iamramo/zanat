@@ -28,7 +28,9 @@ export const Display = {
     if (pinned) {
       // If requestedRef is a commit SHA, the short SHA already conveys the version
       const isCommitSha = skill.requestedRef === skill.resolvedCommit;
-      return isCommitSha ? `${shortCommit} (pinned)` : `${shortCommit} (${skill.requestedRef}, pinned)`;
+      return isCommitSha
+        ? `${shortCommit} (pinned)`
+        : `${shortCommit} (${skill.requestedRef}, pinned)`;
     }
     return `${shortCommit} (${skill.requestedRef})`;
   },

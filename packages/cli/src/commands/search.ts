@@ -10,7 +10,9 @@ export const searchCommand = async (query?: string): Promise<void> => {
     : Log.msg(Chalk.blue('Available skills:'));
   Log.blank();
 
-  const results = normalizedQuery ? await HubSkill.search(normalizedQuery) : await HubSkill.findAll();
+  const results = normalizedQuery
+    ? await HubSkill.search(normalizedQuery)
+    : await HubSkill.findAll();
 
   // Step 3: Display results
   if (results.length === 0) {

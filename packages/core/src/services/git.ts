@@ -162,9 +162,7 @@ export const Git = {
 
     try {
       const repoRoot = (await git.revparse(['--show-toplevel'])).trim();
-      const relativePath = path.isAbsolute(filePath)
-        ? path.relative(repoRoot, filePath)
-        : filePath;
+      const relativePath = path.isAbsolute(filePath) ? path.relative(repoRoot, filePath) : filePath;
       const result = await git.show(`${ref}:${relativePath}`);
       return result;
     } catch (error) {

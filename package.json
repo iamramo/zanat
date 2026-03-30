@@ -13,7 +13,8 @@
     "build:cli": "npm run build -w packages/cli",
     "dev:cli": "npm run dev -w packages/cli",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/*/src/**/*.ts"
+    "lint": "eslint packages/*/src/**/*.ts",
+    "prettier": "npx prettier --write ."
   },
   "keywords": [
     "ai",

@@ -76,5 +76,4 @@ export const LockFile = {
     const { hubBranch } = await Config.get();
     return skill.requestedRef !== hubBranch;
   },
-
 } as const;

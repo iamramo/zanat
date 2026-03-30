@@ -9,10 +9,26 @@ export const statusCommand = async (): Promise<void> => {
   // Step 2: Display hub status
   Log.msg(Chalk.blue(Chalk.bold('Hub Status:')));
   Log.blank();
-  Log.msg(Chalk.bold('Initialized: ') + Chalk.green('yes'), { prefix: '•', prefixColor: 'white', spacing: 2 });
-  Log.msg(Chalk.bold('Repository: ') + Chalk.green(config.hubUrl), { prefix: '•', prefixColor: 'white', spacing: 2 });
-  Log.msg(Chalk.bold('Branch: ') + Chalk.green(config.hubBranch), { prefix: '•', prefixColor: 'white', spacing: 2 });
-  Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', prefixColor: 'white', spacing: 2 });
+  Log.msg(Chalk.bold('Initialized: ') + Chalk.green('yes'), {
+    prefix: '•',
+    prefixColor: 'white',
+    spacing: 2,
+  });
+  Log.msg(Chalk.bold('Repository: ') + Chalk.green(config.hubUrl), {
+    prefix: '•',
+    prefixColor: 'white',
+    spacing: 2,
+  });
+  Log.msg(Chalk.bold('Branch: ') + Chalk.green(config.hubBranch), {
+    prefix: '•',
+    prefixColor: 'white',
+    spacing: 2,
+  });
+  Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), {
+    prefix: '•',
+    prefixColor: 'white',
+    spacing: 2,
+  });
   Log.msg(Chalk.bold('Last pull: ') + Chalk.green(Display.timeAgo(config?.lastPull)), {
     prefix: '•',
     prefixColor: 'white',
@@ -22,7 +38,11 @@ export const statusCommand = async (): Promise<void> => {
   try {
     const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
     if (behind === 0) {
-      Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), { prefix: '•', prefixColor: 'white', spacing: 2 });
+      Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), {
+        prefix: '•',
+        prefixColor: 'white',
+        spacing: 2,
+      });
     } else {
       Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), {
         prefix: '•',
@@ -31,7 +51,11 @@ export const statusCommand = async (): Promise<void> => {
       });
     }
   } catch (error) {
-    Log.msg(Chalk.bold('Behind: ') + Chalk.gray('unknown'), { prefix: '•', prefixColor: 'white', spacing: 2 });
+    Log.msg(Chalk.bold('Behind: ') + Chalk.gray('unknown'), {
+      prefix: '•',
+      prefixColor: 'white',
+      spacing: 2,
+    });
     Log.debug(error);
   }
 
@@ -52,19 +76,23 @@ export const statusCommand = async (): Promise<void> => {
             skills[skillName]!.resolvedCommit,
             `origin/${config.hubBranch}`
           );
-          behindStatus = behindCount === 0
-            ? Chalk.green('[up-to-date]')
-            : Chalk.yellow(`[behind by ${behindCount} commit(s)]`);
+          behindStatus =
+            behindCount === 0
+              ? Chalk.green('[up-to-date]')
+              : Chalk.yellow(`[behind by ${behindCount} commit(s)]`);
         } catch (error) {
           Log.debug(error);
         }
       }
 
-      Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`.trim()), {
-        prefix: '•',
-        prefixColor: 'white',
-        spacing: 2,
-      });
+      Log.msg(
+        Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`.trim()),
+        {
+          prefix: '•',
+          prefixColor: 'white',
+          spacing: 2,
+        }
+      );
     }
   } else {
     Log.msg(Chalk.gray('No skills added.'), { spacing: 2 });

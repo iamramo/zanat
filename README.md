@@ -79,6 +79,7 @@ description: Helps review code for quality and best practices
 # Code Review
 
 When reviewing code, check for:
+
 1. Correctness — Does it work as intended?
 2. Readability — Is it easy to understand?
 3. Performance — Are there obvious inefficiencies?
@@ -88,10 +89,10 @@ See the [zanat-hub](https://github.com/iamramo/zanat-hub) for examples and the [
 
 ## Project Structure
 
-| Package | Description |
-| --- | --- |
-| [`packages/cli`](./packages/cli) | CLI tool (`zanat` command) |
-| [`packages/core`](./packages/core) | Core library |
+| Package                            | Description                |
+| ---------------------------------- | -------------------------- |
+| [`packages/cli`](./packages/cli)   | CLI tool (`zanat` command) |
+| [`packages/core`](./packages/core) | Core library               |
 
 ## Development
 

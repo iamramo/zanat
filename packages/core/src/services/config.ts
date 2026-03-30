@@ -39,9 +39,7 @@ export const Config = {
 
     const branchExists = await Git.remoteBranchExists(config.hubBranch);
     if (!branchExists) {
-      throw new Error(
-        `Branch '${config.hubBranch}' does not exist in hub '${config.hubUrl}'.`
-      );
+      throw new Error(`Branch '${config.hubBranch}' does not exist in hub '${config.hubUrl}'.`);
     }
   },
   async get(): Promise<IConfig> {

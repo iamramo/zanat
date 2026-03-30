@@ -14,7 +14,10 @@ export const pullCommand = async (): Promise<void> => {
     Log.msg(Chalk.green(`Pulled '${config.hubBranch}' (already up to date)`), { prefix: '✔' });
   } else {
     const count = await Git.behind(beforeSha, afterSha);
-    Log.msg(Chalk.green(`Pulled '${config.hubBranch}' (${count} new commit${count === 1 ? '' : 's'})`), { prefix: '✔' });
+    Log.msg(
+      Chalk.green(`Pulled '${config.hubBranch}' (${count} new commit${count === 1 ? '' : 's'})`),
+      { prefix: '✔' }
+    );
   }
 
   // Step 3: Always update timestamp

@@ -12,18 +12,18 @@ Requires Node.js v22+ and Git.
 
 ## Commands
 
-| Command | Description |
-| --- | --- |
-| `zanat init` | Initialize configuration and clone the hub repository |
-| `zanat pull` | Pull latest changes from the hub |
-| `zanat add <skill>` | Add a skill (tracks hub branch) |
-| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA |
-| `zanat rm <skill>` | Remove a skill |
-| `zanat update [skill]` | Update one or all skills from hub |
-| `zanat list` | List added skills with version info |
-| `zanat show <skill>` | Show skill content |
-| `zanat search [query]` | Search available skills in the hub |
-| `zanat status` | Show hub and skills status |
+| Command                         | Description                                           |
+| ------------------------------- | ----------------------------------------------------- |
+| `zanat init`                    | Initialize configuration and clone the hub repository |
+| `zanat pull`                    | Pull latest changes from the hub                      |
+| `zanat add <skill>`             | Add a skill (tracks hub branch)                       |
+| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA             |
+| `zanat rm <skill>`              | Remove a skill                                        |
+| `zanat update [skill]`          | Update one or all skills from hub                     |
+| `zanat list`                    | List added skills with version info                   |
+| `zanat show <skill>`            | Show skill content                                    |
+| `zanat search [query]`          | Search available skills in the hub                    |
+| `zanat status`                  | Show hub and skills status                            |
 
 ## Version Tracking
 
@@ -41,9 +41,9 @@ Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
 
 ### Status Indicators
 
-| Indicator | Meaning |
-| --- | --- |
-| `abc1234 (main)` | Tracking the hub branch |
+| Indicator          | Meaning                       |
+| ------------------ | ----------------------------- |
+| `abc1234 (main)`   | Tracking the hub branch       |
 | `abc1234 (pinned)` | Pinned to a tag or commit SHA |
 
 ## Skill Format
