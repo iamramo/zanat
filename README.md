@@ -16,6 +16,10 @@
   <strong>Your personal skill library from any Git repository.</strong>
 </p>
 
+<p align="center">
+  <video src="assets/demo.mp4" width="600" autoplay loop muted playsinline></video>
+</p>
+
 ## What is Zanat?
 
 Zanat manages AI agent skills as versioned markdown files in Git. Define instructions once, version them, and distribute them to any AI tool — Claude, Cursor, OpenCode, or custom agents.
