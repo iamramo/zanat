@@ -7,13 +7,13 @@ export const statusCommand = async (): Promise<void> => {
   const config = await Config.get();
 
   // Step 2: Display hub status
-  Log.msg(Chalk.blue(Log.bold('Hub Status:')));
+  Log.msg(Chalk.blue(Chalk.bold('Hub Status:')));
   Log.blank();
-  Log.msg(Log.bold('Initialized: ') + Chalk.green('yes'), { prefix: '•', spacing: 2 });
-  Log.msg(Log.bold('Repository: ') + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
-  Log.msg(Log.bold('Branch: ') + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
-  Log.msg(Log.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
-  Log.msg(Log.bold('Last pull: ') + Chalk.green(Display.timeAgo(config?.lastPull)), {
+  Log.msg(Chalk.bold('Initialized: ') + Chalk.green('yes'), { prefix: '•', spacing: 2 });
+  Log.msg(Chalk.bold('Repository: ') + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
+  Log.msg(Chalk.bold('Branch: ') + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
+  Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
+  Log.msg(Chalk.bold('Last pull: ') + Chalk.green(Display.timeAgo(config?.lastPull)), {
     prefix: '•',
     spacing: 2,
   });
@@ -30,14 +30,14 @@ export const statusCommand = async (): Promise<void> => {
 
   const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
   if (behind === 0) {
-    Log.msg(Log.bold('Behind: ') + Log.bold('up-to-date'), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold('Behind: ') + Chalk.bold('up-to-date'), { prefix: '•', spacing: 2 });
   } else {
-    Log.msg(Log.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), { prefix: '•', spacing: 2 });
   }
 
   // Step 3: Display skills status
   Log.blank();
-  Log.msg(Chalk.blue(Log.bold('Skills:')));
+  Log.msg(Chalk.blue(Chalk.bold('Skills:')));
   Log.blank();
 
   if (skillNames.length > 0) {
@@ -68,7 +68,7 @@ export const statusCommand = async (): Promise<void> => {
         behindStatus = Chalk.blue('[static]');
       }
 
-      Log.msg(Log.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`), {
+      Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`), {
         prefix: '•',
         spacing: 2,
       });

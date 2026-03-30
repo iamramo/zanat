@@ -1,4 +1,4 @@
-import { Display, Command, Config, Zod, Log, Chalk } from '@iamramo/zanat-core';
+import { Display, Command, Config, Zod, Chalk } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
@@ -32,10 +32,10 @@ program.configureHelp({
         '\n' +
         Chalk.gray(`v${packageJson.version}`) +
         '\n\n' +
-        Log.bold(originalHelp)
+        Chalk.bold(originalHelp)
       );
     }
-    return Log.bold(originalHelp);
+    return Chalk.bold(originalHelp);
   },
   styleDescriptionText: (str) => Chalk.reset(Chalk.italic.dim(str)),
   styleCommandDescription: (str) => Chalk.white(str),

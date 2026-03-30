@@ -18,9 +18,9 @@ export const initCommand = async (): Promise<void> => {
     Log.blank();
 
     const config = await Config.get();
-    Log.msg(Log.bold(`Repository: `) + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
-    Log.msg(Log.bold(`Branch: `) + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
-    Log.msg(Log.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold(`Branch: `) + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
     Log.blank();
 
     shouldReinitialize = await Prompt.confirm({
@@ -141,5 +141,5 @@ export const initCommand = async (): Promise<void> => {
   Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✓' });
 
   Log.blank();
-  Log.msg(Chalk.white(Log.bold('Zanat initialized successfully!')), { prefix: '✨' });
+  Log.msg(Chalk.white(Chalk.bold('Zanat initialized successfully!')), { prefix: '✨' });
 };

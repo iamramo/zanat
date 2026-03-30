@@ -17,7 +17,7 @@ export const listCommand = async (): Promise<void> => {
 
   for (const skillName of skillNames) {
     const displayVersion = await Display.getDisplayVersion(skillName);
-    Log.msg(Log.bold(`${skillName} `) + Chalk.blue(displayVersion), {
+    Log.msg(Chalk.bold(`${skillName} `) + Chalk.blue(displayVersion), {
       prefix: '•',
       spacing: 2,
     });
