@@ -8,18 +8,17 @@ import { Git } from './git.js';
 import path from 'node:path';
 
 export const A_Skill = {
-  async remove(skillPath: string): Promise<void> {
-    await Fs.remove(skillPath);
-
-    const fullSkillName = path.basename(skillPath);
+  async remove(fullSkillName: string): Promise<void> {
+    const targetDir = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName);
+    await Fs.remove(targetDir);
     await LockFile.remove(fullSkillName);
   },
 
   async add(fullSkillName: string, requestedRef: string, resolvedCommit: string): Promise<void> {
-    const targetFile = Path.getAgentsSkillPath(fullSkillName, true);
+    const targetFile = path.join(Path.AGENTS_SKILLS_DIR, fullSkillName, Path.SKILL_FILENAME);
     const sourceFile = await Path.getHubSkillPath(fullSkillName, true);
 
-    await Fs.ensureDir(Path.getAgentsSkillPath(fullSkillName));
+    await Fs.ensureDir(targetFile.replace('/SKILL.md', ''));
 
     const config = await Config.get();
     if (requestedRef !== config.hubBranch) {

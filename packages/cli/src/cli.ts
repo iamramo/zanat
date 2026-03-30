@@ -14,7 +14,7 @@ import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
 import { addCommand } from './commands/add.js';
-import { removeCommand } from './commands/remove.js';
+import { rmCommand } from './commands/rm.js';
 import { updateCommand } from './commands/update.js';
 import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
@@ -167,32 +167,55 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
     }
 
     case 'pull':
+      // Validate config
       await Config.validate();
+
+      // Ensure on hubBranch
       await Config.ensureOnHubBranch();
+
       return;
 
     case 'rm': {
+      // Validate config
       await Config.validate();
-      Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+
+      // Ensure fullSkillName is in correct format
+      const fullSkillName = args[0]!;
+      Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+
+      // Ensure skill exists in the lock file
+      const lockFileSkill = LockFile.find(fullSkillName);
+      if (!lockFileSkill) throw new Error(`Skill '${fullSkillName}' not found`);
+
       return;
     }
 
     case 'show': {
+      // Validate config
       await Config.validate();
+
+      // Ensure fullSkillName is in correct format
       Zod.skill.FullSchema.shape.fullName.parse(args[0]);
+
       return;
     }
 
     case 'list':
+      // Validate config
       await Config.validate();
+
       return;
 
     case 'search':
+      // Validate config
       await Config.validate();
+
       return;
 
     case 'status':
+      // Validate config
       await Config.validate();
+
       return;
   }
 });
@@ -301,7 +324,7 @@ Note:
   The skill can be re-added at any time with 'zanat add'.
 `)
   )
-  .action(removeCommand);
+  .action(rmCommand);
 
 program
   .command('update [skill]')

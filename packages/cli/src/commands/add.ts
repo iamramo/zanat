@@ -31,7 +31,6 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   } else {
     requestedRef = config.hubBranch;
     resolvedCommit = await Git.resolveCommit(config.hubBranch);
-    Log.msg(Chalk.blue(`Tracking ${config.hubBranch} branch`));
   }
 
   // Step 3: Check if skill exists in hub (only check filesystem when not using --pin, true)
@@ -52,5 +51,5 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
 
   // Step 4: Add skill to local storage
   await A_Skill.add(fullSkillName, requestedRef, resolvedCommit);
-  Log.msg(Chalk.green(`Added ${fullSkillName}`));
+  Log.msg(Chalk.green(`Added '${fullSkillName}'`), { prefix: '✓' });
 };

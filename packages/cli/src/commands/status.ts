@@ -30,9 +30,12 @@ export const statusCommand = async (): Promise<void> => {
 
   const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
   if (behind === 0) {
-    Log.msg(Chalk.bold('Behind: ') + Chalk.bold('up-to-date'), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), { prefix: '•', spacing: 2 });
   } else {
-    Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), { prefix: '•', spacing: 2 });
+    Log.msg(Chalk.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), {
+      prefix: '•',
+      spacing: 2,
+    });
   }
 
   // Step 3: Display skills status
