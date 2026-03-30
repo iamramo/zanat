@@ -1,6 +1,6 @@
 # @iamramo/zanat-cli
 
-CLI for Zanat - a skill hub for AI agents.
+CLI for [Zanat](https://github.com/iamramo/zanat) — a skill hub for AI agents.
 
 ## Installation
 
@@ -8,130 +8,72 @@ CLI for Zanat - a skill hub for AI agents.
 npm install -g @iamramo/zanat-cli
 ```
 
-## Quick Start
+Requires Node.js v22+ and Git.
 
-1. **Initialize zanat:**
+## Commands
 
-   ```bash
-   zanat init
-   ```
-
-   This will prompt you for the hub repository URL and branch.
-
-2. **Search for skills:**
-
-   ```bash
-   zanat search code-review
-   ```
-
-3. **Add a skill:**
-
-   ```bash
-   zanat add yurchi.code-review
-   ```
-
-   You can also use nested namespaces:
-
-   ```bash
-   zanat add company.team.code-review
-   ```
-
-4. **List added skills:**
-
-   ```bash
-   zanat list
-   ```
-
-5. **Update skills:**
-
-   ```bash
-   # Update a specific skill
-   zanat update yurchi.code-review
-
-   # Update all skills
-   zanat update
-   ```
-
-6. **Check status:**
-
-   ```bash
-   zanat status
-   ```
-
-7. **Remove a skill:**
-
-   ```bash
-   zanat rm yurchi.code-review
-   ```
-
-## Quick Reference
-
-| Command                           | Description                                                    |
-| --------------------------------- | -------------------------------------------------------------- |
-| `zanat init`                      | Initialize zanat configuration and clone the hub repository    |
-| `zanat pull`                      | Pull the latest changes from the hub repository                |
-| `zanat search [query]`            | Search for available skills in the hub                         |
-| `zanat add <skill>`               | Add a skill (tracks hub branch by default)                     |
-| `zanat add <skill> --pin=<ref>`   | Add a skill pinned to a specific tag or commit SHA             |
-| `zanat rm <skill>`                | Remove a skill from your local skills                          |
-| `zanat list`                      | List all added skills with version info                        |
-| `zanat update [skill]`            | Update skill(s) from hub                                       |
-| `zanat status`                    | Show hub and skills status                                     |
+| Command | Description |
+| --- | --- |
+| `zanat init` | Initialize configuration and clone the hub repository |
+| `zanat pull` | Pull latest changes from the hub |
+| `zanat add <skill>` | Add a skill (tracks hub branch) |
+| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA |
+| `zanat rm <skill>` | Remove a skill |
+| `zanat update [skill]` | Update one or all skills from hub |
+| `zanat list` | List added skills with version info |
+| `zanat show <skill>` | Show skill content |
+| `zanat search [query]` | Search available skills in the hub |
+| `zanat status` | Show hub and skills status |
 
 ## Version Tracking
 
-Zanat uses a dual-reference tracking system that distinguishes between what you asked for and what was actually resolved:
+By default, skills **track** the hub branch. They stay current when you run `zanat update`.
 
-- **requestedRef**: The branch, tag, or commit you specified (e.g., `main`, `v1.2.0`, `abc1234`)
-- **resolvedCommit**: The actual commit SHA that was resolved from the requested ref
-
-### Tracking vs Pinning
-
-**Tracking (default)**: Skills track the hub branch for automatic updates
+To lock a skill to a specific point in time, **pin** it to a tag or commit SHA:
 
 ```bash
-zanat add vercel.frontend.react-patterns
-# Tracks main branch, updates with 'zanat update'
+zanat add vercel.frontend.react-patterns              # tracks hub branch
+zanat add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
+zanat add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
 ```
 
-**Pinning**: Lock a skill to a specific tag or commit SHA — never auto-updates. Branch pinning is not supported.
+Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
 
-```bash
-# Pin to a tag (never updates)
-zanat add vercel.frontend.react-patterns --pin=v1.2.0
+### Status Indicators
 
-# Pin to a specific commit (never updates)
-zanat add vercel.frontend.react-patterns --pin=abc1234
+| Indicator | Meaning |
+| --- | --- |
+| `abc1234 (main)` | Tracking hub branch |
+| `abc1234 (v1.2.0)` | Pinned to tag |
+| `abc1234 (orphaned)` | Ref deleted, commit preserved |
+| `abc1234 (broken)` | Neither ref nor commit exist |
+
+If a skill becomes orphaned, re-add it without `--pin` to reattach to the hub branch.
+
+## Skill Format
+
+Skills are markdown files with YAML frontmatter:
+
+```markdown
+---
+name: code-review
+description: Helps review code for quality and best practices
+---
+
+# Code Review
+
+Instructions for the agent go here...
 ```
 
-### Reference Status
+**Required:** `name`, `description`
 
-Skills can have three reference states:
+**Optional:** `license`, `compatibility`, `disable-model-invocation`, `user-invocable`, `argument-hint`, `metadata`
 
-- **✓ ok**: The requested ref exists and resolves to a commit
-- **⚠ orphaned**: The ref (branch/tag) no longer exists, but the commit is preserved
-- **✗ broken**: Neither the ref nor the commit exist (skill files remain but can't update)
-
-Check status with:
-
-```bash
-zanat list          # Shows ref status in version column
-zanat status        # Detailed status for all skills
-zanat update        # Warns about orphaned/broken skills before updating
-```
-
-### Fixing Orphaned Skills
-
-If a skill becomes orphaned (the branch was deleted), re-pin it to the hub branch:
-
-```bash
-zanat add vercel.frontend.react-patterns
-# Re-adds without --pin, which tracks the hub branch
-```
+Skill names must be lowercase with hyphens (e.g., `code-review`, `react-hooks`) and match the folder name.
 
 ## Configuration
 
-Configuration is stored in `~/.zanat/config.json`:
+Stored in `~/.zanat/config.json`:
 
 ```json
 {
@@ -144,33 +86,17 @@ Configuration is stored in `~/.zanat/config.json`:
 
 ## Troubleshooting
 
-### Enable Debug Mode
-
-If you encounter errors, enable debug mode to see detailed error information:
+Enable debug mode for detailed error output:
 
 ```bash
-zanat --debug status
-# or
-zanat status --debug
+zanat --debug <command>
 ```
 
-This outputs the full error details in JSON format, helpful for debugging issues.
+**"Failed to initialize"** — Ensure Git is installed and you have access to the hub repository.
 
-### Common Issues
+**"Failed to pull"** — Check the hub URL in `~/.zanat/config.json` and network connectivity.
 
-**"Failed to initialize"**
-
-- Ensure Git is installed and accessible in your PATH
-- Check that you have permission to clone the hub repository
-
-**"Failed to pull"**
-
-- Verify your hub repository URL is correct in `~/.zanat/config.json`
-- Check network connectivity to the Git host
-
-**"Could not read the lock file"**
-
-- Run `zanat init` to create the initial configuration
+**"Could not read the lock file"** — Run `zanat init` to create the initial configuration.
 
 ## License
 
