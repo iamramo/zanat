@@ -143,23 +143,48 @@ export const initCommand = async (): Promise<void> => {
     Log.msg(Chalk.green(`Created ${Path.CONFIG_FILE}`), { prefix: '✔' });
     Log.blank();
 
-    // Remove old hub directory right before clone so earlier failures don't lose data
-    if (oldHubDir) {
-      Log.msg(Chalk.blue('Removing existing hub...'));
+    // Handle hub directory before cloning
+    const hubDirExists = await Fs.exists(hubDir);
+    const hubDirEmpty = hubDirExists && await Fs.isEmptyDir(hubDir);
+
+    if (hubDirExists && !hubDirEmpty) {
+      // On reinit with same dir, the user already confirmed — remove without prompting
+      if (shouldReinitialize && oldHubDir === hubDir) {
+        await Fs.remove(hubDir);
+      } else {
+        const shouldReplace = await Prompt.confirm({
+          message: `Directory '${hubDir}' already exists and is not empty. Replace it?`,
+          default: false,
+        });
+
+        if (!shouldReplace) {
+          Log.blank();
+          Log.msg(Chalk.blue('Cancelled.'));
+          return;
+        }
+
+        await Fs.remove(hubDir);
+      }
+    }
+
+    // Remove old hub dir if reinitializing to a different location
+    if (oldHubDir && oldHubDir !== hubDir) {
+      Log.msg(Chalk.blue('Removing old hub directory...'));
       await Fs.remove(oldHubDir);
-      Log.msg(Chalk.green('Removed existing hub'), { prefix: '✔' });
+      Log.msg(Chalk.green('Removed old hub directory'), { prefix: '✔' });
       Log.blank();
     }
 
     Log.msg(Chalk.blue('Cloning hub repository...'));
-    await Fs.remove(hubDir);
     await Git.clone(hubUrl, hubBranch, hubDir);
     Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✔' });
   } catch (error) {
-    // Clean up partial state on failure
+    // Clean up partial state on failure (only on fresh init — reinit keeps existing config)
     Log.blank();
     Log.msg(Chalk.red('Initialization failed. Cleaning up...'), { prefix: '✗' });
-    await Fs.remove(Path.ZANAT_DIR);
+    if (!shouldReinitialize) {
+      await Fs.remove(Path.ZANAT_DIR);
+    }
     Log.debug(error);
     throw error;
   }

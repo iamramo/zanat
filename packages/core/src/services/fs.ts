@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { access, constants, glob } from 'node:fs/promises';
+import { access, constants, glob, readdir } from 'node:fs/promises';
 import { Log } from './log.js';
 
 type AccessMode = 'F_OK' | 'R_OK' | 'W_OK' | 'X_OK';
@@ -81,6 +81,15 @@ export const Fs = {
     try {
       await access(dir, modeMap[mode]);
       return true;
+    } catch {
+      return false;
+    }
+  },
+
+  async isEmptyDir(dir: string): Promise<boolean> {
+    try {
+      const entries = await readdir(dir);
+      return entries.length === 0;
     } catch {
       return false;
     }
