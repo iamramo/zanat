@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, Skill } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, A_Skill } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
   // Step 1: Update one skill
@@ -34,7 +34,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
       process.exit(1);
     }
 
-    await Skill.update(fullSkillName);
+    await A_Skill.update(fullSkillName);
     Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
     return;
   }
@@ -99,7 +99,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   Log.blue(`Updating ${updatableSkills.length} skill(s)...`);
 
   for (const { name } of updatableSkills) {
-    await Skill.update(name);
+    await A_Skill.update(name);
   }
 
   Log.green('Updated all skills', { prefix: '✓' });

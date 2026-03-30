@@ -1,4 +1,4 @@
-import { Skill, Log, Display } from '@iamramo/zanat-core';
+import { H_Skill, Log, Display } from '@iamramo/zanat-core';
 
 export const searchCommand = async (query?: string): Promise<void> => {
   // Step 1: Validate and normalize input
@@ -10,7 +10,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
     : Log.blue('Available skills:');
   Log.blank();
 
-  const results = normalizedQuery ? await Skill.search(normalizedQuery) : await Skill.findAll();
+  const results = normalizedQuery ? await H_Skill.search(normalizedQuery) : await H_Skill.findAll();
 
   // Step 2: Display results
   if (results.length === 0) {

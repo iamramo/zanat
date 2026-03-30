@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, Skill, Path, Config, Git, Display, Fs } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, A_Skill, Path, Config, Git, Display, Fs } from '@iamramo/zanat-core';
 import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
@@ -22,7 +22,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
       return;
     }
 
-    await Skill.update(fullSkillName);
+    await A_Skill.update(fullSkillName);
     Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
     return;
   }
@@ -67,6 +67,6 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   }
 
   // Step 5: Add skill to local storage
-  await Skill.add(fullSkillName, requestedRef, resolvedCommit);
+  await A_Skill.add(fullSkillName, requestedRef, resolvedCommit);
   Log.green(`Added ${fullSkillName}`);
 };

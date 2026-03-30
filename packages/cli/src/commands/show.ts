@@ -1,8 +1,8 @@
-import { Skill, Log } from '@iamramo/zanat-core';
+import { H_Skill, Log } from '@iamramo/zanat-core';
 
 export const showCommand = async (fullSkillName: string): Promise<void> => {
   // Step 1: Get skill from filesystem (current branch)
-  const skill = await Skill.find(fullSkillName);
+  const skill = await H_Skill.find(fullSkillName);
 
   if (!skill) {
     Log.red(`Skill not found in hub: ${fullSkillName}`, { prefix: '✗' });

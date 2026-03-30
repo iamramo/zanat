@@ -1,4 +1,4 @@
-import { Skill, Fs, Path, Log } from '@iamramo/zanat-core';
+import { A_Skill, Fs, Path, Log } from '@iamramo/zanat-core';
 
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
   // Step 1: Check skill exists
@@ -11,6 +11,6 @@ export const removeCommand = async (fullSkillName: string): Promise<void> => {
   }
 
   // Step 2: Remove skill from storage
-  await Skill.remove(skillPath);
+  await A_Skill.remove(skillPath);
   Log.green(`Removed ${fullSkillName}`, { prefix: '✓' });
 };
