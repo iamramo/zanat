@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.gif" width="600" alt="Zanat demo">
+  <img src="assets/demo.gif" width="800" alt="Zanat demo">
 </p>
 
 ## What is Zanat?
