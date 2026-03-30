@@ -125,7 +125,10 @@ export const initCommand = async (): Promise<void> => {
     await Fs.ensureDir(Path.AGENTS_DIR);
     Log.msg(Chalk.green(`Created ${Path.AGENTS_DIR}`), { prefix: '✔' });
 
-    await LockFile.ensure();
+    await Fs.emptyDir(Path.AGENTS_SKILLS_DIR);
+    Log.msg(Chalk.green(`Created ${Path.AGENTS_SKILLS_DIR}`), { prefix: '✔' });
+
+    await LockFile.create();
     Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✔' });
 
     await Fs.writeFile(

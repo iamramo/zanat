@@ -31,6 +31,14 @@ export const Fs = {
       throw new Error('Failed to create directory.');
     }
   },
+  async emptyDir(dir: string): Promise<void> {
+    try {
+      await fs.emptyDir(dir);
+    } catch (error) {
+      Log.debug(error);
+      throw new Error('Failed to empty directory.');
+    }
+  },
   async copy(source: string, destination: string): Promise<void> {
     try {
       await fs.copy(source, destination);

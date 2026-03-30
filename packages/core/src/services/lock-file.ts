@@ -23,17 +23,8 @@ export const LockFile = {
     }
   },
 
-  async ensure(): Promise<void> {
-    try {
-      await Fs.readFile(Path.SKILL_LOCK_FILE);
-    } catch (error: unknown) {
-      // Only create default lock file if it doesn't exist; re-throw other errors (permissions, I/O, etc.)
-      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-        await this.update(DEFAULT_LOCK_FILE);
-        return;
-      }
-      throw error;
-    }
+  async create(): Promise<void> {
+    await this.update(DEFAULT_LOCK_FILE);
   },
 
   async update(lock: ILockFile): Promise<void> {
