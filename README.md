@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <video src="assets/demo.mp4" width="600" autoplay loop muted playsinline></video>
+  <img src="assets/demo.gif" width="600" alt="Zanat demo">
 </p>
 
 ## What is Zanat?
