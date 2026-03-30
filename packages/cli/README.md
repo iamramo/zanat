@@ -43,12 +43,8 @@ Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
 
 | Indicator | Meaning |
 | --- | --- |
-| `abc1234 (main)` | Tracking hub branch |
-| `abc1234 (v1.2.0)` | Pinned to tag |
-| `abc1234 (orphaned)` | Ref deleted, commit preserved |
-| `abc1234 (broken)` | Neither ref nor commit exist |
-
-If a skill becomes orphaned, re-add it without `--pin` to reattach to the hub branch.
+| `abc1234 (main)` | Tracking the hub branch |
+| `abc1234 (pinned)` | Pinned to a tag or commit SHA |
 
 ## Skill Format
 
