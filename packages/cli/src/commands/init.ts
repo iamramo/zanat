@@ -152,6 +152,7 @@ export const initCommand = async (): Promise<void> => {
     }
 
     Log.msg(Chalk.blue('Cloning hub repository...'));
+    await Fs.remove(hubDir);
     await Git.clone(hubUrl, hubBranch, hubDir);
     Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✔' });
   } catch (error) {
