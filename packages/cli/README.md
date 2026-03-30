@@ -24,6 +24,35 @@ Requires Node.js v22+ and Git.
 | `zanat show <skill>`            | Show skill content                                    |
 | `zanat search [query]`          | Search available skills in the hub                    |
 | `zanat status`                  | Show hub and skills status                            |
+| `zanat mcp`                     | Start the MCP server for AI agent integration         |
+
+## MCP Server
+
+The `zanat mcp` command starts an MCP (Model Context Protocol) server over stdio, enabling AI agents to manage skills programmatically.
+
+Configure it in your AI tool's MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "zanat": {
+      "command": "zanat",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Tools
+
+| Tool            | Description                                        |
+| --------------- | -------------------------------------------------- |
+| `search_skills` | Search for skills in the hub by name or content    |
+| `list_skills`   | List installed skills with version and pin status  |
+| `get_skill`     | Get the full content of a skill                    |
+| `add_skill`     | Install a skill, optionally pinned to a tag or SHA |
+| `update_skill`  | Update one or all non-pinned skills from the hub   |
+| `remove_skill`  | Remove an installed skill                          |
 
 ## Version Tracking
 
@@ -32,7 +61,7 @@ By default, skills **track** the hub branch. They stay current when you run `zan
 To lock a skill to a specific point in time, **pin** it to a tag or commit SHA:
 
 ```bash
-zanat add vercel.frontend.react-patterns              # tracks hub branch
+zanat add vercel.frontend.react-patterns               # tracks hub branch
 zanat add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
 zanat add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
 ```

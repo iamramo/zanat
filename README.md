@@ -87,6 +87,38 @@ When reviewing code, check for:
 
 See the [zanat-hub](https://github.com/iamramo/zanat-hub) for examples and the [CLI README](./packages/cli/README.md) for the full skill format reference.
 
+## MCP Server
+
+Zanat includes an MCP (Model Context Protocol) server, allowing AI agents to search, install, update, and remove skills programmatically.
+
+```bash
+zanat mcp
+```
+
+Configure it in your AI tool's MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "zanat": {
+      "command": "zanat",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+| Tool             | Description                                          |
+| ---------------- | ---------------------------------------------------- |
+| `search_skills`  | Search for skills in the hub by name or content      |
+| `list_skills`    | List installed skills with version and pin status    |
+| `get_skill`      | Get the full content of a skill                      |
+| `add_skill`      | Install a skill, optionally pinned to a tag or SHA   |
+| `update_skill`   | Update one or all non-pinned skills from the hub     |
+| `remove_skill`   | Remove an installed skill                            |
+
 ## Project Structure
 
 | Package                            | Description                |
