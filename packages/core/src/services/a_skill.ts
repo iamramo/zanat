@@ -47,49 +47,21 @@ export const A_Skill = {
   },
 
   async update(fullSkillName: string): Promise<void> {
-    const skillPath = Path.getAgentsSkillPath(fullSkillName);
-
-    const skillExists = await Fs.exists(skillPath);
-    if (!skillExists) {
-      throw new Error(`Skill not added: ${fullSkillName}`);
-    }
-
     const existingSkill = await LockFile.find(fullSkillName);
-    if (!existingSkill) {
-      throw new Error(`Skill not tracked in lock file: ${fullSkillName}`);
-    }
-
-    const config = await Config.get();
-    const requestedRef = existingSkill.requestedRef;
-    const hubFilePath = await Path.getHubSkillPath(fullSkillName, true);
-
-    // Verify skill exists in hub (filesystem for tracking, git for pinned)
-    if (requestedRef === config.hubBranch) {
-      const hubExists = await Fs.exists(hubFilePath);
-      if (!hubExists) {
-        throw new Error(`Skill not found in hub filesystem: ${fullSkillName}`);
-      }
-    } else {
-      try {
-        await Git.show(requestedRef, hubFilePath);
-      } catch (error) {
-        Log.debug(error);
-        throw new Error(`Skill not found at ref '${requestedRef}': ${fullSkillName}`);
-      }
-    }
+    const requestedRef = existingSkill!.requestedRef;
 
     let resolvedCommit: string;
 
-    const refStatus = await LockFile.getRefStatus(existingSkill);
+    const refStatus = await LockFile.getRefStatus(existingSkill!);
 
     if (refStatus === 'orphaned') {
-      resolvedCommit = existingSkill.resolvedCommit;
+      resolvedCommit = existingSkill!.resolvedCommit;
     } else {
       try {
         resolvedCommit = await Git.resolveCommit(requestedRef);
       } catch (error) {
         Log.debug(error);
-        resolvedCommit = existingSkill.resolvedCommit;
+        resolvedCommit = existingSkill!.resolvedCommit;
       }
     }
 
