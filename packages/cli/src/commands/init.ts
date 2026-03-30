@@ -145,7 +145,7 @@ export const initCommand = async (): Promise<void> => {
 
     // Handle hub directory before cloning
     const hubDirExists = await Fs.exists(hubDir);
-    const hubDirEmpty = hubDirExists && await Fs.isEmptyDir(hubDir);
+    const hubDirEmpty = hubDirExists && (await Fs.isEmptyDir(hubDir));
 
     if (hubDirExists && !hubDirEmpty) {
       // On reinit with same dir, the user already confirmed — remove without prompting
@@ -164,6 +164,7 @@ export const initCommand = async (): Promise<void> => {
         }
 
         await Fs.remove(hubDir);
+        Log.blank();
       }
     }
 
