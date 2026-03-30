@@ -1,12 +1,12 @@
 import path from 'node:path';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod } from '@iamramo/zanat-core';
+import { Path, Config, Fs, Git, LockFile, Log, Format, Prompt, Zod, Chalk } from '@iamramo/zanat-core';
 
 const execAsync = promisify(exec);
 
 export const initCommand = async (): Promise<void> => {
-  Log.blue('Initializing Zanat...');
+  Log.msg(Chalk.blue('Initializing Zanat...'));
   Log.blank();
 
   let shouldReinitialize = false;
@@ -14,13 +14,13 @@ export const initCommand = async (): Promise<void> => {
   // Step 1: Check for existing configuration and handle reinitialization
   const hasConfig = await Config.exists();
   if (hasConfig) {
-    Log.blue('Zanat is already initialized.');
+    Log.msg(Chalk.blue('Zanat is already initialized.'));
     Log.blank();
 
     const config = await Config.get();
-    Log.status(`Repository:`, config.hubUrl, 'green', { prefix: '•', spacing: 2 });
-    Log.status(`Branch:`, config.hubBranch, 'green', { prefix: '•', spacing: 2 });
-    Log.status(`Directory:`, config.hubDir, 'green', { prefix: '•', spacing: 2 });
+    Log.msg(Log.bold(`Repository: `) + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
+    Log.msg(Log.bold(`Branch: `) + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
+    Log.msg(Log.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
     Log.blank();
 
     shouldReinitialize = await Prompt.confirm({
@@ -30,7 +30,7 @@ export const initCommand = async (): Promise<void> => {
 
     if (!shouldReinitialize) {
       Log.blank();
-      Log.blue('Keeping existing setup.');
+      Log.msg(Chalk.blue('Keeping existing setup.'));
       return;
     }
 
@@ -105,23 +105,23 @@ export const initCommand = async (): Promise<void> => {
   if (shouldReinitialize) {
     const config = await Config.get();
     Log.blank();
-    Log.blue('Removing existing hub...');
+    Log.msg(Chalk.blue('Removing existing hub...'));
     await Fs.remove(config.hubDir);
-    Log.green('Removed existing hub', { prefix: '✓' });
+    Log.msg(Chalk.green('Removed existing hub'), { prefix: '✓' });
   }
 
   // Step 3: Create directories and config files
   Log.blank();
-  Log.blue('Setting up directories...');
+  Log.msg(Chalk.blue('Setting up directories...'));
 
   await Fs.ensureDir(Path.ZANAT_DIR);
-  Log.green(`Created ${Path.ZANAT_DIR}`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Created ${Path.ZANAT_DIR}`), { prefix: '✓' });
 
   await Fs.ensureDir(Path.AGENTS_DIR);
-  Log.green(`Created ${Path.AGENTS_DIR}`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Created ${Path.AGENTS_DIR}`), { prefix: '✓' });
 
   await LockFile.ensure();
-  Log.green(`Created ${Path.SKILL_LOCK_FILE}`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✓' });
 
   await Fs.writeFile(
     Path.CONFIG_FILE,
@@ -132,14 +132,14 @@ export const initCommand = async (): Promise<void> => {
       lastPull: new Date().toISOString(),
     })
   );
-  Log.green(`Created ${Path.CONFIG_FILE}`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Created ${Path.CONFIG_FILE}`), { prefix: '✓' });
   Log.blank();
 
   // Step 4: Clone repository
-  Log.blue('Cloning hub repository...');
+  Log.msg(Chalk.blue('Cloning hub repository...'));
   await Git.clone(hubUrl, hubBranch, hubDir);
-  Log.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Cloned hub from branch ${hubBranch} to "${hubDir}"`), { prefix: '✓' });
 
   Log.blank();
-  Log.white(Log.bold('Zanat initialized successfully!'), { prefix: '✨' });
+  Log.msg(Chalk.white(Log.bold('Zanat initialized successfully!')), { prefix: '✨' });
 };

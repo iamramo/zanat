@@ -2,6 +2,7 @@ import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { Format } from './format.js';
 import { Log } from './log.js';
+import { Chalk } from './chalk.js';
 import { Git } from './git.js';
 import { Prompt } from './prompt.js';
 import { type IConfig } from '../schemas/config.js';
@@ -54,7 +55,7 @@ export const Config = {
     }
 
     // Branch mismatch detected
-    Log.yellow(`Hub is on '${currentBranch}' but config tracks '${config.hubBranch}'`, {
+    Log.msg(Chalk.yellow(`Hub is on '${currentBranch}' but config tracks '${config.hubBranch}'`), {
       prefix: '⚠',
     });
     Log.blank();
@@ -65,19 +66,19 @@ export const Config = {
     });
 
     if (!shouldSwitch) {
-      Log.blue('Cancelled.');
+      Log.msg(Chalk.blue('Cancelled.'));
       process.exit(0);
     }
 
     // Try to switch
     try {
       await Git.checkout(config.hubBranch);
-      Log.green(`Switched to '${config.hubBranch}'`, { prefix: '✓' });
+      Log.msg(Chalk.green(`Switched to '${config.hubBranch}'`), { prefix: '✓' });
       Log.blank();
     } catch (error) {
       Log.debug(error);
-      Log.red(`Failed to switch to '${config.hubBranch}'`, { prefix: '✗' });
-      Log.gray(`Please fix manually in "${config.hubDir}"`);
+      Log.msg(Chalk.red(`Failed to switch to '${config.hubBranch}'`), { prefix: '✗' });
+      Log.msg(Chalk.gray(`Please fix manually in "${config.hubDir}"`));
       process.exit(1);
     }
   },

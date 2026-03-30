@@ -1,4 +1,4 @@
-import { Display, Command, Config, Zod, Log } from '@iamramo/zanat-core';
+import { Display, Command, Config, Zod, Log, Chalk } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
@@ -28,26 +28,26 @@ program.configureHelp({
     // Only show banner and version for main help, not command-specific help
     if (cmd.name() === 'zanat' && !cmd.parent) {
       return (
-        Log.chalk.white(Display.getAsciiBanner()) +
+        Chalk.white(Display.getAsciiBanner()) +
         '\n' +
-        Log.chalk.gray(`v${packageJson.version}`) +
+        Chalk.gray(`v${packageJson.version}`) +
         '\n\n' +
         Log.bold(originalHelp)
       );
     }
     return Log.bold(originalHelp);
   },
-  styleDescriptionText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleCommandDescription: (str) => Log.chalk.white(str),
-  styleArgumentDescription: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleOptionTerm: (str) => Log.chalk.white(str),
-  styleTitle: (str) => Log.chalk.blue(str),
-  styleOptionText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleArgumentText: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleArgumentTerm: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleSubcommandTerm: (str) => Log.chalk.white(str),
-  styleSubcommandDescription: (str) => Log.chalk.reset(Log.chalk.italic.dim(str)),
-  styleUsage: (str) => Log.chalk.white(str),
+  styleDescriptionText: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleCommandDescription: (str) => Chalk.white(str),
+  styleArgumentDescription: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleOptionTerm: (str) => Chalk.white(str),
+  styleTitle: (str) => Chalk.blue(str),
+  styleOptionText: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleArgumentText: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleArgumentTerm: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleSubcommandTerm: (str) => Chalk.white(str),
+  styleSubcommandDescription: (str) => Chalk.reset(Chalk.italic.dim(str)),
+  styleUsage: (str) => Chalk.white(str),
 });
 
 program.hook('preAction', async (thisCommand, actionCommand) => {
@@ -124,7 +124,7 @@ program
   .description('Initialize zanat configuration and clone the hub')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat init
     Interactive setup for first-time use
@@ -150,7 +150,7 @@ program
   .description('Pull latest changes from hub repository')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat pull
     Pull hub branch and fetch all skill refs
@@ -179,7 +179,7 @@ program
   )
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat add vercel.react-patterns
     Add a skill and track the hub branch (auto-updates)
@@ -213,7 +213,7 @@ program
   .description('Remove a skill')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat rm vercel.react-patterns
     Remove a skill from local storage
@@ -230,7 +230,7 @@ program
   .description('Update skill(s) from hub')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat update
     Update all skills to their latest versions (interactive)
@@ -253,7 +253,7 @@ program
   .description('List added skills')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat list
     List all added skills with their versions
@@ -276,7 +276,7 @@ program
   .description('Search for skills in the hub')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat search
     List all available skills
@@ -296,7 +296,7 @@ program
   .description('Show skill content')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat show vercel.react-patterns
     Display the full content of the skill from current hub branch
@@ -313,7 +313,7 @@ program
   .description('Show hub and skills status')
   .addHelpText(
     'after',
-    Log.chalk.italic.dim(`
+    Chalk.italic.dim(`
 Examples:
   $ zanat status
     Show hub configuration and all skill statuses

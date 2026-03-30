@@ -1,4 +1,4 @@
-import { A_Skill, Fs, Path, Log } from '@iamramo/zanat-core';
+import { A_Skill, Fs, Path, Log, Chalk } from '@iamramo/zanat-core';
 
 export const removeCommand = async (fullSkillName: string): Promise<void> => {
   // Step 1: Check skill exists
@@ -6,11 +6,11 @@ export const removeCommand = async (fullSkillName: string): Promise<void> => {
   const agentSkillExists = await Fs.exists(skillPath);
 
   if (!agentSkillExists) {
-    Log.red('Skill not found.', { prefix: '✗' });
+    Log.msg(Chalk.red('Skill not found.'), { prefix: '✗' });
     process.exit(1);
   }
 
   // Step 2: Remove skill from storage
   await A_Skill.remove(skillPath);
-  Log.green(`Removed ${fullSkillName}`, { prefix: '✓' });
+  Log.msg(Chalk.green(`Removed ${fullSkillName}`), { prefix: '✓' });
 };

@@ -6,6 +6,7 @@ export { Git } from './services/git.js';
 export { A_Skill } from './services/a_skill.js';
 export { H_Skill } from './services/h_skill.js';
 export { Log } from './services/log.js';
+export { Chalk } from './services/chalk.js';
 export { Display } from './services/display.js';
 export { Format } from './services/format.js';
 export { Prompt } from './services/prompt.js';

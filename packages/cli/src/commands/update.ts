@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, A_Skill } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, A_Skill, Chalk } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName: string | undefined): Promise<void> => {
   // Step 1: Update one skill
@@ -6,36 +6,35 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
     const skill = await LockFile.find(fullSkillName);
 
     if (!skill) {
-      Log.red(`Error: ${fullSkillName} was not found`, { prefix: '✗' });
+      Log.msg(Chalk.red(`Error: ${fullSkillName} was not found`), { prefix: '✗' });
       process.exit(1);
     }
 
     const refStatus = await LockFile.getRefStatus(skill);
 
     if (refStatus === 'orphaned') {
-      Log.yellow(
-        `Warning: ${fullSkillName} is orphaned - Branch '${skill.requestedRef}' no longer exists, but commit is preserved`,
-        {
-          prefix: '⚠',
-        }
-      );
+      Log.msg(Chalk.yellow(
+        `Warning: ${fullSkillName} is orphaned - Branch '${skill.requestedRef}' no longer exists, but commit is preserved`
+      ), {
+        prefix: '⚠',
+      });
       const shouldContinue = await Prompt.confirm({
         message: 'Update anyway? (will preserve current commit)',
         default: true,
       });
       if (!shouldContinue) {
-        Log.blue('Update cancelled');
+        Log.msg(Chalk.blue('Update cancelled'));
         return;
       }
     } else if (refStatus === 'broken') {
-      Log.red(`Error: ${fullSkillName} is broken - Neither ref nor commit exist`, {
+      Log.msg(Chalk.red(`Error: ${fullSkillName} is broken - Neither ref nor commit exist`), {
         prefix: '✗',
       });
       process.exit(1);
     }
 
     await A_Skill.update(fullSkillName);
-    Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
+    Log.msg(Chalk.green(`Updated ${fullSkillName}`), { prefix: '✓' });
     return;
   }
 
@@ -44,7 +43,7 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   const skillEntries = Object.entries(skills);
 
   if (skillEntries.length === 0) {
-    Log.blue('No skills to update');
+    Log.msg(Chalk.blue('No skills to update'));
     return;
   }
 
@@ -68,19 +67,19 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   // Step 3: Show summary of skill statuses
   if (orphanedSkills.length > 0) {
     Log.blank();
-    Log.yellow(`Orphaned skills (will preserve current commits):`, { prefix: '⚠' });
-    orphanedSkills.forEach((s) => Log.yellow(s, { spacing: 2 }));
+    Log.msg(Chalk.yellow(`Orphaned skills (will preserve current commits):`), { prefix: '⚠' });
+    orphanedSkills.forEach((s) => Log.msg(Chalk.yellow(s), { spacing: 2 }));
   }
 
   if (brokenSkills.length > 0) {
     Log.blank();
-    Log.red(`Broken skills (cannot update):`, { prefix: '✗' });
-    brokenSkills.forEach((s) => Log.red(s, { spacing: 2 }));
+    Log.msg(Chalk.red(`Broken skills (cannot update):`), { prefix: '✗' });
+    brokenSkills.forEach((s) => Log.msg(Chalk.red(s), { spacing: 2 }));
   }
 
   if (updatableSkills.length === 0) {
     Log.blank();
-    Log.blue('No updatable skills.');
+    Log.msg(Chalk.blue('No updatable skills.'));
     return;
   }
 
@@ -91,16 +90,16 @@ export const updateCommand = async (fullSkillName: string | undefined): Promise<
   });
 
   if (!shouldUpdate) {
-    Log.blue('Update cancelled');
+    Log.msg(Chalk.blue('Update cancelled'));
     return;
   }
 
   Log.blank();
-  Log.blue(`Updating ${updatableSkills.length} skill(s)...`);
+  Log.msg(Chalk.blue(`Updating ${updatableSkills.length} skill(s)...`));
 
   for (const { name } of updatableSkills) {
     await A_Skill.update(name);
   }
 
-  Log.green('Updated all skills', { prefix: '✓' });
+  Log.msg(Chalk.green('Updated all skills'), { prefix: '✓' });
 };

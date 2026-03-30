@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, A_Skill, Path, Config, Git, Display, Fs } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, A_Skill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
 import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
@@ -18,12 +18,12 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     });
 
     if (!shouldUpdate) {
-      Log.blue('Cancelled');
+      Log.msg(Chalk.blue('Cancelled'));
       return;
     }
 
     await A_Skill.update(fullSkillName);
-    Log.green(`Updated ${fullSkillName}`, { prefix: '✓' });
+    Log.msg(Chalk.green(`Updated ${fullSkillName}`), { prefix: '✓' });
     return;
   }
 
@@ -38,9 +38,9 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
 
     try {
       resolvedCommit = await Git.resolveCommit(requestedRef);
-      Log.blue(`Pinning to '${requestedRef}' (${Display.getShortSha(resolvedCommit)})`);
+      Log.msg(Chalk.blue(`Pinning to '${requestedRef}' (${Display.getShortSha(resolvedCommit)})`));
     } catch (error) {
-      Log.red(`Invalid ref: '${requestedRef}' does not exist in the hub repository.`, {
+      Log.msg(Chalk.red(`Invalid ref: '${requestedRef}' does not exist in the hub repository.`), {
         prefix: '✗',
       });
       Log.debug(error);
@@ -49,7 +49,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   } else {
     requestedRef = config.hubBranch;
     resolvedCommit = await Git.resolveCommit(config.hubBranch);
-    Log.blue(`Tracking ${config.hubBranch} branch`);
+    Log.msg(Chalk.blue(`Tracking ${config.hubBranch} branch`));
   }
 
   // Step 4: Check if skill exists in hub (only check filesystem when not using --pin, true)
@@ -58,15 +58,15 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
   if (pinOption === undefined) {
     const skillExistsInHub = await Fs.exists(skillFile);
     if (!skillExistsInHub) {
-      Log.red('Skill not found in hub.', { prefix: '✗' });
-      Log.gray(
+      Log.msg(Chalk.red('Skill not found in hub.'), { prefix: '✗' });
+      Log.msg(Chalk.gray(
         `If the skill exists on a different branch, use: zanat add ${fullSkillName} --pin=<branch>`
-      );
+      ));
       process.exit(1);
     }
   }
 
   // Step 5: Add skill to local storage
   await A_Skill.add(fullSkillName, requestedRef, resolvedCommit);
-  Log.green(`Added ${fullSkillName}`);
+  Log.msg(Chalk.green(`Added ${fullSkillName}`));
 };

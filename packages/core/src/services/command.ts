@@ -1,6 +1,7 @@
 import { Command as CommanderCommand, Help, type HookEvent } from 'commander';
 import { ZodError } from 'zod';
 import { Log } from './log.js';
+import { Chalk } from './chalk.js';
 import { Format } from './format.js';
 
 class ZanatCommand extends CommanderCommand {
@@ -29,7 +30,7 @@ class ZanatCommand extends CommanderCommand {
         } else {
           message = Format.json(error);
         }
-        Log.red(message, { prefix: '✗' });
+        Log.msg(Chalk.red(message), { prefix: '✗' });
         Log.debug(error);
         process.exit(1);
       }
@@ -41,7 +42,7 @@ class ZanatCommand extends CommanderCommand {
       try {
         await fn(...args);
       } catch (error) {
-        Log.red(`Failed to run command "${this.name()}". Try running with --debug.`, {
+        Log.msg(Chalk.red(`Failed to run command "${this.name()}". Try running with --debug.`), {
           prefix: '✗',
         });
         Log.debug(error);

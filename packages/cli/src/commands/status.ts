@@ -1,4 +1,4 @@
-import { Git, LockFile, Display, Config, Log } from '@iamramo/zanat-core';
+import { Git, LockFile, Display, Config, Log, Chalk } from '@iamramo/zanat-core';
 
 export const statusCommand = async (): Promise<void> => {
   // Step 1: Load configuration and skills
@@ -7,13 +7,13 @@ export const statusCommand = async (): Promise<void> => {
   const config = await Config.get();
 
   // Step 2: Display hub status
-  Log.blue(Log.bold('Hub Status:'));
+  Log.msg(Chalk.blue(Log.bold('Hub Status:')));
   Log.blank();
-  Log.status('Initialized:', 'yes', 'green', { prefix: '•', spacing: 2 });
-  Log.status('Repository:', config.hubUrl, 'green', { prefix: '•', spacing: 2 });
-  Log.status('Branch:', config.hubBranch, 'green', { prefix: '•', spacing: 2 });
-  Log.status(`Directory:`, config.hubDir, 'green', { prefix: '•', spacing: 2 });
-  Log.status('Last pull:', Display.timeAgo(config?.lastPull), 'green', {
+  Log.msg(Log.bold('Initialized: ') + Chalk.green('yes'), { prefix: '•', spacing: 2 });
+  Log.msg(Log.bold('Repository: ') + Chalk.green(config.hubUrl), { prefix: '•', spacing: 2 });
+  Log.msg(Log.bold('Branch: ') + Chalk.green(config.hubBranch), { prefix: '•', spacing: 2 });
+  Log.msg(Log.bold(`Directory: `) + Chalk.green(config.hubDir), { prefix: '•', spacing: 2 });
+  Log.msg(Log.bold('Last pull: ') + Chalk.green(Display.timeAgo(config?.lastPull)), {
     prefix: '•',
     spacing: 2,
   });
@@ -21,7 +21,7 @@ export const statusCommand = async (): Promise<void> => {
   // Check if remote branch exists before trying to get behind count
   const remoteExists = await Git.remoteBranchExists(config.hubBranch);
   if (!remoteExists) {
-    Log.yellow(`Remote branch 'origin/${config.hubBranch}' not found.`, {
+    Log.msg(Chalk.yellow(`Remote branch 'origin/${config.hubBranch}' not found.`), {
       prefix: '⚠',
       spacing: 2,
     });
@@ -30,14 +30,14 @@ export const statusCommand = async (): Promise<void> => {
 
   const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
   if (behind === 0) {
-    Log.status('Behind:', Log.bold('up-to-date'), 'green', { prefix: '•', spacing: 2 });
+    Log.msg(Log.bold('Behind: ') + Log.bold('up-to-date'), { prefix: '•', spacing: 2 });
   } else {
-    Log.status('Behind:', `${behind} commit(s)`, 'yellow', { prefix: '•', spacing: 2 });
+    Log.msg(Log.bold('Behind: ') + Chalk.yellow(`${behind} commit(s)`), { prefix: '•', spacing: 2 });
   }
 
   // Step 3: Display skills status
   Log.blank();
-  Log.blue(Log.bold('Skills:'));
+  Log.msg(Chalk.blue(Log.bold('Skills:')));
   Log.blank();
 
   if (skillNames.length > 0) {
@@ -56,25 +56,25 @@ export const statusCommand = async (): Promise<void> => {
             `origin/${skill.requestedRef}`
           );
           if (behindCount === 0) {
-            behindStatus = Log.chalk.green('[up-to-date]');
+            behindStatus = Chalk.green('[up-to-date]');
           } else {
-            behindStatus = Log.chalk.yellow(`[behind by ${behindCount} commit(s)]`);
+            behindStatus = Chalk.yellow(`[behind by ${behindCount} commit(s)]`);
           }
         } catch (error) {
           Log.debug(error);
-          behindStatus = Log.chalk.red('[broken]');
+          behindStatus = Chalk.red('[broken]');
         }
       } else {
-        behindStatus = Log.chalk.blue('[static]');
+        behindStatus = Chalk.blue('[static]');
       }
 
-      Log.status(`${skillName}`, `${displayVersion} ${behindStatus}`, 'blue', {
+      Log.msg(Log.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`), {
         prefix: '•',
         spacing: 2,
       });
     }
   } else {
-    Log.gray('No skills added.', { spacing: 2 });
+    Log.msg(Chalk.gray('No skills added.'), { spacing: 2 });
   }
 
   Log.blank();
