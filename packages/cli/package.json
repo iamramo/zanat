@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-cli",
-  "version": "0.14.17",
+  "version": "0.14.18",
   "description": "CLI for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/cli.js",
