@@ -72,7 +72,7 @@ npm install -g @iamramo/zanat-cli
 | `zanat pull`                      | Pull the latest changes from the hub repository                |
 | `zanat search [query]`            | Search for available skills in the hub                         |
 | `zanat add <skill>`               | Add a skill (tracks hub branch by default)                     |
-| `zanat add <skill> --pin=<ref>`   | Add a skill pinned to a specific branch, tag, or commit        |
+| `zanat add <skill> --pin=<ref>`   | Add a skill pinned to a specific tag or commit SHA             |
 | `zanat rm <skill>`                | Remove a skill from your local skills                          |
 | `zanat list`                      | List all added skills with version info                        |
 | `zanat update [skill]`            | Update skill(s) from hub                                       |
@@ -94,12 +94,9 @@ zanat add vercel.frontend.react-patterns
 # Tracks main branch, updates with 'zanat update'
 ```
 
-**Pinning**: Lock a skill to a specific version that never auto-updates
+**Pinning**: Lock a skill to a specific tag or commit SHA — never auto-updates. Branch pinning is not supported.
 
 ```bash
-# Pin to a branch (follows branch updates but not hub branch)
-zanat add vercel.frontend.react-patterns --pin=develop
-
 # Pin to a tag (never updates)
 zanat add vercel.frontend.react-patterns --pin=v1.2.0
 

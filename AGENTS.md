@@ -105,7 +105,7 @@ Planned but not part of MVP:
 zanat init                    # Create ~/.zanat/, clone hub repo
 zanat pull                    # Pull latest hub changes
 zanat add <skill>             # Add skill (tracks hub branch)
-zanat add <skill> --pin=<ref> # Add skill pinned to specific ref (branch/tag/commit)
+zanat add <skill> --pin=<ref> # Add skill pinned to specific tag or commit SHA
 zanat rm <skill>              # Remove a skill
 zanat update [skill]          # Update skill(s) from hub
 zanat list                    # List added skills
@@ -121,7 +121,7 @@ Zanat uses a dual-reference tracking system:
 - **resolvedCommit**: The actual commit SHA resolved from the requested ref
 
 **Tracking (default):** Skills track the hub branch and auto-update with `zanat pull`
-**Pinning:** Use `--pin=<ref>` to lock a skill to a specific version that never auto-updates
+**Pinning:** Use `--pin=<ref>` to lock a skill to a specific tag or commit SHA. Branch pinning is not supported.
 
 ### Tech Stack
 
@@ -164,10 +164,10 @@ Zanat uses a dual-reference tracking system:
 **Import Ordering:**
 Import order matters for consistency. Follow this pattern:
 
-1. External dependencies (e.g., `commander`, `chalk`, `zod`)
-2. Local/core imports (e.g., `@iamramo/zanat-core`)
-3. Relative imports (e.g., `./schemas/skill-arg.js`)
-4. Styling (e.g., `chalk`) - always last if used
+1. Node built-ins (e.g., `node:path`, `node:os`)
+2. External dependencies (e.g., `commander`, `chalk`, `zod`)
+3. Local/core imports (e.g., `@iamramo/zanat-core`)
+4. Relative imports (e.g., `./schemas/skill-arg.js`)
 
 **Output Formatting:**
 Use inline `\n` for newlines instead of separate `console.log()` calls.
