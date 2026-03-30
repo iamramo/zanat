@@ -89,10 +89,10 @@ See the [zanat-hub](https://github.com/iamramo/zanat-hub) for examples and the [
 
 ## MCP Server
 
-Zanat includes an MCP (Model Context Protocol) server, allowing AI agents to search, install, update, and remove skills programmatically.
+Zanat includes a standalone MCP (Model Context Protocol) server (`@iamramo/zanat-mcp`), allowing AI agents to search, install, update, and remove skills programmatically.
 
 ```bash
-zanat mcp
+npx @iamramo/zanat-mcp
 ```
 
 Configure it in your AI tool's MCP settings:
@@ -101,8 +101,8 @@ Configure it in your AI tool's MCP settings:
 {
   "mcpServers": {
     "zanat": {
-      "command": "zanat",
-      "args": ["mcp"]
+      "command": "npx",
+      "args": ["@iamramo/zanat-mcp"]
     }
   }
 }
@@ -125,6 +125,7 @@ Configure it in your AI tool's MCP settings:
 | ---------------------------------- | -------------------------- |
 | [`packages/cli`](./packages/cli)   | CLI tool (`zanat` command) |
 | [`packages/core`](./packages/core) | Core library               |
+| [`packages/mcp`](./packages/mcp)   | MCP server                 |
 
 ## Development
 

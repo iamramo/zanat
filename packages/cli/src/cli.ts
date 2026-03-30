@@ -21,7 +21,6 @@ import { listCommand } from './commands/list.js';
 import { searchCommand } from './commands/search.js';
 import { statusCommand } from './commands/status.js';
 import { showCommand } from './commands/show.js';
-import { mcpCommand } from './commands/mcp.js';
 import { PinOptionSchema } from './schemas/pin.js';
 
 const program = Command.create();
@@ -250,19 +249,6 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       await Git.fetch([hubBranch]);
 
       return;
-
-    case 'mcp':
-      // Validate config
-      await Config.validate();
-
-      // Auto-checkout to hub branch (non-interactive for MCP)
-      const mcpConfig = await Config.get();
-      const currentBranch = await Git.getCurrentBranch();
-      if (currentBranch !== mcpConfig.hubBranch) {
-        await Git.checkout(mcpConfig.hubBranch);
-      }
-
-      return;
   }
 });
 
@@ -464,34 +450,5 @@ Status Indicators:
 `)
   )
   .action(statusCommand);
-
-program
-  .command('mcp', { hidden: true })
-  .description('Start the MCP server for AI agent integration')
-  .addHelpText(
-    'after',
-    Chalk.italic.dim(`
-Examples:
-  $ zanat mcp
-    Start an MCP server over stdio
-
-Tools Provided:
-  • search_skills  - Search for skills in the hub
-  • list_skills    - List installed skills
-  • get_skill      - Get full skill content
-  • add_skill      - Install a skill from the hub
-  • update_skill   - Update one or all skills from the hub
-  • remove_skill   - Remove an installed skill
-
-Configuration:
-  Add to your AI tool's MCP settings:
-    { "command": "zanat", "args": ["mcp"] }
-
-Note:
-  The MCP server communicates via stdio (JSON-RPC).
-  This command is not intended to be run directly.
-`)
-  )
-  .action(mcpCommand);
 
 program.parse();

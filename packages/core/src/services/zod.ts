@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { Schema as ConfigSchema } from '../schemas/config.js';
 import { OpenStandardSchema, FullSchema } from '../schemas/skill.js';
 import {
@@ -7,6 +8,7 @@ import {
 import { UrlSchema, BranchSchema, TagSchema, CommitShaSchema, RefSchema } from '../schemas/git.js';
 
 export const Zod = {
+  z,
   config: {
     ConfigSchema,
   },

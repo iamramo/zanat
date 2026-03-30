@@ -91,13 +91,13 @@ Instructions for the agent go here...
 - Rebuilt on pull
 - Content remains in Git
 
-### MCP Server (Future)
+### MCP Server
 
-Planned but not part of MVP:
+Standalone package (`@iamramo/zanat-mcp`) providing an MCP (Model Context Protocol) interface:
 
-- MCP (Model Context Protocol) interface
-- Agents can query skills on-demand
-- HTTP API for web UI
+- Agents can query, install, update, and remove skills via MCP tools
+- Communicates over stdio (JSON-RPC)
+- Run via `npx @iamramo/zanat-mcp`
 
 ### CLI Commands
 
@@ -127,6 +127,7 @@ Zanat uses a dual-reference tracking system:
 
 - **Language:** TypeScript
 - **CLI:** Commander.js
+- **MCP:** @modelcontextprotocol/sdk
 - **Git:** simple-git library
 - **Frontmatter:** gray-matter
 
@@ -139,13 +140,13 @@ Zanat uses a dual-reference tracking system:
 
 - Git-based skill storage
 - CLI for init, pull, add, rm, update, list, status, search
+- MCP server for AI agent integration (`@iamramo/zanat-mcp`)
 - Local skill add to `~/.agents/skills/`
 - Basic full-text search (grep-based)
 - Dual-reference version tracking (track hub branch or pin to specific ref)
 
 **Not Included (Future):**
 
-- MCP server
 - HTTP API
 - Web UI
 - Multiple hub sources
@@ -178,7 +179,7 @@ Use the logger abstraction for all output. Don't call `console.log()` or `consol
 ## Repository
 
 - GitHub: iamramo/zanat (will move to yurchi/zanat)
-- npm: @iamramo/zanat-cli
+- npm: @iamramo/zanat-cli, @iamramo/zanat-mcp
 
 ## License
 
