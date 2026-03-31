@@ -1,15 +1,19 @@
 import { Chalk } from './chalk.js';
 import { Log } from './log.js';
 
-const REQUIRED_MAJOR = 22;
-
 export const Node = {
-  checkVersion(): void {
-    const [major] = process.versions.node.split('.').map(Number);
-    if ((major ?? 0) < REQUIRED_MAJOR) {
+  checkVersion(requiredMajor: number): void {
+    const currentMajor = parseInt(process.versions.node.split('.')[0] ?? '', 10);
+
+    if (isNaN(currentMajor)) {
+      Log.msg(Chalk.red('Could not determine the current Node.js version. Is Node.js installed?'), { prefix: '✗' });
+      process.exit(1);
+    }
+
+    if (currentMajor < requiredMajor) {
       Log.msg(
         Chalk.red(
-          `Zanat requires Node.js ${REQUIRED_MAJOR} or higher. You are running Node.js ${process.versions.node}. Visit nodejs.org to upgrade.`,
+          `Zanat requires Node.js ${requiredMajor} or higher. You are running Node.js ${process.versions.node}. Visit nodejs.org to upgrade.`,
         ),
         { prefix: '✗' },
       );

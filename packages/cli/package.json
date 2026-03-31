@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-cli",
-  "version": "0.18.4",
+  "version": "0.18.5",
   "description": "CLI for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/cli.js",
@@ -28,7 +28,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@iamramo/zanat-core": "^0.18.4"
+    "@iamramo/zanat-core": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

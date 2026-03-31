@@ -14,7 +14,7 @@ import {
 } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
 
-Node.checkVersion();
+Node.checkVersion(parseInt(packageJson.engines.node.replace('>=', ''), 10));
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
 import { addCommand } from './commands/add.js';

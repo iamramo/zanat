@@ -20,7 +20,7 @@ async function ensureOnHubBranch(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  Node.checkVersion();
+  Node.checkVersion(parseInt(packageJson.engines.node.replace('>=', ''), 10));
   await ensureOnHubBranch();
 
   const server = new McpServer({
