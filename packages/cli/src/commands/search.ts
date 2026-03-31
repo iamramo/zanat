@@ -5,9 +5,11 @@ export const searchCommand = async (query?: string): Promise<void> => {
   const normalizedQuery = query?.trim();
 
   // Step 2: Search for skills
-  normalizedQuery
-    ? Log.msg(Chalk.blue(`Searching for: "${normalizedQuery}"...`))
-    : Log.msg(Chalk.blue('Available skills:'));
+  if (normalizedQuery) {
+    Log.msg(Chalk.blue(`Searching for: "${normalizedQuery}"...`));
+  } else {
+    Log.msg(Chalk.blue('Available skills:'));
+  }
   Log.blank();
 
   const results = normalizedQuery

@@ -52,7 +52,8 @@ export const LockFile = {
 
   async remove(fullSkillName: string): Promise<void> {
     const lock = await this.get();
-    const { [fullSkillName]: _, ...remainingSkills } = lock.skills;
+    const remainingSkills = { ...lock.skills };
+    delete remainingSkills[fullSkillName];
     const updatedLock = {
       ...lock,
       skills: remainingSkills,

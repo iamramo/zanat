@@ -41,10 +41,10 @@ class ZanatCommand extends CommanderCommand {
     });
   }
 
-  action(fn: (...args: any[]) => Promise<void> | void) {
-    const wrappedFn = async (...args: any[]) => {
+  override action(fn: Parameters<CommanderCommand['action']>[0]) {
+    const wrappedFn: typeof fn = async (...args) => {
       try {
-        await fn(...args);
+        await fn.call(this, ...args);
       } catch (error) {
         if (error instanceof Error && error.name === 'ExitPromptError') {
           Log.msg(Chalk.blue('Cancelled.'));

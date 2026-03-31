@@ -248,8 +248,10 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       await Config.ensureOnHubBranch();
 
       // Ensure we have the latest information
-      const hubBranch = (await Config.get()).hubBranch;
-      await Git.fetch([hubBranch]);
+      {
+        const hubBranch = (await Config.get()).hubBranch;
+        await Git.fetch([hubBranch]);
+      }
 
       return;
   }

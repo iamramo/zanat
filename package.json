@@ -14,7 +14,7 @@
     "build:mcp": "npm run build -w packages/mcp",
     "dev:cli": "npm run dev -w packages/cli",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "eslint packages/*/src/**/*.ts",
+    "lint": "eslint",
     "prettier": "npx prettier --write ."
   },
   "keywords": [
@@ -36,5 +36,12 @@
   "homepage": "https://github.com/iamramo/zanat#readme",
   "engines": {
     "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.58.0"
   }
 }
