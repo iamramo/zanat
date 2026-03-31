@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { Config, Git, Node } from '@iamramo/zanat-core';
+import { Config, Git, Node, Format } from '@iamramo/zanat-core';
 import { registerSearch } from './tools/search.js';
 import { registerList } from './tools/list.js';
 import { registerGet } from './tools/get.js';
@@ -39,4 +39,7 @@ async function main(): Promise<void> {
   await server.connect(transport);
 }
 
-main();
+main().catch((error) => {
+  console.error(`Zanat MCP failed to start: ${Format.json(error)}`);
+  process.exit(1);
+});
