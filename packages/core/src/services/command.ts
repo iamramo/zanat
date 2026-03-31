@@ -22,6 +22,10 @@ class ZanatCommand extends CommanderCommand {
       try {
         await listener(thisCommand, actionCommand);
       } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'ExitPromptError') {
+          Log.msg(Chalk.blue('Cancelled.'));
+          process.exit(0);
+        }
         let message: string;
         if (error instanceof ZodError) {
           message = error.issues[0]?.message ?? 'Validation failed';
@@ -42,6 +46,10 @@ class ZanatCommand extends CommanderCommand {
       try {
         await fn(...args);
       } catch (error) {
+        if (error instanceof Error && error.name === 'ExitPromptError') {
+          Log.msg(Chalk.blue('Cancelled.'));
+          process.exit(0);
+        }
         Log.msg(Chalk.red(`Failed to run command "${this.name()}". Try running with --debug.`), {
           prefix: '✗',
         });
