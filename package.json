@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "rm -rf packages/*/dist",
+    "clean": "node -e \"const{rmSync,globSync}=require('fs');globSync('packages/*/dist').forEach(d=>rmSync(d,{recursive:true,force:true}))\"",
     "prebuild": "npm run clean",
     "build": "npm run build --workspaces",
     "build:core": "npm run build -w packages/core",

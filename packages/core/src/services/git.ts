@@ -163,7 +163,9 @@ export const Git = {
     try {
       const repoRoot = (await git.revparse(['--show-toplevel'])).trim();
       const relativePath = path.isAbsolute(filePath) ? path.relative(repoRoot, filePath) : filePath;
-      const result = await git.show(`${ref}:${relativePath}`);
+      // Git requires forward slashes in <ref>:<path> syntax, but path.relative() returns
+      // backslashes on Windows. Normalize to forward slashes for cross-platform compatibility.
+      const result = await git.show(`${ref}:${relativePath.split(path.sep).join('/')}`);
       return result;
     } catch (error) {
       Log.debug(error);

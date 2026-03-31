@@ -42,8 +42,9 @@ export const HubSkill = {
     const results = await Promise.allSettled(
       files.map((f) => {
         // Convert path like 'company-a/backend/nodejs/SKILL.md' to 'company-a.backend.nodejs'
+        // fast-glob always returns forward-slash paths regardless of OS, so split on '/'
         const relativeDir = path.dirname(f);
-        const fullSkillName = relativeDir.split(path.sep).join('.');
+        const fullSkillName = relativeDir.split('/').join('.');
         return this.parse(fullSkillName);
       })
     );
