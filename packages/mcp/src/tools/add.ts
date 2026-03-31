@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { AgentSkill, HubSkill, LockFile, Config, Git, Path, Zod } from '@iamramo/zanat-core';
-import { text } from '../response.js';
+import { text, error } from '../response.js';
 
 export function registerAdd(server: McpServer): void {
   server.registerTool(
@@ -57,9 +57,9 @@ export function registerAdd(server: McpServer): void {
         await AgentSkill.add(fullName, requestedRef, resolvedCommit);
 
         return text(`Skill '${fullName}' has been installed.`);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return text(`Error adding skill: ${message}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return error(`Error adding skill: ${message}`);
       }
     }
   );

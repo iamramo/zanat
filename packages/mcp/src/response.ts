@@ -7,3 +7,7 @@ export function text(content: string) {
 export function json(data: unknown) {
   return text(Format.json(data));
 }
+
+export function error(message: string) {
+  return { content: [{ type: 'text' as const, text: message }], isError: true as const };
+}

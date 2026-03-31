@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { LockFile, Config } from '@iamramo/zanat-core';
-import { text, json } from '../response.js';
+import { text, json, error } from '../response.js';
 
 export function registerList(server: McpServer): void {
   server.registerTool(
@@ -26,9 +26,9 @@ export function registerList(server: McpServer): void {
         }));
 
         return json(results);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return text(`Error listing skills: ${message}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return error(`Error listing skills: ${message}`);
       }
     }
   );

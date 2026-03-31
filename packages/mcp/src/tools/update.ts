@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { AgentSkill, LockFile, Git, Zod } from '@iamramo/zanat-core';
-import { text, json } from '../response.js';
+import { text, json, error } from '../response.js';
 
 export function registerUpdate(server: McpServer): void {
   server.registerTool(
@@ -63,9 +63,9 @@ export function registerUpdate(server: McpServer): void {
         if (pinned.length > 0) result.skipped_pinned = pinned;
 
         return json(result);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return text(`Error updating skill: ${message}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return error(`Error updating skill: ${message}`);
       }
     }
   );

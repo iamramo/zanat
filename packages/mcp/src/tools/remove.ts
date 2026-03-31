@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { AgentSkill, LockFile, Zod } from '@iamramo/zanat-core';
-import { text } from '../response.js';
+import { text, error } from '../response.js';
 
 export function registerRemove(server: McpServer): void {
   server.registerTool(
@@ -19,9 +19,9 @@ export function registerRemove(server: McpServer): void {
         await AgentSkill.remove(fullName);
 
         return text(`Skill '${fullName}' has been removed.`);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        return text(`Error removing skill: ${message}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return error(`Error removing skill: ${message}`);
       }
     }
   );
