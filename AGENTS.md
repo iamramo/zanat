@@ -34,16 +34,15 @@ This prevents conflicts with other skill managers (like npx skills).
 
 ```
 ~/.zanat/hub/
-└── sources/
-    ├── yurchi/
-    │   └── code-review/
-    │       └── SKILL.md
-    ├── vercel/
-    │   └── pr-review/
-    │       └── SKILL.md
-    └── anthropic/
-        └── web-accessibility/
-            └── SKILL.md
+  ├── yurchi/
+  │   └── code-review/
+  │       └── SKILL.md
+  ├── vercel/
+  │   └── pr-review/
+  │       └── SKILL.md
+  └── anthropic/
+      └── web-accessibility/
+          └── SKILL.md
 ```
 
 **Installed Skills:**

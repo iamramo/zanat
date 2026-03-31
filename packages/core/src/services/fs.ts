@@ -1,5 +1,6 @@
+import fg from 'fast-glob';
 import fs from 'fs-extra';
-import { access, constants, glob, readdir } from 'node:fs/promises';
+import { access, constants, readdir } from 'node:fs/promises';
 import { Log } from './log.js';
 
 type AccessMode = 'F_OK' | 'R_OK' | 'W_OK' | 'X_OK';
@@ -66,11 +67,7 @@ export const Fs = {
 
   async glob(pattern: string, cwd?: string): Promise<string[]> {
     try {
-      const results: string[] = [];
-      for await (const file of glob(pattern, { cwd })) {
-        results.push(file);
-      }
-      return results;
+      return await fg(pattern, { cwd, dot: true });
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to glob files.');

@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-cli",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "CLI for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/cli.js",
@@ -21,13 +21,14 @@
     "LICENSE"
   ],
   "scripts": {
+    "preinstall": "node -e \"if(process.versions.node.split('.')[0] < 22) { console.error('Zanat requires Node.js 22 or higher. Visit nodejs.org to upgrade.'); process.exit(1); }\"",
     "prebuild": "npm run build -w @iamramo/zanat-core",
     "build": "tsc",
     "dev": "tsx watch src/cli.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@iamramo/zanat-core": "^0.18.2"
+    "@iamramo/zanat-core": "^0.18.3"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
