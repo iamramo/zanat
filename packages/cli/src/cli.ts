@@ -10,8 +10,11 @@ import {
   Path,
   Prompt,
   Log,
+  Node,
 } from '@iamramo/zanat-core';
 import packageJson from '../package.json' with { type: 'json' };
+
+Node.checkVersion();
 import { initCommand } from './commands/init.js';
 import { pullCommand } from './commands/pull.js';
 import { addCommand } from './commands/add.js';

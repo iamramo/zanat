@@ -12,3 +12,4 @@ export { Format } from './services/format.js';
 export { Prompt } from './services/prompt.js';
 export { Command } from './services/command.js';
 export { Zod } from './services/zod.js';
+export { Node } from './services/node.js';

@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-mcp",
-  "version": "0.18.3",
+  "version": "0.18.4",
   "description": "MCP server for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/index.js",
@@ -26,7 +26,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@iamramo/zanat-core": "^0.18.3",
+    "@iamramo/zanat-core": "^0.18.4",
     "@modelcontextprotocol/sdk": "^1.29.0"
   },
   "devDependencies": {
