@@ -24,7 +24,7 @@ export function registerUpdate(server: McpServer): void {
 
           const lockEntry = await LockFile.find(fullName);
           if (!lockEntry) {
-            return text(`Skill '${fullName}' is not installed.`);
+            return text(`Skill '${fullName}' is not added.`);
           }
 
           if (await LockFile.isPinned(fullName)) {
@@ -41,7 +41,7 @@ export function registerUpdate(server: McpServer): void {
         const entries = Object.entries(skills);
 
         if (entries.length === 0) {
-          return text('No skills installed.');
+          return text('No skills added.');
         }
 
         const pinned: string[] = [];
@@ -56,7 +56,7 @@ export function registerUpdate(server: McpServer): void {
         }
 
         if (updatable.length === 0) {
-          return text('No updatable skills. All installed skills are pinned.');
+          return text('No updatable skills. All added skills are pinned.');
         }
 
         await Git.pull();

@@ -6,7 +6,7 @@ export function registerRemove(server: McpServer): void {
   server.registerTool(
     'remove_skill',
     {
-      description: 'Remove an installed skill. Omit skill_name to remove all installed skills.',
+      description: 'Remove an added skill. Omit skill_name to remove all added skills.',
       inputSchema: { fullName: Zod.skill.FullSchema.shape.fullName.optional() },
     },
     async ({ fullName }) => {
@@ -17,7 +17,7 @@ export function registerRemove(server: McpServer): void {
           const skillNames = Object.keys(lockFileSkills);
 
           if (skillNames.length === 0) {
-            return text('No skills installed.');
+            return text('No skills added.');
           }
 
           for (const name of skillNames) {
@@ -30,7 +30,7 @@ export function registerRemove(server: McpServer): void {
         // Single-skill remove
         const lockEntry = await LockFile.find(fullName);
         if (!lockEntry) {
-          return text(`Skill '${fullName}' is not installed.`);
+          return text(`Skill '${fullName}' is not added.`);
         }
 
         await AgentSkill.remove(fullName);

@@ -24,7 +24,7 @@ export function registerGet(server: McpServer): void {
           name: skill.name,
           description: skill.description,
           content: skill.content,
-          installed: skill.fullName in lockFileSkills,
+          added: skill.fullName in lockFileSkills,
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);

@@ -32,14 +32,22 @@ export const addCommand = async (
 
     const allHubSkills = await HubSkill.findAll();
     const lockFileSkills = await LockFile.findAll();
-    const installedNames = new Set(Object.keys(lockFileSkills));
+    const addedNames = new Set(Object.keys(lockFileSkills));
 
-    const alreadyAdded = allHubSkills.filter((s) => installedNames.has(s.fullName));
-    const toAdd = allHubSkills.filter((s) => !installedNames.has(s.fullName));
+    const alreadyAdded = allHubSkills.filter((s) => addedNames.has(s.fullName));
+    const toAdd = allHubSkills.filter((s) => !addedNames.has(s.fullName));
 
     if (alreadyAdded.length > 0) {
-      Log.msg(Chalk.blue('Already added (skipping):'), { prefix: '•', prefixColor: 'blue' });
-      alreadyAdded.forEach((s) => Log.msg(Chalk.gray(s.fullName), { spacing: 2 }));
+      Log.msg(Chalk.bold.blue('Already added (skipping):'));
+      Log.blank();
+      for (const s of alreadyAdded) {
+        const version = await Display.getDisplayVersion(s.fullName);
+        Log.msg(Chalk.bold.white(s.fullName) + ' ' + Chalk.blue(version), {
+          prefix: '•',
+          prefixColor: 'white',
+          spacing: 2,
+        });
+      }
       Log.blank();
     }
 

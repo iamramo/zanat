@@ -57,7 +57,7 @@ See the [CLI documentation](./packages/cli/README.md) for the full command refer
 
 1. **Hub** — A Git repository containing skills organized by namespace
 2. **CLI** — Search, add, and manage skills from your terminal
-3. **Local** — Skills install to `~/.agents/skills/` where agents can read them
+3. **Local** — Skills add to `~/.agents/skills/` where agents can read them
 
 ## Namespaces
 
@@ -93,7 +93,7 @@ See the [zanat-hub](https://github.com/iamramo/zanat-hub) for examples and the [
 
 ## MCP Server
 
-Zanat includes a standalone MCP (Model Context Protocol) server (`@iamramo/zanat-mcp`), allowing AI agents to search, install, update, and remove skills programmatically.
+Zanat includes a standalone MCP (Model Context Protocol) server (`@iamramo/zanat-mcp`), allowing AI agents to search, add, update, and remove skills programmatically.
 
 ```bash
 npx @iamramo/zanat-mcp
@@ -114,14 +114,14 @@ Configure it in your AI tool's MCP settings:
 
 ### Available Tools
 
-| Tool            | Description                                        |
-| --------------- | -------------------------------------------------- |
-| `search_skills` | Search for skills in the hub by name or content    |
-| `list_skills`   | List installed skills with version and pin status  |
-| `get_skill`     | Get the full content of a skill                    |
-| `add_skill`     | Install a skill, optionally pinned to a tag or SHA |
-| `update_skill`  | Update one or all non-pinned skills from the hub   |
-| `remove_skill`  | Remove an installed skill                          |
+| Tool            | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `search_skills` | Search for skills in the hub by name or content  |
+| `list_skills`   | List added skills with version and pin status    |
+| `get_skill`     | Get the full content of a skill                  |
+| `add_skill`     | Add a skill, optionally pinned to a tag or SHA   |
+| `update_skill`  | Update one or all non-pinned skills from the hub |
+| `remove_skill`  | Remove an added skill                            |
 
 ## Project Structure
 

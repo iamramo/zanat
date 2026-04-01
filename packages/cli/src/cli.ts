@@ -213,7 +213,7 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       if (!fullSkillName) {
         const lockFileSkills = await LockFile.findAll();
         if (Object.keys(lockFileSkills).length === 0) {
-          Log.msg(Chalk.blue('No skills installed.'));
+          Log.msg(Chalk.blue('No skills added.'));
           process.exit(0);
         }
         return;
@@ -332,7 +332,7 @@ Examples:
     Add a skill and track the hub branch (auto-updates)
 
   $ zanat add
-    Add all skills from the hub that aren't already installed
+    Add all skills from the hub that aren't already added
 
   $ zanat add vercel.react-patterns --pin=v1.2.0
     Pin to tag v1.2.0 (never auto-updates)
@@ -353,7 +353,7 @@ Notes:
 
 program
   .command('rm [skill]')
-  .description('Remove a skill, or all installed skills if no name is given')
+  .description('Remove a skill, or all added skills if no name is given')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
@@ -362,7 +362,7 @@ Examples:
     Remove a skill from local storage
 
   $ zanat rm
-    Remove all installed skills (prompts for confirmation)
+    Remove all added skills (prompts for confirmation)
 
 Note:
   Removes the skill files from ~/.agents/skills/ and removes the lock file entry.

@@ -8,7 +8,7 @@ This file provides context about the Zanat project for future AI agents.
 
 - Store skills as markdown files with YAML frontmatter
 - Version skills using Git
-- Install skills locally to `~/.agents/skills/`
+- Add skills locally to `~/.agents/skills/`
 - Search and discover skills
 
 ## Key Decisions
@@ -45,7 +45,7 @@ This prevents conflicts with other skill managers (like npx skills).
           └── SKILL.md
 ```
 
-**Installed Skills:**
+**Added Skills:**
 
 ```
 ~/.agents/
@@ -94,7 +94,7 @@ Instructions for the agent go here...
 
 Standalone package (`@iamramo/zanat-mcp`) providing an MCP (Model Context Protocol) interface:
 
-- Agents can query, install, update, and remove skills via MCP tools
+- Agents can query, add, update, and remove skills via MCP tools
 - Communicates over stdio (JSON-RPC)
 - Run via `npx @iamramo/zanat-mcp`
 

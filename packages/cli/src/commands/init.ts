@@ -44,7 +44,7 @@ export const initCommand = async (): Promise<void> => {
 
     shouldReinitialize = await Prompt.confirm({
       message:
-        'Reinitialize? Your hub directory will be replaced. Installed skills and lock file are preserved.',
+        'Reinitialize? Your hub directory will be replaced. Added skills and lock file are preserved.',
       default: false,
     });
 

@@ -7,7 +7,7 @@ export function registerSearch(server: McpServer): void {
     'search_skills',
     {
       description:
-        'Search for skills available in the hub. Returns matching skills with name, description, and install status. If no query is provided, returns all available skills.',
+        'Search for skills available in the hub. Returns matching skills with name, description, and add status. If no query is provided, returns all available skills.',
       inputSchema: {
         query: Zod.z
           .string()
@@ -27,7 +27,7 @@ export function registerSearch(server: McpServer): void {
           fullName: skill.fullName,
           name: skill.name,
           description: skill.description,
-          installed: skill.fullName in lockFileSkills,
+          added: skill.fullName in lockFileSkills,
         }));
 
         return json(results);

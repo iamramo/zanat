@@ -6,7 +6,7 @@ export const rmCommand = async (fullSkillName: string | undefined): Promise<void
     const lockFileSkills = await LockFile.findAll();
     const skillNames = Object.keys(lockFileSkills);
 
-    Log.msg(Chalk.bold.blue('Installed skills:'));
+    Log.msg(Chalk.bold.blue('Added skills:'));
     Log.blank();
 
     for (const s of skillNames) {

@@ -7,7 +7,7 @@ export function registerAdd(server: McpServer): void {
     'add_skill',
     {
       description:
-        'Install a skill from the hub. Omit skill_name to install all skills not yet added. Optionally pin to a specific tag or commit SHA.',
+        'Add a skill from the hub. Omit skill_name to add all skills not yet added. Optionally pin to a specific tag or commit SHA.',
       inputSchema: {
         fullName: Zod.skill.FullSchema.shape.fullName.optional(),
         pin: Zod.z
@@ -30,8 +30,8 @@ export function registerAdd(server: McpServer): void {
 
           const allHubSkills = await HubSkill.findAll();
           const lockFileSkills = await LockFile.findAll();
-          const installedNames = new Set(Object.keys(lockFileSkills));
-          const toAdd = allHubSkills.filter((s) => !installedNames.has(s.fullName));
+          const addedNames = new Set(Object.keys(lockFileSkills));
+          const toAdd = allHubSkills.filter((s) => !addedNames.has(s.fullName));
 
           if (toAdd.length === 0) {
             return text('All hub skills are already added.');
@@ -48,7 +48,7 @@ export function registerAdd(server: McpServer): void {
         // Single-skill add
         const existingLock = await LockFile.find(fullName).catch(() => undefined);
         if (existingLock) {
-          return text(`Skill '${fullName}' is already installed. Remove it first or use update.`);
+          return text(`Skill '${fullName}' is already added. Remove it first or use update.`);
         }
 
         let requestedRef: string;
@@ -83,7 +83,7 @@ export function registerAdd(server: McpServer): void {
 
         await AgentSkill.add(fullName, requestedRef, resolvedCommit);
 
-        return text(`Skill '${fullName}' has been installed.`);
+        return text(`Skill '${fullName}' has been added.`);
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         return error(`Error adding skill: ${message}`);

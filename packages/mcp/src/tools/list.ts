@@ -5,7 +5,7 @@ import { text, json, error } from '../response.js';
 export function registerList(server: McpServer): void {
   server.registerTool(
     'list_skills',
-    { description: 'List all installed skills with their version and pin status.' },
+    { description: 'List all added skills with their version and pin status.' },
     async () => {
       try {
         const skills = await LockFile.findAll();
@@ -13,7 +13,7 @@ export function registerList(server: McpServer): void {
         const entries = Object.entries(skills);
 
         if (entries.length === 0) {
-          return text('No skills installed.');
+          return text('No skills added.');
         }
 
         const results = entries.map(([fullName, lock]) => ({
