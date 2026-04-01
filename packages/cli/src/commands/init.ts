@@ -43,7 +43,8 @@ export const initCommand = async (): Promise<void> => {
     Log.blank();
 
     shouldReinitialize = await Prompt.confirm({
-      message: 'Reinitialize? Your hub directory will be replaced but added skills stay safe.',
+      message:
+        'Reinitialize? Your hub directory will be replaced. Installed skills and lock file are preserved.',
       default: false,
     });
 
@@ -137,11 +138,13 @@ export const initCommand = async (): Promise<void> => {
     await Fs.ensureDir(Path.AGENTS_DIR);
     Log.msg(Chalk.green(`Created ${Path.AGENTS_DIR}`), { prefix: '✔' });
 
-    await Fs.emptyDir(Path.AGENTS_SKILLS_DIR);
+    await Fs.ensureDir(Path.AGENTS_SKILLS_DIR);
     Log.msg(Chalk.green(`Created ${Path.AGENTS_SKILLS_DIR}`), { prefix: '✔' });
 
-    await LockFile.create();
-    Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✔' });
+    if (!shouldReinitialize) {
+      await LockFile.create();
+      Log.msg(Chalk.green(`Created ${Path.SKILL_LOCK_FILE}`), { prefix: '✔' });
+    }
 
     await Fs.writeFile(
       Path.CONFIG_FILE,
