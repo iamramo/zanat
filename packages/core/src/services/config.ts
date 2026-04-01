@@ -22,7 +22,7 @@ export const Config = {
     // Contains all required values
     const result = Zod.config.ConfigSchema.safeParse(config);
     if (!result.success) {
-      const errorMessage = result.error.errors[0]?.message ?? 'Invalid configuration values';
+      const errorMessage = result.error.issues[0]?.message ?? 'Invalid configuration values';
       throw new Error(
         `Invalid config at ${Path.CONFIG_FILE}: ${errorMessage}. Run 'zanat init' to reconfigure.`
       );

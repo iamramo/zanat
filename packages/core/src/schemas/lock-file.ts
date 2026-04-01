@@ -12,7 +12,7 @@ export const SkillSchema = z.object({
 
 export const FileSchema = z.object({
   version: z.literal(1),
-  skills: z.record(SkillSchema),
+  skills: z.record(z.string(), SkillSchema),
 });
 
 export type ISkillLock = z.infer<typeof SkillSchema>;

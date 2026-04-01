@@ -9,7 +9,7 @@ export const Prompt = {
       const result = schema.safeParse(value);
       return result.success
         ? true
-        : (customErrorMessage ?? result.error.errors[0]?.message ?? 'Invalid value');
+        : (customErrorMessage ?? result.error.issues[0]?.message ?? 'Invalid value');
     };
   },
 };

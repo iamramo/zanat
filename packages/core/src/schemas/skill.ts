@@ -18,7 +18,7 @@ export const OpenStandardSchema = z
     'disable-model-invocation': z.boolean().optional(),
     'user-invocable': z.boolean().optional(),
     'argument-hint': z.string().optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
   })
   .passthrough();
 
