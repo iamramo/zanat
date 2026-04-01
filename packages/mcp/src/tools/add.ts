@@ -9,7 +9,10 @@ export function registerAdd(server: McpServer): void {
       description: 'Install a skill from the hub. Optionally pin to a specific tag or commit SHA.',
       inputSchema: {
         fullName: Zod.skill.FullSchema.shape.fullName,
-        pin: Zod.z.string().optional().describe('Pin to a specific tag or commit SHA. Branch pinning is not supported.'),
+        pin: Zod.z
+          .string()
+          .optional()
+          .describe('Pin to a specific tag or commit SHA. Branch pinning is not supported.'),
       },
     },
     async ({ fullName, pin }) => {

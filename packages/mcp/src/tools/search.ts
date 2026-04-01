@@ -6,8 +6,14 @@ export function registerSearch(server: McpServer): void {
   server.registerTool(
     'search_skills',
     {
-      description: 'Search for skills available in the hub. Returns matching skills with name, description, and install status. If no query is provided, returns all available skills.',
-      inputSchema: { query: Zod.z.string().optional().describe('Search query to filter skills by name, description, or content') },
+      description:
+        'Search for skills available in the hub. Returns matching skills with name, description, and install status. If no query is provided, returns all available skills.',
+      inputSchema: {
+        query: Zod.z
+          .string()
+          .optional()
+          .describe('Search query to filter skills by name, description, or content'),
+      },
     },
     async ({ query }) => {
       try {

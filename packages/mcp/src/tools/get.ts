@@ -6,7 +6,8 @@ export function registerGet(server: McpServer): void {
   server.registerTool(
     'get_skill',
     {
-      description: 'Get the full content of a specific skill by its full name (e.g. "vercel.react-patterns"). Returns the skill frontmatter and markdown content.',
+      description:
+        'Get the full content of a specific skill by its full name (e.g. "vercel.react-patterns"). Returns the skill frontmatter and markdown content.',
       inputSchema: { fullName: Zod.skill.FullSchema.shape.fullName },
     },
     async ({ fullName }) => {

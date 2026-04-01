@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-mcp",
-  "version": "0.18.8",
+  "version": "0.18.9",
   "description": "MCP server for zanat - a skill hub for AI agents",
   "type": "module",
   "main": "dist/index.js",

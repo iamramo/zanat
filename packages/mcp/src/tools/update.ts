@@ -6,9 +6,15 @@ export function registerUpdate(server: McpServer): void {
   server.registerTool(
     'update_skill',
     {
-      description: 'Update skill(s) from the hub. If a skill name is provided, updates that skill. Otherwise, updates all non-pinned skills. Pinned skills are always skipped.',
+      description:
+        'Update skill(s) from the hub. If a skill name is provided, updates that skill. Otherwise, updates all non-pinned skills. Pinned skills are always skipped.',
       inputSchema: {
-        fullName: Zod.z.string().optional().describe('Full skill name to update (e.g. "vercel.react-patterns"). If omitted, updates all non-pinned skills.'),
+        fullName: Zod.z
+          .string()
+          .optional()
+          .describe(
+            'Full skill name to update (e.g. "vercel.react-patterns"). If omitted, updates all non-pinned skills.'
+          ),
       },
     },
     async ({ fullName }) => {
