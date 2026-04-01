@@ -8,7 +8,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
   if (normalizedQuery) {
     Log.msg(Chalk.blue(`Searching for: "${normalizedQuery}"...`));
   } else {
-    Log.msg(Chalk.blue('Available skills:'));
+    Log.msg(Chalk.bold.blue('Available skills:'));
   }
   Log.blank();
 
@@ -24,7 +24,7 @@ export const searchCommand = async (query?: string): Promise<void> => {
     results.forEach((skill) => {
       Log.msg(Chalk.white(skill.fullName), { prefix: '•', prefixColor: 'white', spacing: 2 });
       const truncatedDesc = Display.truncate(skill.description.trim());
-      Log.msg(Chalk.gray(truncatedDesc), { spacing: 4 });
+      Log.msg(Chalk.italic.gray(truncatedDesc), { spacing: 4 });
       Log.blank();
     });
   }
