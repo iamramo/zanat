@@ -12,7 +12,7 @@ export const listCommand = async (): Promise<void> => {
   }
 
   // Step 2: Display skills with versions
-  Log.msg(Chalk.blue('Added skills:'));
+  Log.msg(Chalk.bold.blue('Added skills:'));
   Log.blank();
 
   for (const skillName of skillNames) {
