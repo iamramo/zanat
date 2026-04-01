@@ -1,6 +1,5 @@
 import type { ISkillLock } from '../schemas/lock-file.js';
 import { Path } from './path.js';
-import { Config } from './config.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
 import { Git } from './git.js';
@@ -13,20 +12,12 @@ export const AgentSkill = {
   },
 
   async add(fullSkillName: string, requestedRef: string, resolvedCommit: string): Promise<void> {
-    const targetFile = Path.getAgentsSkillPath(fullSkillName, true);
-    const sourceFile = await Path.getHubSkillPath(fullSkillName, true);
+    const sourceDir = await Path.getHubSkillPath(fullSkillName);
+    const targetDir = Path.getAgentsSkillPath(fullSkillName);
 
-    await Fs.ensureDir(Path.getAgentsSkillPath(fullSkillName));
-
-    const config = await Config.get();
-    if (requestedRef !== config.hubBranch) {
-      // Pinned ref: fetch content from git
-      const skillContent = await Git.show(requestedRef, sourceFile);
-      await Fs.writeFile(targetFile, skillContent);
-    } else {
-      // Tracking hub branch: copy from filesystem
-      await Fs.copy(sourceFile, targetFile);
-    }
+    // Clean copy: remove stale files then copy entire skill directory
+    await Fs.remove(targetDir);
+    await Fs.copy(sourceDir, targetDir);
 
     const existingSkill = await LockFile.find(fullSkillName);
     const { namespace, skillName } = Path.toSkillParts(fullSkillName);

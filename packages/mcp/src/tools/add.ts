@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { AgentSkill, HubSkill, LockFile, Config, Git, Path, Zod } from '@iamramo/zanat-core';
+import { AgentSkill, HubSkill, LockFile, Config, Git, Path, Fs, Zod } from '@iamramo/zanat-core';
 import { text, error } from '../response.js';
 
 export function registerAdd(server: McpServer): void {
@@ -35,12 +35,10 @@ export function registerAdd(server: McpServer): void {
             return text('Branch pinning is not supported. Use a tag or commit SHA.');
           }
 
-          // Verify skill exists at that ref
-          const sourceFile = await Path.getHubSkillPath(fullName, true);
-          try {
-            await Git.show(pin, sourceFile);
-          } catch {
-            return text(`Skill '${fullName}' does not exist at ref '${pin}'.`);
+          // Verify skill directory exists in hub
+          const sourceDir = await Path.getHubSkillPath(fullName);
+          if (!(await Fs.exists(sourceDir))) {
+            return text(`Skill '${fullName}' does not exist in hub.`);
           }
 
           requestedRef = pin;

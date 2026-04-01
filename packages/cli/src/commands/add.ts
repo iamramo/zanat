@@ -33,20 +33,21 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     resolvedCommit = await Git.resolveCommit(config.hubBranch);
   }
 
-  // Step 3: Check if skill exists in hub (only check filesystem when not using --pin, true)
-  const skillFile = await Path.getHubSkillPath(fullSkillName);
-
-  if (pinOption === undefined) {
-    const skillExistsInHub = await Fs.exists(skillFile);
-    if (!skillExistsInHub) {
-      Log.msg(Chalk.red(`Skill '${fullSkillName}' not found in hub.`), { prefix: '✗' });
+  // Step 3: Check if skill directory exists in hub
+  const skillDir = await Path.getHubSkillPath(fullSkillName);
+  const skillExistsInHub = await Fs.exists(skillDir);
+  if (!skillExistsInHub) {
+    Log.msg(Chalk.red(`Skill '${fullSkillName}' not found in hub.`), { prefix: '✗' });
+    if (pinOption !== undefined) {
+      Log.msg(Chalk.gray(`Note: skill must exist on the current hub branch to be copied.`));
+    } else {
       Log.msg(
         Chalk.gray(
           `If the skill exists at a specific version, use: zanat add ${fullSkillName} --pin=<tag or commit>`
         )
       );
-      process.exit(1);
     }
+    process.exit(1);
   }
 
   // Step 4: Add skill to local storage
