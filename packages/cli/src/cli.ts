@@ -87,8 +87,15 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       // Ensure on hubBranch
       await Config.ensureOnHubBranch();
 
+      const fullSkillName = args[0];
+
+      // Bulk-add: no skill name — pull and let the command handle the rest
+      if (!fullSkillName) {
+        await Git.pull();
+        return;
+      }
+
       // Ensure fullSkillName is in correct format
-      const fullSkillName = args[0]!;
       Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
 
       // Ensure if needs to be updated instead
@@ -171,7 +178,6 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
         }
       };
 
-      Log.msg(Chalk.blue(`Checking skill(s) for updates...`));
       if (args[0]) {
         await individualValidationLogic(args[0]);
       } else {
@@ -201,8 +207,19 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       // Validate config
       await Config.validate({ remote: false });
 
+      const fullSkillName = args[0];
+
+      // Bulk-remove: no skill name — check there's something to remove
+      if (!fullSkillName) {
+        const lockFileSkills = await LockFile.findAll();
+        if (Object.keys(lockFileSkills).length === 0) {
+          Log.msg(Chalk.blue('No skills installed.'));
+          process.exit(0);
+        }
+        return;
+      }
+
       // Ensure fullSkillName is in correct format
-      const fullSkillName = args[0]!;
       Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
 
       // Ensure skill exists in the lock file
@@ -301,8 +318,8 @@ Behavior:
   .action(pullCommand);
 
 program
-  .command('add <skill>')
-  .description('Add a skill')
+  .command('add [skill]')
+  .description('Add a skill, or all hub skills if no name is given')
   .option(
     '-p, --pin <ref>',
     'Pin to a specific tag or commit SHA. Requires a value (e.g., --pin=v1.0.0, --pin=abc123).'
@@ -313,6 +330,9 @@ program
 Examples:
   $ zanat add vercel.react-patterns
     Add a skill and track the hub branch (auto-updates)
+
+  $ zanat add
+    Add all skills from the hub that aren't already installed
 
   $ zanat add vercel.react-patterns --pin=v1.2.0
     Pin to tag v1.2.0 (never auto-updates)
@@ -332,14 +352,17 @@ Notes:
   .action(addCommand);
 
 program
-  .command('rm <skill>')
-  .description('Remove a skill')
+  .command('rm [skill]')
+  .description('Remove a skill, or all installed skills if no name is given')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
   $ zanat rm vercel.react-patterns
     Remove a skill from local storage
+
+  $ zanat rm
+    Remove all installed skills (prompts for confirmation)
 
 Note:
   Removes the skill files from ~/.agents/skills/ and removes the lock file entry.

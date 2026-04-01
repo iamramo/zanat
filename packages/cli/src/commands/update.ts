@@ -53,6 +53,8 @@ export const updateCommand = async (fullSkillName?: string): Promise<void> => {
     return;
   }
 
+  Log.blank();
+
   for (const name of updatableSkills) {
     await AgentSkill.update(name);
     Log.msg(Chalk.green(`Updated '${name}'`), { prefix: '✔' });

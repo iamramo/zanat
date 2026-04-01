@@ -1,15 +1,79 @@
-import { Log, AgentSkill, Path, Config, Git, Display, Fs, Chalk } from '@iamramo/zanat-core';
+import {
+  Log,
+  AgentSkill,
+  Path,
+  Config,
+  Git,
+  Display,
+  Fs,
+  Chalk,
+  HubSkill,
+  LockFile,
+  Prompt,
+} from '@iamramo/zanat-core';
 import type { PinOption } from '../schemas/pin.js';
 
 interface AddOptions {
   pin?: PinOption;
 }
 
-export const addCommand = async (fullSkillName: string, options: AddOptions): Promise<void> => {
-  // Step 1: Parse inputs (validated in preAction hook, true)
+export const addCommand = async (
+  fullSkillName: string | undefined,
+  options: AddOptions
+): Promise<void> => {
   const pinOption = options.pin;
 
-  // Step 2: Determine requested ref and resolve commit
+  // Bulk-add: no skill name provided (pull already done in preAction hook)
+  if (fullSkillName === undefined) {
+    if (pinOption !== undefined) {
+      Log.msg(Chalk.red('--pin cannot be used without a skill name.'), { prefix: '✗' });
+      process.exit(1);
+    }
+
+    const allHubSkills = await HubSkill.findAll();
+    const lockFileSkills = await LockFile.findAll();
+    const installedNames = new Set(Object.keys(lockFileSkills));
+
+    const alreadyAdded = allHubSkills.filter((s) => installedNames.has(s.fullName));
+    const toAdd = allHubSkills.filter((s) => !installedNames.has(s.fullName));
+
+    if (alreadyAdded.length > 0) {
+      Log.msg(Chalk.blue('Already added (skipping):'), { prefix: '•', prefixColor: 'blue' });
+      alreadyAdded.forEach((s) => Log.msg(Chalk.gray(s.fullName), { spacing: 2 }));
+      Log.blank();
+    }
+
+    if (toAdd.length === 0) {
+      Log.msg(Chalk.blue('All hub skills are already added.'));
+      return;
+    }
+
+    const shouldAdd = await Prompt.confirm({
+      message: `Add ${toAdd.length} skill(s)?`,
+      default: true,
+    });
+
+    if (!shouldAdd) {
+      Log.msg(Chalk.blue('Cancelled.'));
+      return;
+    }
+
+    Log.blank();
+
+    const config = await Config.get();
+    const resolvedCommit = await Git.resolveCommit(config.hubBranch);
+
+    for (const skill of toAdd) {
+      await AgentSkill.add(skill.fullName, config.hubBranch, resolvedCommit);
+      Log.msg(Chalk.green(`Added '${skill.fullName}'`), { prefix: '✔' });
+    }
+
+    Log.blank();
+    Log.msg(Chalk.green(`Added ${toAdd.length} skill(s)`), { prefix: '✔' });
+    return;
+  }
+
+  // Single-skill add
   const config = await Config.get();
 
   let requestedRef: string;
@@ -33,7 +97,7 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     resolvedCommit = await Git.resolveCommit(config.hubBranch);
   }
 
-  // Step 3: Check if skill directory exists in hub
+  // Check if skill directory exists in hub
   const skillDir = await Path.getHubSkillPath(fullSkillName);
   const skillExistsInHub = await Fs.exists(skillDir);
   if (!skillExistsInHub) {
@@ -50,7 +114,6 @@ export const addCommand = async (fullSkillName: string, options: AddOptions): Pr
     process.exit(1);
   }
 
-  // Step 4: Add skill to local storage
   await AgentSkill.add(fullSkillName, requestedRef, resolvedCommit);
   Log.msg(Chalk.green(`Added '${fullSkillName}'`), { prefix: '✔' });
 };
