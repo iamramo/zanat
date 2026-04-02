@@ -17,7 +17,7 @@ export const Path = {
   async getHubSkillPath(fullSkillName: string, includeFilename = false): Promise<string> {
     const config = await Config.get();
     const { namespace, skillName } = this.toSkillParts(fullSkillName);
-    const dir = path.join(config.hubDir, ...namespace, skillName);
+    const dir = path.join(config.dir, ...namespace, skillName);
     return includeFilename ? path.join(dir, this.SKILL_FILENAME) : dir;
   },
 

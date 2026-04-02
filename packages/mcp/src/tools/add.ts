@@ -37,9 +37,9 @@ export function registerAdd(server: McpServer): void {
             return text('All hub skills are already added.');
           }
 
-          const resolvedCommit = await Git.resolveCommit(config.hubBranch);
+          const resolvedCommit = await Git.resolveCommit(config.branch);
           for (const skill of toAdd) {
-            await AgentSkill.add(skill.fullName, config.hubBranch, resolvedCommit);
+            await AgentSkill.add(skill.fullName, config.branch, resolvedCommit);
           }
 
           return text(`Added ${toAdd.length} skill(s): ${toAdd.map((s) => s.fullName).join(', ')}`);
@@ -77,8 +77,8 @@ export function registerAdd(server: McpServer): void {
           }
 
           await Git.pull();
-          requestedRef = config.hubBranch;
-          resolvedCommit = await Git.resolveCommit(config.hubBranch);
+          requestedRef = config.branch;
+          resolvedCommit = await Git.resolveCommit(config.branch);
         }
 
         await AgentSkill.add(fullName, requestedRef, resolvedCommit);

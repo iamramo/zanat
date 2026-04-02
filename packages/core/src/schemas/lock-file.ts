@@ -4,6 +4,7 @@ import { GIT_COMMIT_SHA_REGEX } from './common.js';
 export const SkillSchema = z.object({
   namespace: z.array(z.string()),
   skillName: z.string(),
+  hubAlias: z.string().min(1),
   addedAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   requestedRef: z.string().min(1),

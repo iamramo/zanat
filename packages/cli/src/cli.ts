@@ -172,7 +172,7 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
         if (!lockFileSkill) throw new Error(`Skill '${name}' not found in lock file.`);
 
         // Ensure up-to-date hub branch (pull once)
-        if (lockFileSkill.requestedRef === config.hubBranch && !hasPulled) {
+        if (lockFileSkill.requestedRef === config.branch && !hasPulled) {
           await Git.pull();
           hasPulled = true;
         }
@@ -266,7 +266,7 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
 
       // Ensure we have the latest information
       {
-        const hubBranch = (await Config.get()).hubBranch;
+        const hubBranch = (await Config.get()).branch;
         await Git.fetch([hubBranch]);
       }
 

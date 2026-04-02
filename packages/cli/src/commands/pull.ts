@@ -5,17 +5,17 @@ export const pullCommand = async (): Promise<void> => {
 
   // Step 1: Capture current HEAD before pull
   Log.msg(Chalk.blue('Pulling latest changes...'));
-  const beforeSha = await Git.resolveCommit(config.hubBranch);
+  const beforeSha = await Git.resolveCommit(config.branch);
   await Git.pull();
-  const afterSha = await Git.resolveCommit(config.hubBranch);
+  const afterSha = await Git.resolveCommit(config.branch);
 
   // Step 2: Report what changed
   if (beforeSha === afterSha) {
-    Log.msg(Chalk.green(`Pulled '${config.hubBranch}' (already up to date)`), { prefix: '✔' });
+    Log.msg(Chalk.green(`Pulled '${config.branch}' (already up to date)`), { prefix: '✔' });
   } else {
     const count = await Git.behind(beforeSha, afterSha);
     Log.msg(
-      Chalk.green(`Pulled '${config.hubBranch}' (${count} new commit${count === 1 ? '' : 's'})`),
+      Chalk.green(`Pulled '${config.branch}' (${count} new commit${count === 1 ? '' : 's'})`),
       { prefix: '✔' }
     );
   }

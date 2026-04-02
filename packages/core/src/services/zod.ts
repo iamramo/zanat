@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Schema as ConfigSchema } from '../schemas/config.js';
+import { Schema as ConfigSchema, HubSchema } from '../schemas/config.js';
 import { OpenStandardSchema, FullSchema } from '../schemas/skill.js';
 import {
   FileSchema as LockFileSchema,
@@ -11,6 +11,7 @@ export const Zod = {
   z,
   config: {
     ConfigSchema,
+    HubSchema,
   },
   lockFile: {
     FileSchema: LockFileSchema,

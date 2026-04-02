@@ -14,17 +14,17 @@ export const statusCommand = async (): Promise<void> => {
     prefixColor: 'white',
     spacing: 2,
   });
-  Log.msg(Chalk.bold('Repository: ') + Chalk.green(config.hubUrl), {
+  Log.msg(Chalk.bold('Repository: ') + Chalk.green(config.url), {
     prefix: '•',
     prefixColor: 'white',
     spacing: 2,
   });
-  Log.msg(Chalk.bold('Branch: ') + Chalk.green(config.hubBranch), {
+  Log.msg(Chalk.bold('Branch: ') + Chalk.green(config.branch), {
     prefix: '•',
     prefixColor: 'white',
     spacing: 2,
   });
-  Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), {
+  Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.dir), {
     prefix: '•',
     prefixColor: 'white',
     spacing: 2,
@@ -36,7 +36,7 @@ export const statusCommand = async (): Promise<void> => {
   });
 
   try {
-    const behind = await Git.behind(config.hubBranch, `origin/${config.hubBranch}`);
+    const behind = await Git.behind(config.branch, `origin/${config.branch}`);
     if (behind === 0) {
       Log.msg(Chalk.bold('Behind: ') + Chalk.green('up-to-date'), {
         prefix: '•',
@@ -74,7 +74,7 @@ export const statusCommand = async (): Promise<void> => {
         try {
           const behindCount = await Git.behind(
             skills[skillName]!.resolvedCommit,
-            `origin/${config.hubBranch}`
+            `origin/${config.branch}`
           );
           behindStatus =
             behindCount === 0

@@ -69,10 +69,10 @@ export const addCommand = async (
     Log.blank();
 
     const config = await Config.get();
-    const resolvedCommit = await Git.resolveCommit(config.hubBranch);
+    const resolvedCommit = await Git.resolveCommit(config.branch);
 
     for (const skill of toAdd) {
-      await AgentSkill.add(skill.fullName, config.hubBranch, resolvedCommit);
+      await AgentSkill.add(skill.fullName, config.branch, resolvedCommit);
       Log.msg(Chalk.green(`Added '${skill.fullName}'`), { prefix: '✔' });
     }
 
@@ -101,8 +101,8 @@ export const addCommand = async (
       process.exit(1);
     }
   } else {
-    requestedRef = config.hubBranch;
-    resolvedCommit = await Git.resolveCommit(config.hubBranch);
+    requestedRef = config.branch;
+    resolvedCommit = await Git.resolveCommit(config.branch);
   }
 
   // Check if skill directory exists in hub

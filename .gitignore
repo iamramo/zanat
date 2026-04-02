@@ -13,3 +13,4 @@ coverage/
 .env.local
 .env.*.local
 todo.txt
+multi-hub-plan.txt

@@ -74,7 +74,7 @@ export const LockFile = {
   async isPinned(fullSkillName: string): Promise<boolean> {
     const skill = await this.find(fullSkillName);
     if (!skill) throw new Error(`Skill '${fullSkillName}' not found in lock file.`);
-    const { hubBranch } = await Config.get();
-    return skill.requestedRef !== hubBranch;
+    const { branch } = await Config.get();
+    return skill.requestedRef !== branch;
   },
 } as const;

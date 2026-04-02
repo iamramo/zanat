@@ -22,7 +22,7 @@ export function registerList(server: McpServer): void {
           skillName: lock.skillName,
           requestedRef: lock.requestedRef,
           resolvedCommit: lock.resolvedCommit,
-          pinned: lock.requestedRef !== config.hubBranch,
+          pinned: lock.requestedRef !== config.branch,
         }));
 
         return json(results);

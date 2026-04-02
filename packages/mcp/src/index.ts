@@ -14,8 +14,8 @@ async function ensureOnHubBranch(): Promise<void> {
 
   const config = await Config.get();
   const currentBranch = await Git.getCurrentBranch();
-  if (currentBranch !== config.hubBranch) {
-    await Git.checkout(config.hubBranch);
+  if (currentBranch !== config.branch) {
+    await Git.checkout(config.branch);
   }
 }
 

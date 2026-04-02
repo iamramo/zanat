@@ -25,17 +25,17 @@ export const initCommand = async (): Promise<void> => {
     Log.blank();
 
     const config = await Config.get();
-    Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.hubUrl), {
+    Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.url), {
       prefix: '•',
       prefixColor: 'white',
       spacing: 2,
     });
-    Log.msg(Chalk.bold(`Branch: `) + Chalk.green(config.hubBranch), {
+    Log.msg(Chalk.bold(`Branch: `) + Chalk.green(config.branch), {
       prefix: '•',
       prefixColor: 'white',
       spacing: 2,
     });
-    Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.hubDir), {
+    Log.msg(Chalk.bold(`Directory: `) + Chalk.green(config.dir), {
       prefix: '•',
       prefixColor: 'white',
       spacing: 2,
@@ -63,7 +63,7 @@ export const initCommand = async (): Promise<void> => {
     required: true,
     validate: async (value: string) => {
       // Validate format
-      const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubUrl)(value);
+      const formatResult = Prompt.validate(Zod.config.HubSchema.shape.url)(value);
       if (formatResult !== true) {
         return formatResult;
       }
@@ -88,7 +88,7 @@ export const initCommand = async (): Promise<void> => {
     default: 'main',
     validate: async (value: string) => {
       // Validate format
-      const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubBranch)(value);
+      const formatResult = Prompt.validate(Zod.config.HubSchema.shape.branch)(value);
       if (formatResult !== true) {
         return formatResult;
       }
@@ -108,7 +108,7 @@ export const initCommand = async (): Promise<void> => {
     default: Path.HUB_DIR,
     validate: async (value: string) => {
       // Validate format
-      const formatResult = Prompt.validate(Zod.config.ConfigSchema.shape.hubDir)(value);
+      const formatResult = Prompt.validate(Zod.config.HubSchema.shape.dir)(value);
       if (formatResult !== true) {
         return formatResult;
       }
@@ -125,7 +125,7 @@ export const initCommand = async (): Promise<void> => {
     },
   });
 
-  const oldHubDir = shouldReinitialize ? (await Config.get()).hubDir : undefined;
+  const oldHubDir = shouldReinitialize ? (await Config.get()).dir : undefined;
 
   // Step 3: Create directories, config files, and clone repository
   try {
@@ -149,10 +149,15 @@ export const initCommand = async (): Promise<void> => {
     await Fs.writeFile(
       Path.CONFIG_FILE,
       Format.json({
-        hubUrl,
-        hubBranch,
-        hubDir,
-        lastPull: new Date().toISOString(),
+        version: 1,
+        hubs: {
+          default: {
+            url: hubUrl,
+            branch: hubBranch,
+            dir: hubDir,
+            lastPull: new Date().toISOString(),
+          },
+        },
       })
     );
     Log.msg(Chalk.green(`Created ${Path.CONFIG_FILE}`), { prefix: '✔' });

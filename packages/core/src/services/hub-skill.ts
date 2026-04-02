@@ -38,7 +38,7 @@ export const HubSkill = {
 
   async findAll(): Promise<ISkill[]> {
     const config = await Config.get();
-    const files = await Fs.glob('**/SKILL.md', config.hubDir);
+    const files = await Fs.glob('**/SKILL.md', config.dir);
     const results = await Promise.allSettled(
       files.map((f) => {
         // Convert path like 'company-a/backend/nodejs/SKILL.md' to 'company-a.backend.nodejs'

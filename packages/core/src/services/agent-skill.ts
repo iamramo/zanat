@@ -25,6 +25,7 @@ export const AgentSkill = {
     const lockedSkill: ISkillLock = {
       namespace,
       skillName,
+      hubAlias: 'default',
       addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       requestedRef,
