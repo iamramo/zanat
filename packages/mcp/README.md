@@ -1,10 +1,12 @@
 # @iamramo/zanat-mcp
 
-MCP (Model Context Protocol) server for [Zanat](https://github.com/iamramo/zanat) — a skill hub for AI agents.
+MCP (Model Context Protocol) server for [Zanat](https://github.com/iamramo/zanat), a skill hub for AI agents.
+
+Allows agents to search, add, update, and remove skills programmatically without leaving the conversation.
 
 ## Usage
 
-Configure it in your AI tool's MCP settings:
+Add it to your agent's MCP config:
 
 ```json
 {
