@@ -22,84 +22,84 @@
 
 ## What is Zanat?
 
-Zanat manages AI agent skills as versioned markdown files in Git. Define instructions once, version them, and distribute them to any AI tool — Claude, Cursor, OpenCode, or custom agents.
+Zanat manages AI agent skills: markdown files that tell an agent how to behave in a specific situation. Skills live in a Git repository, so they are versioned, shareable, and easy to keep in sync across machines and teams.
 
-- **Version-controlled prompts** — Track changes, roll back, collaborate via Git
-- **Searchable** — Find skills across your entire library from the terminal
-- **Consistent** — Every agent uses the same instructions
-- **Flexible** — Any Git repository can be a skill hub
+You search for skills, add the ones you want, and they land in `~/.agents/skills/` where any compatible agent can pick them up. When the hub updates, you pull and update, just like any other dependency.
 
 ## Quick Start
 
 ```bash
-# Install
 npm install -g @iamramo/zanat-cli
 
-# Initialize (clones your hub repository)
-zanat init
-
-# Search, add, and use skills
-zanat search react
+zanat init    # point it at your hub repository
+zanat search  # browse available skills
 zanat add vercel.frontend.react-patterns
-zanat list
 ```
 
-See the [CLI documentation](./packages/cli/README.md) for the full command reference.
+## Commands
 
-## How It Works
+| Command                         | Description                                             |
+| ------------------------------- | ------------------------------------------------------- |
+| `zanat init`                    | Initialize and clone the hub repository                 |
+| `zanat pull`                    | Pull latest changes from the hub                        |
+| `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
+| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a specific tag or commit          |
+| `zanat rm [skill]`              | Remove a skill, or all added skills if no name is given |
+| `zanat update [skill]`          | Update one or all non-pinned skills                     |
+| `zanat list`                    | List added skills with version info                     |
+| `zanat search [query]`          | Search available skills in the hub                      |
+| `zanat show <skill>`            | Show the full content of a skill                        |
+| `zanat status`                  | Show hub and skills status                              |
 
+See the [CLI README](./packages/cli/README.md) for the full reference.
+
+## Version Tracking
+
+Skills either track the hub branch by default or are pinned to a specific point in time.
+
+```bash
+zanat add vercel.frontend.react-patterns               # tracks hub branch
+zanat add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
+zanat add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
 ```
-┌─────────────────┐     ┌──────────────┐     ┌─────────────────────┐
-│   Git Hub       │────>│  Zanat CLI   │────>│  ~/.agents/skills/  │
-│   (skills repo) │     │  (search/add)│     │  (local skills)     │
-└─────────────────┘     └──────────────┘     └─────────────────────┘
-```
 
-1. **Hub** — A Git repository containing skills organized by namespace
-2. **CLI** — Search, add, and manage skills from your terminal
-3. **Local** — Skills add to `~/.agents/skills/` where agents can read them
+Tracked skills update when you run `zanat update`. Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
 
-## Namespaces
+## Writing Skills
 
-Skills use dot-notation namespaces that map to directories in the hub:
-
-```
-anthropic.code-review       → hub/anthropic/code-review/SKILL.md
-vercel.frontend.react       → hub/vercel/frontend/react/SKILL.md
-```
-
-Namespaces can be nested to any depth — organize by company, team, category, or whatever fits.
-
-## Creating Skills
-
-Skills are markdown files with YAML frontmatter, stored in your hub repository:
+A skill is a markdown file with a short YAML frontmatter header:
 
 ```markdown
 ---
 name: code-review
-description: Helps review code for quality and best practices
+description: Reviews code for quality, correctness, and readability
 ---
 
 # Code Review
 
-When reviewing code, check for:
-
-1. Correctness — Does it work as intended?
-2. Readability — Is it easy to understand?
-3. Performance — Are there obvious inefficiencies?
+When reviewing code, focus on...
 ```
 
-See the [zanat-hub](https://github.com/iamramo/zanat-hub) for examples and the [CLI README](./packages/cli/README.md) for the full skill format reference.
+The only required fields are `name` and `description`. Everything below the frontmatter is the instruction content the agent will read.
+
+Store skills in a Git repository organized by namespace. The directory path becomes the skill's identifier:
+
+```
+hub/anthropic/code-review/SKILL.md   →   anthropic.code-review
+hub/vercel/frontend/react/SKILL.md   →   vercel.frontend.react
+```
+
+See [zanat-hub](https://github.com/iamramo/zanat-hub) for examples.
 
 ## MCP Server
 
-Zanat includes a standalone MCP (Model Context Protocol) server (`@iamramo/zanat-mcp`), allowing AI agents to search, add, update, and remove skills programmatically.
+Zanat ships a standalone MCP server so agents can manage skills programmatically: search, add, update, and remove without leaving the conversation.
 
 ```bash
 npx @iamramo/zanat-mcp
 ```
 
-Configure it in your AI tool's MCP settings:
+Add it to your agent's MCP config:
 
 ```json
 {
@@ -112,23 +112,21 @@ Configure it in your AI tool's MCP settings:
 }
 ```
 
-### Available Tools
+| Tool            | Description                                    |
+| --------------- | ---------------------------------------------- |
+| `search_skills` | Search skills by name or content               |
+| `list_skills`   | List added skills with version and pin status  |
+| `get_skill`     | Get the full content of a skill                |
+| `add_skill`     | Add a skill, optionally pinned to a tag or SHA |
+| `update_skill`  | Update one or all non-pinned skills            |
+| `remove_skill`  | Remove an added skill                          |
 
-| Tool            | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `search_skills` | Search for skills in the hub by name or content  |
-| `list_skills`   | List added skills with version and pin status    |
-| `get_skill`     | Get the full content of a skill                  |
-| `add_skill`     | Add a skill, optionally pinned to a tag or SHA   |
-| `update_skill`  | Update one or all non-pinned skills from the hub |
-| `remove_skill`  | Remove an added skill                            |
-
-## Project Structure
+## Packages
 
 | Package                            | Description                |
 | ---------------------------------- | -------------------------- |
 | [`packages/cli`](./packages/cli)   | CLI tool (`zanat` command) |
-| [`packages/core`](./packages/core) | Core library               |
+| [`packages/core`](./packages/core) | Shared core library        |
 | [`packages/mcp`](./packages/mcp)   | MCP server                 |
 
 ## Development
@@ -139,10 +137,6 @@ cd zanat
 npm install
 npm run build
 ```
-
-## Contributing
-
-Contributions welcome. Please open an issue first for major changes.
 
 ## License
 
