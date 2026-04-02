@@ -7,7 +7,7 @@ const home = homedir();
 
 export const Path = {
   ZANAT_DIR: path.join(home, '.zanat'),
-  HUB_DIR: path.join(home, '.zanat', 'hub'),
+  HUB_DIR: path.join(home, '.zanat', 'hubs', 'default'),
   CONFIG_FILE: path.join(home, '.zanat', 'config.json'),
   AGENTS_DIR: path.join(home, '.agents'),
   AGENTS_SKILLS_DIR: path.join(home, '.agents', 'skills'),
