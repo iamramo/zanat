@@ -1,6 +1,12 @@
 import { Config, Log, Chalk } from '@iamramo/zanat-core';
 
 export const hubListCommand = async (): Promise<void> => {
+  const configExists = await Config.exists();
+  if (!configExists) {
+    Log.msg(Chalk.blue("No hubs configured. Use 'zanat hub add' to add one."));
+    return;
+  }
+
   const full = await Config.get();
   const hubNames = Object.keys(full.hubs);
 
