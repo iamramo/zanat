@@ -1,6 +1,6 @@
 import { Git, Config, Log, Chalk } from '@iamramo/zanat-core';
 
-export const pullCommand = async (): Promise<void> => {
+export const hubPullCommand = async (): Promise<void> => {
   const config = await Config.getActiveHub();
 
   // Step 1: Capture current HEAD before pull

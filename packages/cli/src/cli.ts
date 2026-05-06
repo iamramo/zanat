@@ -19,7 +19,7 @@ import { hubAddCommand } from './commands/hub/add.js';
 import { hubRmCommand } from './commands/hub/rm.js';
 import { hubSwitchCommand } from './commands/hub/switch.js';
 import { hubListCommand } from './commands/hub/list.js';
-import { pullCommand } from './commands/pull.js';
+import { hubPullCommand } from './commands/hub/pull.js';
 import { addCommand } from './commands/add.js';
 import { rmCommand } from './commands/rm.js';
 import { updateCommand } from './commands/update.js';
@@ -79,9 +79,16 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
     process.env.ZANAT_DEBUG = 'true';
   }
 
-  // hub subcommands manage config themselves — no pre-action validation
+  // hub subcommands manage config themselves — except pull which needs validation
   if (parentCmd === 'hub') {
-    return;
+    switch (cmd) {
+      case 'pull':
+        await Config.validate();
+        await Config.ensureOnHubBranch();
+        return;
+      default:
+        return;
+    }
   }
 
   switch (cmd) {
@@ -202,15 +209,6 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
 
       return;
     }
-
-    case 'pull':
-      // Validate config
-      await Config.validate();
-
-      // Ensure on hubBranch
-      await Config.ensureOnHubBranch();
-
-      return;
 
     case 'rm': {
       // Validate config
@@ -349,22 +347,22 @@ Examples:
   )
   .action(hubListCommand);
 
-program
+hub
   .command('pull')
   .description('Pull latest changes from hub repository')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat pull
-    Pull latest changes from the hub branch
+  $ zanat hub pull
+    Pull latest changes from the active hub branch
 
 Behavior:
   • Pulls the configured hub branch (fast-forward)
   • Updates the lastPull timestamp
 `)
   )
-  .action(pullCommand);
+  .action(hubPullCommand);
 
 program
   .command('add [skill]')

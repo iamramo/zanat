@@ -44,7 +44,7 @@ zanat add vercel.frontend.react-patterns
 | `zanat hub rm <name>`           | Remove a hub                                            |
 | `zanat hub switch <name>`       | Switch the active hub                                   |
 | `zanat hub list`                | List all configured hubs                                |
-| `zanat pull`                    | Pull latest changes from the hub                        |
+| `zanat hub pull`                | Pull latest changes from the hub                        |
 | `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
 | `zanat add <skill> --pin=<ref>` | Add a skill pinned to a specific tag or commit          |
 | `zanat rm [skill]`              | Remove a skill, or all added skills if no name is given |
