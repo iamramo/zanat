@@ -4,11 +4,17 @@ export const statusCommand = async (): Promise<void> => {
   // Step 1: Load configuration and skills
   const skills = await LockFile.findAll();
   const skillNames = Object.keys(skills);
+  const fullConfig = await Config.get();
   const config = await Config.getActiveHub();
 
   // Step 2: Display hub status
   Log.msg(Chalk.blue(Chalk.bold('Hub Status:')));
   Log.blank();
+  Log.msg(Chalk.bold('Name: ') + Chalk.green(fullConfig.activeHub), {
+    prefix: '•',
+    prefixColor: 'white',
+    spacing: 2,
+  });
   Log.msg(Chalk.bold('Initialized: ') + Chalk.green('yes'), {
     prefix: '•',
     prefixColor: 'white',
@@ -86,7 +92,7 @@ export const statusCommand = async (): Promise<void> => {
       }
 
       Log.msg(
-        Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`.trim()),
+        Chalk.gray(`[${skills[skillName]!.hubAlias}] `) + Chalk.bold(`${skillName} `) + Chalk.blue(`${displayVersion} ${behindStatus}`.trim()),
         {
           prefix: '•',
           prefixColor: 'white',
