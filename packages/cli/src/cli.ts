@@ -160,8 +160,12 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       // Ensure on hubBranch
       await Config.ensureOnHubBranch();
 
+      const fullConfig = await Config.get();
       const config = await Config.getActiveHub();
-      const lockFileSkills = await LockFile.findAll();
+      const allLockFileSkills = await LockFile.findAll();
+      const lockFileSkills = Object.fromEntries(
+        Object.entries(allLockFileSkills).filter(([, skill]) => skill.hubAlias === fullConfig.activeHub)
+      );
       let hasPulled = false;
 
       const individualValidationLogic = async (name: string) => {

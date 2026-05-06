@@ -1,4 +1,4 @@
-import { Log, Prompt, LockFile, AgentSkill, Chalk } from '@iamramo/zanat-core';
+import { Log, Prompt, LockFile, AgentSkill, Chalk, Config } from '@iamramo/zanat-core';
 
 export const updateCommand = async (fullSkillName?: string): Promise<void> => {
   // Step 1: Update one skill
@@ -16,8 +16,9 @@ export const updateCommand = async (fullSkillName?: string): Promise<void> => {
   }
 
   // Step 2: Update all skills
-  const skills = await LockFile.findAll();
-  const skillEntries = Object.entries(skills);
+  const { activeHub } = await Config.get();
+  const allSkills = await LockFile.findAll();
+  const skillEntries = Object.entries(allSkills).filter(([, skill]) => skill.hubAlias === activeHub);
 
   const pinnedSkills: string[] = [];
   const updatableSkills: string[] = [];
