@@ -3,6 +3,7 @@ import { Path } from './path.js';
 import { Fs } from './fs.js';
 import { LockFile } from './lock-file.js';
 import { Git } from './git.js';
+import { Config } from './config.js';
 
 export const AgentSkill = {
   async remove(fullSkillName: string): Promise<void> {
@@ -25,7 +26,7 @@ export const AgentSkill = {
     const lockedSkill: ISkillLock = {
       namespace,
       skillName,
-      hubAlias: 'default',
+      hubAlias: (await Config.get()).activeHub,
       addedAt: existingSkill?.addedAt ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       requestedRef,
