@@ -115,7 +115,7 @@ export const addCommand = async (
     } else {
       Log.msg(
         Chalk.gray(
-          `If the skill exists at a specific version, use: zanat add ${fullSkillName} --pin=<tag or commit>`
+          `If the skill exists at a specific version, use: zanat skill add ${fullSkillName} --pin=<tag or commit>`
         )
       );
     }

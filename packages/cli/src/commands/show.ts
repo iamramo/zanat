@@ -6,7 +6,7 @@ export const showCommand = async (fullSkillName: string): Promise<void> => {
 
   if (!skill) {
     Log.msg(Chalk.red(`Skill '${fullSkillName}' not found in hub.`), { prefix: '✗' });
-    Log.msg(Chalk.gray(`Use 'zanat search' to find available skills.`));
+    Log.msg(Chalk.gray(`Use 'zanat skill search' to find available skills.`));
     process.exit(1);
   }
 

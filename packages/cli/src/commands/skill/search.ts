@@ -34,5 +34,5 @@ export const searchCommand = async (query?: string): Promise<void> => {
 
   Log.msg(Chalk.gray(`Found ${results.length} skill(s)`));
   Log.blank();
-  Log.msg(Chalk.gray('Add a skill with: zanat add <skill>'));
+  Log.msg(Chalk.gray('Add a skill with: zanat skill add <skill>'));
 };
