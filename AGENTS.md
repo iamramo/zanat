@@ -101,7 +101,10 @@ Standalone package (`@iamramo/zanat-mcp`) providing an MCP (Model Context Protoc
 ### CLI Commands
 
 ```bash
-zanat init                    # Create ~/.zanat/, clone hub repo
+zanat hub add                 # Add a hub (first-time setup or additional hubs)
+zanat hub rm <name>           # Remove a hub
+zanat hub switch <name>       # Switch the active hub
+zanat hub list                # List all configured hubs
 zanat pull                    # Pull latest hub changes
 zanat add <skill>             # Add skill (tracks hub branch)
 zanat add <skill> --pin=<ref> # Add skill pinned to specific tag or commit SHA

@@ -14,7 +14,10 @@ Requires Node.js v22+ and Git.
 
 | Command                         | Description                                             |
 | ------------------------------- | ------------------------------------------------------- |
-| `zanat init`                    | Initialize configuration and clone the hub repository   |
+| `zanat hub add`                 | Add a new hub interactively                             |
+| `zanat hub rm <name>`           | Remove a hub                                            |
+| `zanat hub switch <name>`       | Switch the active hub                                   |
+| `zanat hub list`                | List all configured hubs                                |
 | `zanat pull`                    | Pull latest changes from the hub                        |
 | `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
 | `zanat add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA               |
@@ -67,6 +70,7 @@ Stored in `~/.zanat/config.json`:
 ```json
 {
   "version": 1,
+  "activeHub": "default",
   "hubs": {
     "default": {
       "url": "git@github.com:you/your-skills-hub.git",
@@ -90,7 +94,7 @@ zanat --debug <command>
 
 **"Failed to pull"** Check the hub URL in `~/.zanat/config.json` and network connectivity.
 
-**"Could not read the lock file"** Run `zanat init` to create the initial configuration.
+**"Could not read the lock file"** Run `zanat hub add` to create the initial configuration.
 
 ## License
 

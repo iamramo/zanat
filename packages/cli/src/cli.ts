@@ -15,7 +15,10 @@ import {
 import packageJson from '../package.json' with { type: 'json' };
 
 Node.checkVersion(parseInt(packageJson.engines.node.replace('>=', ''), 10));
-import { initCommand } from './commands/init.js';
+import { hubAddCommand } from './commands/hub/add.js';
+import { hubRmCommand } from './commands/hub/rm.js';
+import { hubSwitchCommand } from './commands/hub/switch.js';
+import { hubListCommand } from './commands/hub/list.js';
 import { pullCommand } from './commands/pull.js';
 import { addCommand } from './commands/add.js';
 import { rmCommand } from './commands/rm.js';
@@ -67,6 +70,7 @@ program.configureHelp({
 
 program.hook('preAction', async (thisCommand, actionCommand) => {
   const cmd = actionCommand.name();
+  const parentCmd = actionCommand.parent?.name();
   const args = actionCommand.args;
   const opts = actionCommand.opts();
   const parentOpts = thisCommand.opts();
@@ -75,11 +79,12 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
     process.env.ZANAT_DEBUG = 'true';
   }
 
-  switch (cmd) {
-    case 'init':
-      // No validation
-      return;
+  // hub subcommands manage config themselves — no pre-action validation
+  if (parentCmd === 'hub') {
+    return;
+  }
 
+  switch (cmd) {
     case 'add': {
       // Validate config
       await Config.validate();
@@ -274,31 +279,71 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
   }
 });
 
-program
-  .command('init')
-  .description('Initialize zanat configuration and clone the hub')
+const hub = program
+  .command('hub')
+  .description('Manage hubs');
+
+hub
+  .command('add')
+  .description('Add a new hub')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat init
-    Interactive setup for first-time use
-
-  $ zanat init
-    (when already initialized)
-    Prompts to reinitialize or keep existing setup
+  $ zanat hub add
+    Interactively add a new hub
 
 Interactive Prompts:
-  • Hub repository URL - Git URL of your skills repository
-  • Hub branch - Branch to track (default: main)
-  • Hub directory - Local path to clone repository
-
-Note:
-  Reinitializing removes the hub directory but keeps added skills safe.
-  You'll need to re-add skills to re-pin them to the new hub branch.
+  • Hub name       - Alias for this hub (default: default)
+  • Hub URL        - Git URL of your skills repository
+  • Hub branch     - Branch to track (default: main)
+  • Hub directory  - Local path to clone repository
 `)
   )
-  .action(initCommand);
+  .action(hubAddCommand);
+
+hub
+  .command('rm <name>')
+  .description('Remove a hub')
+  .addHelpText(
+    'after',
+    Chalk.italic.dim(`
+Examples:
+  $ zanat hub rm work
+    Remove the hub named 'work'
+
+Note:
+  Cannot remove the active hub. Switch to another hub first.
+  Skills added from this hub remain on disk and in the lock file.
+`)
+  )
+  .action(hubRmCommand);
+
+hub
+  .command('switch <name>')
+  .description('Switch the active hub')
+  .addHelpText(
+    'after',
+    Chalk.italic.dim(`
+Examples:
+  $ zanat hub switch work
+    Make 'work' the active hub
+`)
+  )
+  .action(hubSwitchCommand);
+
+hub
+  .command('list')
+  .description('List all configured hubs')
+  .addHelpText(
+    'after',
+    Chalk.italic.dim(`
+Examples:
+  $ zanat hub list
+    Show all hubs, with the active hub highlighted
+`)
+  )
+  .action(hubListCommand);
 
 program
   .command('pull')

@@ -13,6 +13,7 @@ export const HubSchema = z.object({
 
 export const Schema = z.object({
   version: z.literal(1),
+  activeHub: z.string().min(1),
   hubs: z.record(z.string().min(1), HubSchema),
 });
 

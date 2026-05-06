@@ -17,7 +17,7 @@ export const Config = {
     // Check if exists
     const config = await this.get().catch(() => undefined);
     if (!config) {
-      throw new Error(`Config not found at ${Path.CONFIG_FILE}. Run 'zanat init' first.`);
+      throw new Error(`Config not found at ${Path.CONFIG_FILE}. Run 'zanat hub add' first.`);
     }
 
     // Contains all required values
@@ -25,7 +25,7 @@ export const Config = {
     if (!result.success) {
       const errorMessage = result.error.issues[0]?.message ?? 'Invalid configuration values';
       throw new Error(
-        `Invalid config at ${Path.CONFIG_FILE}: ${errorMessage}. Run 'zanat init' to reconfigure.`
+        `Invalid config at ${Path.CONFIG_FILE}: ${errorMessage}. Run 'zanat hub add' to reconfigure.`
       );
     }
 
@@ -46,10 +46,8 @@ export const Config = {
 
   async get(): Promise<IHubConfig> {
     try {
-      const content = await Fs.readFile(Path.CONFIG_FILE);
-      const parsed = JSON.parse(content) as IConfig;
-      const validated = Zod.config.ConfigSchema.parse(parsed);
-      const hub = Zod.config.HubSchema.parse(validated.hubs['default']);
+      const full = await this.getAll();
+      const hub = Zod.config.HubSchema.parse(full.hubs[full.activeHub]);
       return hub;
     } catch (error) {
       Log.debug(error);
@@ -57,14 +55,21 @@ export const Config = {
     }
   },
 
-  async update(config: IHubConfig): Promise<void> {
+  async getAll(): Promise<IConfig> {
     try {
-      const validated = Zod.config.HubSchema.parse(config);
-      const full: IConfig = {
-        version: 1,
-        hubs: { default: validated },
-      };
-      await Fs.writeFile(Path.CONFIG_FILE, Format.json(full));
+      const content = await Fs.readFile(Path.CONFIG_FILE);
+      const parsed = JSON.parse(content) as IConfig;
+      return Zod.config.ConfigSchema.parse(parsed);
+    } catch (error) {
+      Log.debug(error);
+      throw new Error('Failed to read the config.');
+    }
+  },
+
+  async update(config: IConfig): Promise<void> {
+    try {
+      const validated = Zod.config.ConfigSchema.parse(config);
+      await Fs.writeFile(Path.CONFIG_FILE, Format.json(validated));
     } catch (error) {
       Log.debug(error);
       throw new Error('Failed to update the config.');

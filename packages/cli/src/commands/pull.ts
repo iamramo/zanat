@@ -21,6 +21,7 @@ export const pullCommand = async (): Promise<void> => {
   }
 
   // Step 3: Always update timestamp
-  config.lastPull = new Date().toISOString();
-  await Config.update(config);
+  const full = await Config.getAll();
+  full.hubs[full.activeHub]!.lastPull = new Date().toISOString();
+  await Config.update(full);
 };

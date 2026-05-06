@@ -31,8 +31,8 @@ You search for skills, add the ones you want, and they land in `~/.agents/skills
 ```bash
 npm install -g @iamramo/zanat-cli
 
-zanat init    # point it at your hub repository
-zanat search  # browse available skills
+zanat hub add  # point it at your hub repository
+zanat search   # browse available skills
 zanat add vercel.frontend.react-patterns
 ```
 
@@ -40,7 +40,10 @@ zanat add vercel.frontend.react-patterns
 
 | Command                         | Description                                             |
 | ------------------------------- | ------------------------------------------------------- |
-| `zanat init`                    | Initialize and clone the hub repository                 |
+| `zanat hub add`                 | Add a new hub interactively                             |
+| `zanat hub rm <name>`           | Remove a hub                                            |
+| `zanat hub switch <name>`       | Switch the active hub                                   |
+| `zanat hub list`                | List all configured hubs                                |
 | `zanat pull`                    | Pull latest changes from the hub                        |
 | `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
 | `zanat add <skill> --pin=<ref>` | Add a skill pinned to a specific tag or commit          |
