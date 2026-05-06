@@ -1,6 +1,6 @@
 {
   "name": "@iamramo/zanat-core",
-  "version": "0.20.4",
+  "version": "0.20.5",
   "description": "Core library for zanat - skill hub for AI agents",
   "type": "module",
   "main": "dist/index.js",
@@ -26,7 +26,7 @@
     "fs-extra": "^11.3.4",
     "gray-matter": "^4.0.3",
     "simple-git": "^3.36.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
