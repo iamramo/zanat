@@ -32,27 +32,27 @@ You search for skills, add the ones you want, and they land in `~/.agents/skills
 npm install -g @iamramo/zanat-cli
 
 zanat hub add  # point it at your hub repository
-zanat search   # browse available skills
-zanat add vercel.frontend.react-patterns
+zanat skill search   # browse available skills
+zanat skill add vercel.frontend.react-patterns
 ```
 
 ## Commands
 
-| Command                         | Description                                             |
-| ------------------------------- | ------------------------------------------------------- |
-| `zanat hub add`                 | Add a new hub interactively                             |
-| `zanat hub rm <name>`           | Remove a hub                                            |
-| `zanat hub switch <name>`       | Switch the active hub                                   |
-| `zanat hub list`                | List all configured hubs                                |
-| `zanat hub pull`                | Pull latest changes from the hub                        |
-| `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
-| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a specific tag or commit          |
-| `zanat rm [skill]`              | Remove a skill, or all added skills if no name is given |
-| `zanat update [skill]`          | Update one or all non-pinned skills                     |
-| `zanat list`                    | List added skills with version info                     |
-| `zanat search [query]`          | Search available skills in the hub                      |
-| `zanat show <skill>`            | Show the full content of a skill                        |
-| `zanat status`                  | Show hub and skills status                              |
+| Command                               | Description                                             |
+| ------------------------------------- | ------------------------------------------------------- |
+| `zanat hub add`                       | Add a new hub interactively                             |
+| `zanat hub rm <name>`                 | Remove a hub                                            |
+| `zanat hub switch <name>`             | Switch the active hub                                   |
+| `zanat hub list`                      | List all configured hubs                                |
+| `zanat hub pull`                      | Pull latest changes from the hub                        |
+| `zanat skill add [skill]`             | Add a skill, or all hub skills if no name is given      |
+| `zanat skill add <skill> --pin=<ref>` | Add a skill pinned to a specific tag or commit          |
+| `zanat skill rm [skill]`              | Remove a skill, or all added skills if no name is given |
+| `zanat skill update [skill]`          | Update one or all non-pinned skills                     |
+| `zanat skill list`                    | List added skills with version info                     |
+| `zanat skill search [query]`          | Search available skills in the hub                      |
+| `zanat show <skill>`                  | Show the full content of a skill                        |
+| `zanat status`                        | Show hub and skills status                              |
 
 See the [CLI README](./packages/cli/README.md) for the full reference.
 
@@ -61,12 +61,12 @@ See the [CLI README](./packages/cli/README.md) for the full reference.
 Skills either track the hub branch by default or are pinned to a specific point in time.
 
 ```bash
-zanat add vercel.frontend.react-patterns               # tracks hub branch
-zanat add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
-zanat add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
+zanat skill add vercel.frontend.react-patterns               # tracks hub branch
+zanat skill add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
+zanat skill add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
 ```
 
-Tracked skills update when you run `zanat update`. Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
+Tracked skills update when you run `zanat skill update`. Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
 
 ## Writing Skills
 

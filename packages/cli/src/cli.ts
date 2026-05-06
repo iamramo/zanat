@@ -20,11 +20,11 @@ import { hubRmCommand } from './commands/hub/rm.js';
 import { hubSwitchCommand } from './commands/hub/switch.js';
 import { hubListCommand } from './commands/hub/list.js';
 import { hubPullCommand } from './commands/hub/pull.js';
-import { addCommand } from './commands/add.js';
-import { rmCommand } from './commands/rm.js';
-import { updateCommand } from './commands/update.js';
-import { listCommand } from './commands/list.js';
-import { searchCommand } from './commands/search.js';
+import { addCommand } from './commands/skill/add.js';
+import { rmCommand } from './commands/skill/rm.js';
+import { updateCommand } from './commands/skill/update.js';
+import { listCommand } from './commands/skill/list.js';
+import { searchCommand } from './commands/skill/search.js';
 import { statusCommand } from './commands/status.js';
 import { showCommand } from './commands/show.js';
 import { PinOptionSchema } from './schemas/pin.js';
@@ -91,151 +91,173 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
     }
   }
 
-  switch (cmd) {
-    case 'add': {
-      // Validate config
-      await Config.validate();
+  if (parentCmd === 'skill') {
+    switch (cmd) {
+      case 'add': {
+        // Validate config
+        await Config.validate();
 
-      // Ensure on hubBranch
-      await Config.ensureOnHubBranch();
+        // Ensure on hubBranch
+        await Config.ensureOnHubBranch();
 
-      const fullSkillName = args[0];
+        const fullSkillName = args[0];
 
-      // Bulk-add: no skill name — pull and let the command handle the rest
-      if (!fullSkillName) {
-        await Git.pull();
-        return;
-      }
+        // Bulk-add: no skill name — pull and let the command handle the rest
+        if (!fullSkillName) {
+          await Git.pull();
+          return;
+        }
 
-      // Ensure fullSkillName is in correct format
-      Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+        // Ensure fullSkillName is in correct format
+        Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
 
-      // Ensure if needs to be updated instead
-      const skillLockExists = !!(await LockFile.find(fullSkillName));
-      if (skillLockExists) {
-        if (await LockFile.isPinned(fullSkillName)) {
-          Log.msg(Chalk.yellow(`Skill '${fullSkillName}' is already added and pinned.`));
+        // Ensure if needs to be updated instead
+        const skillLockExists = !!(await LockFile.find(fullSkillName));
+        if (skillLockExists) {
+          if (await LockFile.isPinned(fullSkillName)) {
+            Log.msg(Chalk.yellow(`Skill '${fullSkillName}' is already added and pinned.`));
+            process.exit(0);
+          }
+
+          const shouldUpdate = await Prompt.confirm({
+            message: `Skill ${fullSkillName} is already added. Update from hub?`,
+            default: true,
+          });
+
+          if (!shouldUpdate) process.exit(0);
+
+          await updateCommand(fullSkillName);
           process.exit(0);
         }
-
-        const shouldUpdate = await Prompt.confirm({
-          message: `Skill ${fullSkillName} is already added. Update from hub?`,
-          default: true,
-        });
-
-        if (!shouldUpdate) process.exit(0);
-
-        await updateCommand(fullSkillName);
-        process.exit(0);
-      }
-
-      // Ensure skill exists in hub
-      const pin = opts.pin;
-      PinOptionSchema.parse(opts.pin);
-
-      if (!pin) {
-        const hubSkill = await HubSkill.find(fullSkillName);
-        if (!hubSkill) throw new Error(`Skill '${fullSkillName}' not found in hub.`);
-      }
-
-      // Ensure up-to-date branch
-      if (pin) {
-        const refType = await Git.getRefType(pin);
-        if (refType === 'branch')
-          throw new Error(`Branch pinning is not supported. Use a tag or commit SHA.`);
-      } else {
-        await Git.pull();
-      }
-
-      // When pinned, verify skill exists at that ref
-      if (pin) {
-        const sourceFile = await Path.getHubSkillPath(fullSkillName, true);
-        try {
-          await Git.show(pin, sourceFile);
-        } catch {
-          throw new Error(`Skill '${fullSkillName}' does not exist at ref '${pin}'.`);
-        }
-      }
-
-      return;
-    }
-
-    case 'update': {
-      // Validate config
-      await Config.validate();
-
-      // Ensure on hubBranch
-      await Config.ensureOnHubBranch();
-
-      const fullConfig = await Config.get();
-      const config = await Config.getActiveHub();
-      const allLockFileSkills = await LockFile.findAll();
-      const lockFileSkills = Object.fromEntries(
-        Object.entries(allLockFileSkills).filter(([, skill]) => skill.hubAlias === fullConfig.activeHub)
-      );
-      let hasPulled = false;
-
-      const individualValidationLogic = async (name: string) => {
-        // Ensure fullSkillName is in correct format
-        Zod.skill.FullSchema.shape.fullName.parse(name);
 
         // Ensure skill exists in hub
-        const hubSkill = await HubSkill.find(name);
-        if (!hubSkill) throw new Error(`Skill '${name}' not found in hub.`);
+        const pin = opts.pin;
+        PinOptionSchema.parse(opts.pin);
 
-        // Ensure skill exists in lock file
-        const lockFileSkill = lockFileSkills[name];
-        if (!lockFileSkill) throw new Error(`Skill '${name}' not found in lock file.`);
+        if (!pin) {
+          const hubSkill = await HubSkill.find(fullSkillName);
+          if (!hubSkill) throw new Error(`Skill '${fullSkillName}' not found in hub.`);
+        }
 
-        // Ensure up-to-date hub branch (pull once)
-        if (lockFileSkill.requestedRef === config.branch && !hasPulled) {
+        // Ensure up-to-date branch
+        if (pin) {
+          const refType = await Git.getRefType(pin);
+          if (refType === 'branch')
+            throw new Error(`Branch pinning is not supported. Use a tag or commit SHA.`);
+        } else {
           await Git.pull();
-          hasPulled = true;
         }
-      };
 
-      if (args[0]) {
-        await individualValidationLogic(args[0]);
-      } else {
-        const skillNames = Object.keys(lockFileSkills);
-        if (skillNames.length === 0) {
-          Log.msg(Chalk.blue('No skills to update'));
-          process.exit(0);
+        // When pinned, verify skill exists at that ref
+        if (pin) {
+          const sourceFile = await Path.getHubSkillPath(fullSkillName, true);
+          try {
+            await Git.show(pin, sourceFile);
+          } catch {
+            throw new Error(`Skill '${fullSkillName}' does not exist at ref '${pin}'.`);
+          }
         }
-        for (const skillName of skillNames) {
-          await individualValidationLogic(skillName);
-        }
-      }
 
-      return;
-    }
-
-    case 'rm': {
-      // Validate config
-      await Config.validate({ remote: false });
-
-      const fullSkillName = args[0];
-
-      // Bulk-remove: no skill name — check there's something to remove
-      if (!fullSkillName) {
-        const lockFileSkills = await LockFile.findAll();
-        if (Object.keys(lockFileSkills).length === 0) {
-          Log.msg(Chalk.blue('No skills added.'));
-          process.exit(0);
-        }
         return;
       }
 
-      // Ensure fullSkillName is in correct format
-      Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+      case 'update': {
+        // Validate config
+        await Config.validate();
 
-      // Ensure skill exists in the lock file
-      const lockFileSkill = await LockFile.find(fullSkillName);
-      if (!lockFileSkill) throw new Error(`Skill '${fullSkillName}' not found in lock file.`);
+        // Ensure on hubBranch
+        await Config.ensureOnHubBranch();
 
-      return;
+        const fullConfig = await Config.get();
+        const config = await Config.getActiveHub();
+        const allLockFileSkills = await LockFile.findAll();
+        const lockFileSkills = Object.fromEntries(
+          Object.entries(allLockFileSkills).filter(([, skill]) => skill.hubAlias === fullConfig.activeHub)
+        );
+        let hasPulled = false;
+
+        const individualValidationLogic = async (name: string) => {
+          // Ensure fullSkillName is in correct format
+          Zod.skill.FullSchema.shape.fullName.parse(name);
+
+          // Ensure skill exists in hub
+          const hubSkill = await HubSkill.find(name);
+          if (!hubSkill) throw new Error(`Skill '${name}' not found in hub.`);
+
+          // Ensure skill exists in lock file
+          const lockFileSkill = lockFileSkills[name];
+          if (!lockFileSkill) throw new Error(`Skill '${name}' not found in lock file.`);
+
+          // Ensure up-to-date hub branch (pull once)
+          if (lockFileSkill.requestedRef === config.branch && !hasPulled) {
+            await Git.pull();
+            hasPulled = true;
+          }
+        };
+
+        if (args[0]) {
+          await individualValidationLogic(args[0]);
+        } else {
+          const skillNames = Object.keys(lockFileSkills);
+          if (skillNames.length === 0) {
+            Log.msg(Chalk.blue('No skills to update'));
+            process.exit(0);
+          }
+          for (const skillName of skillNames) {
+            await individualValidationLogic(skillName);
+          }
+        }
+
+        return;
+      }
+
+      case 'rm': {
+        // Validate config
+        await Config.validate({ remote: false });
+
+        const fullSkillName = args[0];
+
+        // Bulk-remove: no skill name — check there's something to remove
+        if (!fullSkillName) {
+          const lockFileSkills = await LockFile.findAll();
+          if (Object.keys(lockFileSkills).length === 0) {
+            Log.msg(Chalk.blue('No skills added.'));
+            process.exit(0);
+          }
+          return;
+        }
+
+        // Ensure fullSkillName is in correct format
+        Zod.skill.FullSchema.shape.fullName.parse(fullSkillName);
+
+        // Ensure skill exists in the lock file
+        const lockFileSkill = await LockFile.find(fullSkillName);
+        if (!lockFileSkill) throw new Error(`Skill '${fullSkillName}' not found in lock file.`);
+
+        return;
+      }
+
+      case 'list':
+        // Validate config
+        await Config.validate({ remote: false });
+
+        return;
+
+      case 'search':
+        // Validate config
+        await Config.validate();
+
+        // Ensure on hubBranch
+        await Config.ensureOnHubBranch();
+
+        return;
+
+      default:
+        return;
     }
+  }
 
+  switch (cmd) {
     case 'show': {
       // Validate config
       await Config.validate();
@@ -248,21 +270,6 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
 
       return;
     }
-
-    case 'list':
-      // Validate config
-      await Config.validate({ remote: false });
-
-      return;
-
-    case 'search':
-      // Validate config
-      await Config.validate();
-
-      // Ensure on hubBranch
-      await Config.ensureOnHubBranch();
-
-      return;
 
     case 'status':
       // Validate config
@@ -364,7 +371,11 @@ Behavior:
   )
   .action(hubPullCommand);
 
-program
+const skill = program
+  .command('skill')
+  .description('Manage skills');
+
+skill
   .command('add [skill]')
   .description('Add a skill, or all hub skills if no name is given')
   .option(
@@ -375,60 +386,60 @@ program
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat add vercel.react-patterns
+  $ zanat skill add vercel.react-patterns
     Add a skill and track the hub branch (auto-updates)
 
-  $ zanat add
+  $ zanat skill add
     Add all skills from the hub that aren't already added
 
-  $ zanat add vercel.react-patterns --pin=v1.2.0
+  $ zanat skill add vercel.react-patterns --pin=v1.2.0
     Pin to tag v1.2.0 (never auto-updates)
 
-  $ zanat add vercel.react-patterns --pin=abc1234
+  $ zanat skill add vercel.react-patterns --pin=abc1234
     Pin to specific commit (never auto-updates)
 
-  $ zanat add vercel.react-patterns --pin
+  $ zanat skill add vercel.react-patterns --pin
     Error: --pin requires a value
 
 Notes:
-  • Without --pin, the skill tracks the hub branch and updates with 'zanat update'
+  • Without --pin, the skill tracks the hub branch and updates with 'zanat skill update'
   • With --pin, the skill is locked to that tag or commit and never auto-updates
   • Re-add a skill without --pin to switch it back to tracking the hub branch
 `)
   )
   .action(addCommand);
 
-program
+skill
   .command('rm [skill]')
   .description('Remove a skill, or all added skills if no name is given')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat rm vercel.react-patterns
+  $ zanat skill rm vercel.react-patterns
     Remove a skill from local storage
 
-  $ zanat rm
+  $ zanat skill rm
     Remove all added skills (prompts for confirmation)
 
 Note:
   Removes the skill files from ~/.agents/skills/ and removes the lock file entry.
-  The skill can be re-added at any time with 'zanat add'.
+  The skill can be re-added at any time with 'zanat skill add'.
 `)
   )
   .action(rmCommand);
 
-program
+skill
   .command('update [skill]')
   .description('Update skill(s) from hub')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat update
+  $ zanat skill update
     Update all skills to their latest versions (interactive)
 
-  $ zanat update vercel.react-patterns
+  $ zanat skill update vercel.react-patterns
     Update a specific skill
 
 Behavior:
@@ -441,14 +452,14 @@ Behavior:
   )
   .action(updateCommand);
 
-program
+skill
   .command('list')
   .description('List added skills')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat list
+  $ zanat skill list
     List all added skills with their versions
 
 Output Format:
@@ -464,17 +475,17 @@ Note:
   )
   .action(listCommand);
 
-program
+skill
   .command('search [query]')
   .description('Search for skills in the hub')
   .addHelpText(
     'after',
     Chalk.italic.dim(`
 Examples:
-  $ zanat search
+  $ zanat skill search
     List all available skills
 
-  $ zanat search react
+  $ zanat skill search react
     Search for skills matching "react"
 
 Note:

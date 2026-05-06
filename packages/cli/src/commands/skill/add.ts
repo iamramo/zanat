@@ -11,7 +11,7 @@ import {
   LockFile,
   Prompt,
 } from '@iamramo/zanat-core';
-import type { PinOption } from '../schemas/pin.js';
+import type { PinOption } from '../../schemas/pin.js';
 
 interface AddOptions {
   pin?: PinOption;

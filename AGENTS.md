@@ -106,13 +106,13 @@ zanat hub rm <name>           # Remove a hub
 zanat hub switch <name>       # Switch the active hub
 zanat hub list                # List all configured hubs
 zanat hub pull                # Pull latest hub changes
-zanat add <skill>             # Add skill (tracks hub branch)
-zanat add <skill> --pin=<ref> # Add skill pinned to specific tag or commit SHA
-zanat rm <skill>              # Remove a skill
-zanat update [skill]          # Update skill(s) from hub
-zanat list                    # List added skills
+zanat skill add <skill>             # Add skill (tracks hub branch)
+zanat skill add <skill> --pin=<ref> # Add skill pinned to specific tag or commit SHA
+zanat skill rm <skill>              # Remove a skill
+zanat skill update [skill]          # Update skill(s) from hub
+zanat skill list                    # List added skills
+zanat skill search [query]          # Search available skills
 zanat status                  # Show hub and skills status
-zanat search [query]          # Search available skills
 ```
 
 ### Version Tracking

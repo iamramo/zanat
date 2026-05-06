@@ -14,30 +14,30 @@ Requires Node.js v22+ and Git.
 
 | Command                         | Description                                             |
 | ------------------------------- | ------------------------------------------------------- |
-| `zanat hub add`                 | Add a new hub interactively                             |
-| `zanat hub rm <name>`           | Remove a hub                                            |
-| `zanat hub switch <name>`       | Switch the active hub                                   |
-| `zanat hub list`                | List all configured hubs                                |
-| `zanat hub pull`                | Pull latest changes from the hub                        |
-| `zanat add [skill]`             | Add a skill, or all hub skills if no name is given      |
-| `zanat add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA               |
-| `zanat rm [skill]`              | Remove a skill, or all added skills if no name is given |
-| `zanat update [skill]`          | Update one or all non-pinned skills from the hub        |
-| `zanat list`                    | List added skills with version info                     |
-| `zanat show <skill>`            | Show the full content of a skill                        |
-| `zanat search [query]`          | Search available skills in the hub                      |
-| `zanat status`                  | Show hub and skills status                              |
+| `zanat hub add`                       | Add a new hub interactively                             |
+| `zanat hub rm <name>`                 | Remove a hub                                            |
+| `zanat hub switch <name>`             | Switch the active hub                                   |
+| `zanat hub list`                      | List all configured hubs                                |
+| `zanat hub pull`                      | Pull latest changes from the hub                        |
+| `zanat skill add [skill]`             | Add a skill, or all hub skills if no name is given      |
+| `zanat skill add <skill> --pin=<ref>` | Add a skill pinned to a tag or commit SHA               |
+| `zanat skill rm [skill]`              | Remove a skill, or all added skills if no name is given |
+| `zanat skill update [skill]`          | Update one or all non-pinned skills from the hub        |
+| `zanat skill list`                    | List added skills with version info                     |
+| `zanat skill search [query]`          | Search available skills in the hub                      |
+| `zanat show <skill>`                  | Show the full content of a skill                        |
+| `zanat status`                        | Show hub and skills status                              |
 
 ## Version Tracking
 
-By default, skills track the hub branch and stay current when you run `zanat update`.
+By default, skills track the hub branch and stay current when you run `zanat skill update`.
 
 To lock a skill to a specific point in time, pin it to a tag or commit SHA:
 
 ```bash
-zanat add vercel.frontend.react-patterns               # tracks hub branch
-zanat add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
-zanat add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
+zanat skill add vercel.frontend.react-patterns               # tracks hub branch
+zanat skill add vercel.frontend.react-patterns --pin=v1.2.0  # pinned to tag
+zanat skill add vercel.frontend.react-patterns --pin=abc1234 # pinned to commit
 ```
 
 Pinned skills never auto-update. Re-add without `--pin` to resume tracking.
