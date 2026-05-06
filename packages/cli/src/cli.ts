@@ -160,7 +160,7 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
       // Ensure on hubBranch
       await Config.ensureOnHubBranch();
 
-      const config = await Config.get();
+      const config = await Config.getActiveHub();
       const lockFileSkills = await LockFile.findAll();
       let hasPulled = false;
 
@@ -271,7 +271,7 @@ program.hook('preAction', async (thisCommand, actionCommand) => {
 
       // Ensure we have the latest information
       {
-        const hubBranch = (await Config.get()).branch;
+        const hubBranch = (await Config.getActiveHub()).branch;
         await Git.fetch([hubBranch]);
       }
 

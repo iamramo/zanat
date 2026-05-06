@@ -4,7 +4,7 @@ export const statusCommand = async (): Promise<void> => {
   // Step 1: Load configuration and skills
   const skills = await LockFile.findAll();
   const skillNames = Object.keys(skills);
-  const config = await Config.get();
+  const config = await Config.getActiveHub();
 
   // Step 2: Display hub status
   Log.msg(Chalk.blue(Chalk.bold('Hub Status:')));

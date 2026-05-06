@@ -9,7 +9,7 @@ export function registerList(server: McpServer): void {
     async () => {
       try {
         const skills = await LockFile.findAll();
-        const config = await Config.get();
+        const config = await Config.getActiveHub();
         const entries = Object.entries(skills);
 
         if (entries.length === 0) {

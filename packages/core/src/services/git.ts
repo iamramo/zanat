@@ -21,7 +21,7 @@ export const Git = {
   },
 
   async pull(): Promise<void> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {
@@ -34,7 +34,7 @@ export const Git = {
 
   async checkout(ref: string): Promise<void> {
     Zod.git.RefSchema.parse(ref);
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {
@@ -47,7 +47,7 @@ export const Git = {
 
   async resolveCommit(ref: string): Promise<string> {
     Zod.git.RefSchema.parse(ref);
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {
@@ -60,7 +60,7 @@ export const Git = {
   },
 
   async fetch(refs: string[]): Promise<void> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     if (refs.length === 0) throw new Error('Missing refs.');
@@ -74,7 +74,7 @@ export const Git = {
   },
 
   async behind(from: string, to: string): Promise<number> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {
@@ -91,7 +91,7 @@ export const Git = {
       return 'sha';
     }
 
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {
@@ -128,7 +128,7 @@ export const Git = {
       git = simpleGit();
       remoteUrl = url;
     } else {
-      const config = await Config.get();
+      const config = await Config.getActiveHub();
       git = simpleGit(config.dir);
       remoteUrl = config.url;
     }
@@ -144,7 +144,7 @@ export const Git = {
   },
 
   async getCurrentBranch(): Promise<string> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
     try {
       const result = await git.revparse(['--abbrev-ref', 'HEAD']);
@@ -157,7 +157,7 @@ export const Git = {
 
   async show(ref: string, filePath: string): Promise<string> {
     Zod.git.RefSchema.parse(ref);
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const git = simpleGit(config.dir);
 
     try {

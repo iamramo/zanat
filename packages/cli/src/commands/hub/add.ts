@@ -18,7 +18,7 @@ export const hubAddCommand = async (): Promise<void> => {
   const isFirstHub = !(await Config.exists());
 
   // Step 1: Collect configuration from user
-  const existingHubs = isFirstHub ? {} : (await Config.getAll()).hubs;
+  const existingHubs = isFirstHub ? {} : (await Config.get()).hubs;
 
   const hubName = await Prompt.input({
     message: 'Hub name:',
@@ -113,7 +113,7 @@ export const hubAddCommand = async (): Promise<void> => {
 
     const newFullConfig = isFirstHub
       ? { version: 1 as const, activeHub: hubName, hubs: { [hubName]: newHubEntry } }
-      : { ...(await Config.getAll()), hubs: { ...existingHubs, [hubName]: newHubEntry } };
+      : { ...(await Config.get()), hubs: { ...existingHubs, [hubName]: newHubEntry } };
 
     await Config.update(newFullConfig);
     Log.msg(Chalk.green(`Updated ${Path.CONFIG_FILE}`), { prefix: '✔' });

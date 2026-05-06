@@ -20,7 +20,7 @@ export const Path = {
   SKILL_FILENAME: 'SKILL.md',
 
   async getHubSkillPath(fullSkillName: string, includeFilename = false): Promise<string> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const { namespace, skillName } = this.toSkillParts(fullSkillName);
     const dir = path.join(config.dir, ...namespace, skillName);
     return includeFilename ? path.join(dir, this.SKILL_FILENAME) : dir;

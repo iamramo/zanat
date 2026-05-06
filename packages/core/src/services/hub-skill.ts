@@ -37,7 +37,7 @@ export const HubSkill = {
   },
 
   async findAll(): Promise<ISkill[]> {
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const files = await Fs.glob('**/SKILL.md', config.dir);
     const results = await Promise.allSettled(
       files.map((f) => {

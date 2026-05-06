@@ -12,7 +12,7 @@ import packageJson from '../package.json' with { type: 'json' };
 async function ensureOnHubBranch(): Promise<void> {
   await Config.validate();
 
-  const config = await Config.get();
+  const config = await Config.getActiveHub();
   const currentBranch = await Git.getCurrentBranch();
   if (currentBranch !== config.branch) {
     await Git.checkout(config.branch);

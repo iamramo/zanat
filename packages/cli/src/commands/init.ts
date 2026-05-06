@@ -24,7 +24,7 @@ export const initCommand = async (): Promise<void> => {
     Log.msg(Chalk.blue('Zanat is already initialized.'));
     Log.blank();
 
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     Log.msg(Chalk.bold(`Repository: `) + Chalk.green(config.url), {
       prefix: '•',
       prefixColor: 'white',
@@ -125,7 +125,7 @@ export const initCommand = async (): Promise<void> => {
     },
   });
 
-  const oldHubDir = shouldReinitialize ? (await Config.get()).dir : undefined;
+  const oldHubDir = shouldReinitialize ? (await Config.getActiveHub()).dir : undefined;
 
   // Step 3: Create directories, config files, and clone repository
   try {

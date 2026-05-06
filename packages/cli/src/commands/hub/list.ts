@@ -1,7 +1,7 @@
 import { Config, Log, Chalk } from '@iamramo/zanat-core';
 
 export const hubListCommand = async (): Promise<void> => {
-  const full = await Config.getAll();
+  const full = await Config.get();
   const hubNames = Object.keys(full.hubs);
 
   if (hubNames.length === 0) {

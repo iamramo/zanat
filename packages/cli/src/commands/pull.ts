@@ -1,7 +1,7 @@
 import { Git, Config, Log, Chalk } from '@iamramo/zanat-core';
 
 export const pullCommand = async (): Promise<void> => {
-  const config = await Config.get();
+  const config = await Config.getActiveHub();
 
   // Step 1: Capture current HEAD before pull
   Log.msg(Chalk.blue('Pulling latest changes...'));
@@ -21,7 +21,7 @@ export const pullCommand = async (): Promise<void> => {
   }
 
   // Step 3: Always update timestamp
-  const full = await Config.getAll();
+  const full = await Config.get();
   full.hubs[full.activeHub]!.lastPull = new Date().toISOString();
   await Config.update(full);
 };

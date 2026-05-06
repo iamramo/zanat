@@ -18,7 +18,7 @@ export function registerAdd(server: McpServer): void {
     },
     async ({ fullName, pin }) => {
       try {
-        const config = await Config.get();
+        const config = await Config.getActiveHub();
 
         // Bulk-add: no skill name provided
         if (fullName === undefined) {

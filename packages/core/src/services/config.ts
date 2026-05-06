@@ -15,7 +15,7 @@ export const Config = {
 
   async validate({ remote = true }: { remote?: boolean } = {}): Promise<void> {
     // Check if exists
-    const config = await this.get().catch(() => undefined);
+    const config = await this.getActiveHub().catch(() => undefined);
     if (!config) {
       throw new Error(`Config not found at ${Path.CONFIG_FILE}. Run 'zanat hub add' first.`);
     }
@@ -44,9 +44,9 @@ export const Config = {
     }
   },
 
-  async get(): Promise<IHubConfig> {
+  async getActiveHub(): Promise<IHubConfig> {
     try {
-      const full = await this.getAll();
+      const full = await this.get();
       const hub = Zod.config.HubSchema.parse(full.hubs[full.activeHub]);
       return hub;
     } catch (error) {
@@ -55,7 +55,7 @@ export const Config = {
     }
   },
 
-  async getAll(): Promise<IConfig> {
+  async get(): Promise<IConfig> {
     try {
       const content = await Fs.readFile(Path.CONFIG_FILE);
       const parsed = JSON.parse(content) as IConfig;
@@ -77,7 +77,7 @@ export const Config = {
   },
 
   async ensureOnHubBranch(): Promise<void> {
-    const config = await this.get();
+    const config = await this.getActiveHub();
     const currentBranch = await Git.getCurrentBranch();
 
     if (currentBranch === config.branch) {

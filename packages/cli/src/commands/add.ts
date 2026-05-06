@@ -68,7 +68,7 @@ export const addCommand = async (
 
     Log.blank();
 
-    const config = await Config.get();
+    const config = await Config.getActiveHub();
     const resolvedCommit = await Git.resolveCommit(config.branch);
 
     for (const skill of toAdd) {
@@ -82,7 +82,7 @@ export const addCommand = async (
   }
 
   // Single-skill add
-  const config = await Config.get();
+  const config = await Config.getActiveHub();
 
   let requestedRef: string;
   let resolvedCommit: string;

@@ -1,7 +1,7 @@
 import { Config, Fs, Log, Prompt, Chalk } from '@iamramo/zanat-core';
 
 export const hubRmCommand = async (hubName: string): Promise<void> => {
-  const full = await Config.getAll();
+  const full = await Config.get();
 
   if (!full.hubs[hubName]) {
     throw new Error(`Hub '${hubName}' not found.`);
